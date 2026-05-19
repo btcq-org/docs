@@ -18,7 +18,7 @@ Bitcoin needs to migrate before quantum computers reach that scale. The cryptogr
 
 Bitcoin uses a signature scheme called **ECDSA** over a specific elliptic curve called **secp256k1**. To send Bitcoin, you sign a transaction with your private key. Anyone can verify the signature using your public key.
 
-The security of this scheme rests on a one-way relationship: it's easy to derive a public key from a private key, but practically impossible to go the other way around — for a classical computer.
+The security of this scheme rests on a one-way relationship. It's easy to derive a public key from a private key. The reverse is practically impossible for a classical computer.
 
 A sufficiently large quantum computer running **Shor's algorithm** can reverse that direction. Given your public key, it can derive your private key. Then it can sign whatever it wants on your behalf.
 
@@ -41,7 +41,7 @@ The owners of these coins, if any are still around, **cannot defend themselves**
 
 ### Category 2: Addresses with only hashed public keys (mempool risk)
 
-Modern Bitcoin addresses (P2PKH, P2WPKH) store only the **hash** of the public key on-chain. The hash itself is quantum-resistant — Grover's algorithm only provides a quadratic speedup, leaving these addresses effectively safe.
+Modern Bitcoin addresses (P2PKH, P2WPKH) store only the **hash** of the public key on-chain. The hash itself is quantum-resistant: Grover's algorithm only provides a quadratic speedup, leaving these addresses effectively safe.
 
 But the moment such an address spends, the public key is broadcast in the transaction. While the transaction sits in the mempool waiting to be mined, a quantum-capable adversary could:
 

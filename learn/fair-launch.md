@@ -71,7 +71,7 @@ This is materially different from a team premine or a vesting cliff:
 * The funds are on-chain treasuries, not private wallets. Every disbursement is publicly recorded.
 * If validators decide the project no longer warrants funding, they can vote to stop.
 
-The framing: QBTC funds its own continued development out of value that would otherwise be lost to a quantum attacker, on terms set by the validator set. Bitcoin Core is funded by donations and corporate sponsorship; QBTC is funded by a transparent on-chain mechanism gated by governance.
+QBTC funds its own continued development out of value that would otherwise be lost to a quantum attacker, on terms set by the validator set. Bitcoin Core is funded by donations and corporate sponsorship; QBTC is funded by a transparent on-chain mechanism gated by governance.
 
 ## What the project gets
 
