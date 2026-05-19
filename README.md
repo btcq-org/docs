@@ -15,7 +15,7 @@ Bitcoin's signatures will eventually fall to quantum computers. QBTC is the safe
 ## Choose your path
 
 {% tabs %}
-{% tab title="I hold BTC" %}
+{% tab title="BTC holder" %}
 **Start with [Learn](learn/what-is-qbtc.md).**
 
 Plain-English explanations of what QBTC is, why the quantum threat matters, and what your claim will look like.
@@ -23,7 +23,7 @@ Plain-English explanations of what QBTC is, why the quantum threat matters, and 
 [What is QBTC?](learn/what-is-qbtc.md) → [The Quantum Threat](learn/quantum-threat.md) → [For BTC Holders](learn/for-btc-holders.md)
 {% endtab %}
 
-{% tab title="I'm a developer" %}
+{% tab title="Developer" %}
 **Start with [Build](build/README.md).**
 
 Architecture, consensus, claim mechanism, APIs, and how to run a node.
@@ -31,7 +31,7 @@ Architecture, consensus, claim mechanism, APIs, and how to run a node.
 [Architecture](build/architecture.md) → [Quantum Resistance](build/quantum-resistance.md) → [Claim Mechanism](build/claim-mechanism.md)
 {% endtab %}
 
-{% tab title="I'm a researcher or institution" %}
+{% tab title="Researcher / Institution" %}
 **Start with [Research](research/README.md).**
 
 The formal protocol specification, the quantum risk assessment, the security model, and the tokenomics.
