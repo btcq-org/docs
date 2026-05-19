@@ -50,7 +50,7 @@ If you can't sign a proof of ownership, you can't claim. This is the same securi
 
 ### Do I need to do anything now?
 
-No, with one caveat. Most holders can claim whenever they want, or never. The exception is **dormant exposed-key BTC** — UTXOs older than 17 years whose public keys are already on-chain (Satoshi-era P2PK outputs and very old reused addresses). Those are subject to reclamation by QBTC governance. If your BTC is not in that category, your claim is not affected by waiting.
+No, with one caveat. Most holders can claim whenever they want, or never. The exception is **dormant exposed-key BTC**: UTXOs older than 17 years whose public keys are already on-chain (Satoshi-era P2PK outputs and very old reused addresses). Those are subject to reclamation by QBTC governance. If your BTC is not in that category, your claim is not affected by waiting.
 
 ### How do I claim?
 

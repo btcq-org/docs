@@ -4,7 +4,7 @@ QBTC is pre-mainnet. The protocol substrate (post-quantum consensus, ZK-gated cl
 
 **Mainnet target: Q3 2026.**
 
-## Status, at a glance
+## Component status
 
 | Component | Status |
 |---|---|

@@ -37,7 +37,7 @@ A Bitcoin public key becomes visible on-chain in two situations:
 
 For both categories, the moment a quantum computer can run Shor's algorithm at the required scale, the funds can be stolen by deriving the private key from the exposed public key.
 
-The owners of these coins, if any are still around, **cannot defend themselves**. To move the coins, they would have to broadcast a transaction — which broadcasts the public key — which is the very thing that lets the attacker race them. There is no way to win that race once a quantum-capable adversary exists.
+The owners of these coins, if any are still around, **cannot defend themselves**. To move the coins, they would have to broadcast a transaction, which broadcasts the public key, which is the very thing that lets the attacker race them. There is no way to win that race once a quantum-capable adversary exists.
 
 ### Category 2: Addresses with only hashed public keys (mempool risk)
 

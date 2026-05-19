@@ -10,11 +10,9 @@ Every validator's consensus key is an ML-DSA key. Every consensus vote, every bl
 
 Implemented via a fork of CometBFT at `github.com/btcq-org/cometbft`, which adds a `crypto/mldsa` package and routes signing through it.
 
-### Why it matters
+If validators signed with Ed25519, a quantum-capable adversary could forge a validator signature and rewrite chain history. ML-DSA is lattice-based and is believed secure against both classical and quantum attacks at NIST security level 3 (ML-DSA-65).
 
-A chain that exists to be quantum-safe cannot have any quantum-vulnerable cryptography in its consensus layer. If validators signed with Ed25519, a quantum-capable adversary could forge a validator signature and rewrite chain history. ML-DSA is lattice-based and is believed secure against both classical and quantum attacks at NIST security level 3 (ML-DSA-65).
-
-### Trade-offs
+### Size and bandwidth
 
 ML-DSA signatures are larger than Ed25519:
 
@@ -46,7 +44,7 @@ Hidden inputs (kept secret):
 * Bitcoin private key.
 * ECDSA signature.
 
-### Practical implications
+### Verification cost and proof generation
 
 The on-chain verifier is fast (~2–5 ms verification per proof, proof size ~1 KB). Verification cost is what matters for chain throughput.
 

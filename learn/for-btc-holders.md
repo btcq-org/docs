@@ -1,7 +1,7 @@
 # For BTC Holders
 
 {% hint style="success" %}
-**1 BTC held = 1 QBTC claimable.** No signup. No deadline. No fees to the project.
+**1 BTC held = 1 QBTC claimable.** No signup. No time limit. No fees to the project.
 {% endhint %}
 
 {% hint style="info" %}
@@ -12,7 +12,7 @@
 
 If you hold Bitcoin, you have a claim on an equal amount of QBTC. When mainnet launches, you can convert your claim into spendable QBTC by submitting a zero-knowledge proof of ownership of your Bitcoin address. The proof never reveals your public key, so the migration is itself quantum-safe.
 
-Holders can claim immediately at mainnet, wait years, or never claim. The only exception: **dormant exposed-key BTC** (UTXOs older than 17 years whose public keys are visible on-chain — overwhelmingly Satoshi-era P2PK outputs and ancient reused addresses) is subject to reclamation by on-chain governance. If your BTC is not in those categories, your claim is not affected.
+Holders can claim immediately at mainnet, wait years, or never claim. The only exception: **dormant exposed-key BTC** (UTXOs older than 17 years whose public keys are visible on-chain, overwhelmingly Satoshi-era P2PK outputs and ancient reused addresses) is subject to reclamation by on-chain governance. If your BTC is not in those categories, your claim is not affected.
 
 **Claiming QBTC cannot cost you any Bitcoin.** Nothing about the process moves, spends, or locks your BTC. The ZK proof is generated locally from your Bitcoin private key and never sends a Bitcoin transaction.
 

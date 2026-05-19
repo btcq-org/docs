@@ -52,7 +52,7 @@ When a validator receives a `MsgClaimWithProof`, the handler (`x/qbtc/keeper/han
 
 A claimed UTXO has `EntitledAmount == 0`. Any subsequent attempt to claim it fails at step 2 of validator handling.
 
-The claimed status also propagates through Bitcoin spends. When the `ebifrost` module ingests a new Bitcoin block, any transaction that spends from a claimed UTXO carries the claimed status to its outputs. A child of a fully-claimed UTXO has `EntitledAmount = 0` and cannot be claimed.
+The claimed status also propagates through Bitcoin spends. When the `ebifrost` module ingests a new Bitcoin block, any transaction whose inputs include claimed UTXOs carries the claimed status to its outputs in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed. A child of a partially-claimed set of parents inherits a proportionally-reduced `EntitledAmount`.
 
 Propagation makes governance reclamation (see [Tokenomics](../research/tokenomics.md)) permanent: once a UTXO is reclaimed into the Reserve Module, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO to a new address.
 
@@ -66,7 +66,7 @@ Propagation makes governance reclamation (see [Tokenomics](../research/tokenomic
 
 Proofs are generated client-side. Two paths exist:
 
-* **Native wallet flow.** Quantum-safe wallet partners ship ZK proving natively. Users see claiming as a normal in-wallet action. QBTC is partnering with an established Bitcoin wallet for this integration, live at mainnet.
+* **Native wallet flow.** Quantum-safe wallet partners ship ZK proving natively. Users see claiming as a normal in-wallet action. Wallet partner integrations are in progress; specific partners will be named ahead of mainnet.
 * **Hosted proof service.** Independent operators run `proof-service` HTTP endpoints that wallets can use to offload computation on constrained devices. Multiple operators run these so users can choose.
 * **Local CLI prover.** `zkprover` lets advanced users generate proofs themselves.
 

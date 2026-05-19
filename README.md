@@ -44,7 +44,7 @@ The formal protocol specification, the quantum risk assessment, the security mod
 
 Quantum computers will eventually break the math that protects Bitcoin addresses. Every Bitcoin address whose public key has ever been revealed (which includes every address that has ever spent) becomes vulnerable that day.
 
-QBTC is a separate chain built on quantum-resistant cryptography (a NIST-standardized scheme called ML-DSA). The chain keeps a continuous mirror of who owns what on Bitcoin. To move your balance over, you prove you own your Bitcoin address using a zero-knowledge proof — a cryptographic technique that confirms ownership without revealing your public key. The migration itself is therefore safe from quantum attack.
+QBTC is a separate chain built on quantum-resistant cryptography (a NIST-standardized scheme called ML-DSA). The chain keeps a continuous mirror of who owns what on Bitcoin. To move your balance over, you prove you own your Bitcoin address using a zero-knowledge proof, a cryptographic technique that confirms ownership without revealing your public key. The migration itself is therefore safe from quantum attack.
 
 Nothing happens to your Bitcoin. No bridge, no peg, no locked coins, no custodian.
 

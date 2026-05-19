@@ -27,7 +27,7 @@ A soft fork buys safety for active users *eventually*, does nothing for the larg
 
 A Bitcoin hard fork that requires post-quantum signatures for all future spends, and re-mines dormant exposed UTXOs into safe addresses, would technically solve the problem.
 
-It will not happen on Bitcoin Legacy. The social consensus does not accept hard forks that change the rules in ways that affect existing holders' coins, even to protect them. Every prior attempt has failed or split off. A hard fork that re-allocates dormant Satoshi-era UTXOs would be the most contentious change in Bitcoin's history — and it would impose that change on every holder, including those who reject the migration.
+It will not happen on Bitcoin Legacy. The social consensus does not accept hard forks that change the rules in ways that affect existing holders' coins, even to protect them. Every prior attempt has failed or split off. A hard fork that re-allocates dormant Satoshi-era UTXOs would be the most contentious change in Bitcoin's history, and it would impose that change on every holder, including those who reject the migration.
 
 QBTC performs the hard-fork-equivalent migration **on a separate chain**, so Bitcoin's consensus is never touched and no holder is forced to participate. Holders who want quantum safety opt in. Holders who don't, don't. The reclamation of dormant exposed-key UTXOs happens only in QBTC's mirror; on Bitcoin, those coins remain exactly where they are, governed by exactly the rules they have today.
 
@@ -38,12 +38,12 @@ A bridge moves BTC into a quantum-safe chain by locking it under a custodian or 
 Bridges fail for several reasons:
 
 * **They reintroduce custodial risk, and the custody itself is quantum-vulnerable.** The thing protecting your BTC is now a multisig signed with ECDSA keys. Quantum capability that breaks Bitcoin breaks the bridge custodians' keys at the same moment. QBTC has no custodian and no peg: your BTC stays on Bitcoin, under your own keys, until you choose to exercise the entitlement with a ZK proof. There is no honeypot to attack.
-* **They lock your BTC to use the destination chain.** A bridge requires you to surrender custody of the underlying BTC to mint the wrapped version. With QBTC, you keep your BTC on Bitcoin *and* hold QBTC after claiming — the claim does not move or lock the underlying coin.
-* **They are not universal and cannot protect inactive holders.** Bridges typically support a subset of address types and require interactive participation, paying fees and trusting the operator. Dormant exposed-key UTXOs whose owners are unreachable cannot be bridged at all. QBTC's user claim is also opt-in, but the protocol additionally provides a *non-user* path — governance reclamation — for exactly the category of coins no opt-in mechanism can save.
+* **They lock your BTC to use the destination chain.** A bridge requires you to surrender custody of the underlying BTC to mint the wrapped version. With QBTC, you keep your BTC on Bitcoin *and* hold QBTC after claiming. The claim does not move or lock the underlying coin.
+* **They are not universal and cannot protect inactive holders.** Bridges typically support a subset of address types and require interactive participation, paying fees and trusting the operator. Dormant exposed-key UTXOs whose owners are unreachable cannot be bridged at all. QBTC's user claim is also opt-in, but the protocol additionally provides a *non-user* path (governance reclamation) for exactly the category of coins no opt-in mechanism can save.
 
 ## Why not a wrapped asset
 
-Wrapping BTC as a token on another chain (Ethereum, a Cosmos chain, etc.) inherits all the problems of bridges. It adds another: the wrapped token's security depends on the host chain's security model, which may itself be quantum-vulnerable. QBTC is not a wrapped asset — it is a sovereign chain with its own ML-DSA-secured validator set, mirroring Bitcoin's UTXO state without depending on any other chain's consensus.
+Wrapping BTC as a token on another chain (Ethereum, a Cosmos chain, etc.) inherits all the problems of bridges. It adds another: the wrapped token's security depends on the host chain's security model, which may itself be quantum-vulnerable. QBTC is a sovereign chain with its own ML-DSA-secured validator set, mirroring Bitcoin's UTXO state without depending on any other chain's consensus.
 
 ## What QBTC does instead: mirror, then claim
 
