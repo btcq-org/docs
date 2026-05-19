@@ -56,7 +56,7 @@ This is the "**short-range attack**" or "**live key attack**." It threatens ever
 
 Published estimates converge in the same range:
 
-* Over **1 million BTC** sits in P2PK and reused-address outputs whose public keys are permanently exposed. This includes most of the dormant Satoshi-era coins.
+* Over **1 million BTC** is estimated to sit in P2PK and reused-address outputs whose public keys are permanently exposed. This includes most of the dormant Satoshi-era coins.
 * **Effectively all actively-spent BTC** is exposed during the mempool window of each transaction.
 
 The total economically exposed surface, depending on how you count reused addresses and the time horizon, is in the millions of BTC.

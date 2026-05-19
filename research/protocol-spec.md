@@ -97,7 +97,7 @@ There are two minting paths, and only two.
 
 **Path 1: User claim.** A successful `MsgClaimWithProof` mints QBTC into the claimer's account, equal to the sum of the referenced UTXOs' BTC values.
 
-**Path 2: Governance reclamation.** Through standard `x/gov` proposals on a ~2-week voting cadence, validators vote on which dormant exposed-key UTXOs (older than 17 years, with on-chain public keys) to reclaim. When a proposal passes:
+**Path 2: Governance reclamation.** Through standard `x/gov` proposals, validators vote on which dormant exposed-key UTXOs (older than 17 years, with on-chain public keys) to reclaim. The voting period is the standard Cosmos parameter (default ~2 weeks, set by governance). When a proposal passes:
 
 1. Each referenced UTXO is marked as claimed in the mirror (`EntitledAmount → 0`), identically to a user claim.
 2. QBTC equal to the reclaimed BTC value is minted on the chain and split across three on-chain accounts at a fixed ratio:
@@ -122,7 +122,7 @@ Per `x/qbtc/keeper/network_manager.go:24–47`:
 Constants (per `constants/constants.go`):
 
 * `EmissionCurve = 5`
-* `BlocksPerYear = 52,560,000` (~10 blocks per minute)
+* `BlocksPerYear = 5,256,000` (10 × 60 × 24 × 365, i.e. 10 blocks per minute)
 
 The Reserve Module's balance evolves as a function of governance activity: it grows when reclamation proposals pass and decreases as validators are paid.
 

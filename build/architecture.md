@@ -34,7 +34,7 @@ For deeper specifications, see the [Protocol Specification](../research/protocol
                                         │  /prove
                           ┌─────────────┴──────────────┐
                           │       proof-service        │
-                          │   PLONK prover (60s, 8GB)  │
+                          │   PLONK prover (HTTP)      │
                           └────────────────────────────┘
 ```
 
@@ -88,11 +88,11 @@ QBTC's view of Bitcoin is itself produced by a Byzantine-fault-tolerant consensu
 
 ### 5. The proof service (`proof-service`)
 
-ZK proofs for QBTC claims take roughly 60 seconds and 8 GB of RAM to generate. This is too expensive for a phone or modest laptop. The `proof-service` is a standalone HTTP service that generates proofs on behalf of users.
+ZK proof generation runs client-side. Wallets handle it natively. On constrained devices, the `proof-service` is a standalone HTTP service that takes user-constructed proof inputs and computes the cryptographic output.
 
-Anyone can host one. Multiple instances will exist. Users select a proof service the same way they select a wallet, by trust, by latency, or by convenience. The proof service never sees the user's BTC private key in a way that lets it forge claims; the proof inputs are constructed locally and the service computes the cryptographic proof.
+Anyone can host a `proof-service` instance. Multiple independent operators will run them. Users (or their wallet) pick by trust, latency, or convenience. The proof service does not see private key material in a form that lets it forge claims; the witness is constructed locally on the user's side.
 
-A CLI version (`zkprover`) is available for users who want to generate proofs locally on adequate hardware.
+A CLI version (`zkprover`) is available for users who want to generate proofs locally.
 
 ## Binaries shipped
 

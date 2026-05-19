@@ -47,7 +47,7 @@ These UTXOs are structurally indefensible against a quantum-capable attacker: a 
 
 On Bitcoin Legacy, this value will be captured by the first viable quantum attacker. It is economically lost.
 
-On QBTC, governance reclaims it productively. Through standard `x/gov` proposals on a roughly two-week voting cadence:
+On QBTC, governance reclaims it productively. Through standard `x/gov` proposals (default Cosmos voting period is ~2 weeks; the period is itself a governance parameter):
 
 1. A proposal identifies one or more UTXOs meeting the dormant exposed-key criteria.
 2. Validators vote.
@@ -89,7 +89,7 @@ release_per_block = reserve_balance / (EmissionCurve × BlocksPerYear)
 Constants (per `constants/constants.go`):
 
 * `EmissionCurve = 5`
-* `BlocksPerYear = 52,560,000`
+* `BlocksPerYear = 5,256,000` (10 × 60 × 24 × 365, i.e. 10 blocks per minute)
 
 The released amount is transferred from the Reserve Module to the standard Cosmos fee collector, which distributes to validators and delegators via `x/distribution`.
 
