@@ -11,7 +11,7 @@ QBTC consensus is **CometBFT, forked** to replace Ed25519 with ML-DSA (CRYSTALS-
 * Source: `github.com/btcq-org/cometbft`.
 * Replaces `crypto/ed25519` with `crypto/mldsa` for validator consensus keys, vote signing, and block-commit signatures.
 * ML-DSA-65 parameter set (NIST security level 3).
-* Signature size: ~2.5 KB. Public key size: ~2.0 KB.
+* Signature size: 3309 bytes (~3.3 KB). Public key size: 1952 bytes (~2.0 KB). Per FIPS 204.
 
 There is no ECDSA or Ed25519 dependency in the consensus path. The chain is post-quantum from genesis.
 

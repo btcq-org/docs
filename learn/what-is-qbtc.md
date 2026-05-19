@@ -1,53 +1,69 @@
 # What is QBTC?
 
-QBTC is a **standalone, quantum-resistant blockchain that mirrors Bitcoin's UTXO set**. Every holder of Bitcoin has a 1:1 claim of QBTC waiting for them. To convert a claim into spendable QBTC, the holder proves control of their Bitcoin address using a zero-knowledge proof, without ever revealing their public key on-chain.
+QBTC is a new blockchain that mirrors Bitcoin. Every Bitcoin holder will be able to claim an equal amount of QBTC by proving they own their Bitcoin address. The proof never reveals the public key, so the claim itself is safe from quantum-computer attack.
 
-The result is a parallel ledger of "Bitcoin balances" secured by post-quantum cryptography, available to every BTC holder, with no fork of Bitcoin and no bridge.
+## In plain English
 
-## The two mechanical innovations
+A few terms you'll see repeatedly. Read these once and the rest of the docs become much easier.
 
-QBTC works because of two specific design choices.
+* **UTXO** — short for "unspent transaction output." Think of a Bitcoin balance not as a single number but as a collection of separate coins (each one a UTXO). When you "have 0.5 BTC," you actually control one or more UTXOs that add up to 0.5 BTC. Bitcoin's entire ledger is a set of UTXOs.
+* **Public key** — a long number derived from your Bitcoin private key. Your Bitcoin address is a hash (a one-way summary) of your public key. Bitcoin uses your public key to verify that signatures came from you.
+* **Why public keys matter for quantum** — quantum computers can derive a private key from a public key. Once your public key is broadcast on Bitcoin (which happens every time you spend), a quantum-capable attacker could in principle reconstruct your private key and steal your coins.
+* **Zero-knowledge proof (ZK proof)** — a cryptographic technique that proves you know a secret without revealing the secret itself. QBTC uses a ZK proof to confirm you own your Bitcoin address without ever broadcasting the public key.
+
+## What QBTC does
+
+QBTC is a standalone blockchain that keeps a continuous **mirror** of Bitcoin's UTXO set inside its own state. Every Bitcoin UTXO that exists right now has a corresponding 1:1 entitlement of QBTC waiting in that mirror.
+
+To convert a claim into spendable QBTC:
+
+1. You open a quantum-safe wallet.
+2. The wallet generates a ZK proof that says, in effect, *"I control the private key for this Bitcoin address. I want my claim delivered to this QBTC address."*
+3. You submit the proof to QBTC.
+4. The chain verifies the proof, marks the claim as exhausted, and credits the QBTC to your destination address.
+
+Your Bitcoin never moves. Your public key is never broadcast. Your private key never leaves your wallet.
+
+## The two design choices that make this work
 
 ### 1. The validator layer uses post-quantum signatures
 
-Every block on QBTC is signed and verified using **ML-DSA** (the NIST-standardized lattice-based signature, formerly known as CRYSTALS-Dilithium, published as **FIPS 204**). This replaces the Ed25519 signatures used by typical proof-of-stake chains, and means that even an adversary with a large-scale quantum computer cannot forge validator signatures or rewrite history.
+Every block on QBTC is signed using **ML-DSA**, a lattice-based signature scheme standardized by NIST as FIPS 204. Even an adversary with a large-scale quantum computer cannot forge a QBTC validator signature or rewrite QBTC's history.
 
-The chain is built on a fork of CometBFT that adds native ML-DSA support throughout the consensus pipeline.
+The chain is built on a fork of CometBFT that uses ML-DSA throughout the consensus pipeline.
 
 ### 2. Claims use zero-knowledge proofs
 
-To claim QBTC, a Bitcoin holder generates a ZK proof that says, in effect: *"I control the private key for the Bitcoin address that owns this UTXO, and I want my claim delivered to this QBTC address."*
+The ZK proof reveals on-chain only:
 
-What the proof reveals on-chain:
-
-* The Hash160 (the Bitcoin address) of the UTXO being claimed.
+* The hash of your Bitcoin address (which is public on Bitcoin anyway).
 * The destination QBTC address.
 
-What the proof keeps hidden:
+It keeps secret:
 
-* The Bitcoin **public key**.
-* The Bitcoin **private key**.
-* The ECDSA signature.
+* Your Bitcoin public key.
+* Your Bitcoin private key.
+* The signature you produced.
 
-Once a Bitcoin public key is broadcast (for example, when you spend from an address), a quantum-capable adversary can derive the private key from it. The ZK proof lets QBTC verify ownership cryptographically without ever exposing the public key on a public network. The migration itself stays quantum-safe.
+Once a Bitcoin public key has been broadcast (during a normal Bitcoin spend), a quantum-capable attacker could derive the private key from it. The ZK proof lets QBTC verify ownership cryptographically without ever exposing the public key. The migration itself stays quantum-safe.
 
 ## What QBTC is, technically
 
 * A **Cosmos SDK** application chain with its own validator set, staking, governance, and IBC support.
-* Native token: `qbtc`. Bech32 prefix: `qbtc`.
+* Native token: `qbtc`. Bech32 address prefix: `qbtc`.
 * Consensus: **CometBFT, forked** to use ML-DSA signatures instead of Ed25519.
 * One custom module (`x/qbtc`) that handles UTXO mirroring, claim verification, and the ZK PLONK verifier.
-* A per-validator sidecar process (`bifrost`) that watches a Bitcoin full node and gossips new BTC blocks into QBTC, where they are attested by more than 2/3 of bonded validator power before being processed.
+* A per-validator sidecar process (`bifrost`) that watches a Bitcoin full node and gossips new BTC blocks into QBTC, where more than 2/3 of bonded validator power must attest before they are processed.
 
 ## How a claim flows, end to end
 
-1. **Genesis snapshot.** At launch, QBTC mirrors the Bitcoin UTXO set at a specific block height. Every UTXO becomes a claim entry in QBTC's state.
-2. **Rolling updates.** As Bitcoin produces new blocks, the validator set ingests them and updates QBTC's mirror. New UTXOs become new claims, spent outputs are reconciled, and coinbase outputs add new claim entries.
-3. **User claims.** A holder runs a quantum-safe wallet, signs a ZK proof for the UTXO they want to claim, and submits it to QBTC. A single transaction can batch up to 50 UTXOs from the same address.
-4. **Verification.** QBTC validators verify three things: the ZK proof is valid for the UTXO, the UTXO has an outstanding claim in QBTC's state, and the destination QBTC address is well-formed.
-5. **Release.** The claim is released to the destination QBTC address. The claim entry is marked as exhausted to prevent double-claims. The original Bitcoin UTXO is untouched and remains on Bitcoin.
+1. **At launch.** QBTC starts with a snapshot of the Bitcoin UTXO set. Every UTXO becomes an entitlement entry in QBTC's state.
+2. **Continuous updates.** As Bitcoin produces new blocks, QBTC's validators ingest them and update the mirror. New UTXOs become new entitlement entries; spent ones are reconciled; coinbase outputs add new entries. Whoever currently controls a Bitcoin UTXO controls the corresponding QBTC entitlement.
+3. **User claims.** A holder runs a quantum-safe wallet, signs a ZK proof for the UTXO they want to claim, and submits it. A single transaction can claim up to 50 UTXOs from the same Bitcoin address.
+4. **Verification.** Validators verify three things: the ZK proof is valid, the UTXO has an outstanding entitlement, and the destination QBTC address is well-formed.
+5. **Release.** The QBTC is minted into the destination address. The entitlement is exhausted to prevent double-claims. The original Bitcoin UTXO is untouched and remains on Bitcoin.
 
-The Bitcoin holder can claim at any time. Claims do not expire. Holders can also choose never to claim; the BTC is theirs either way.
+Claims do not expire. Holders can claim immediately, wait years, or never claim at all.
 
 ## What QBTC is not
 
@@ -60,4 +76,5 @@ The Bitcoin holder can claim at any time. Claims do not expire. Holders can also
 
 * [The Quantum Threat to Bitcoin](quantum-threat.md), why this needs to exist.
 * [Why a Parallel Chain](why-parallel-chain.md), why a soft fork, hard fork, or bridge does not solve this.
+* [For BTC Holders](for-btc-holders.md), what to do as a Bitcoin owner.
 * [Architecture](../build/architecture.md), the deeper technical view.

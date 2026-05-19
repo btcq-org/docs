@@ -20,6 +20,32 @@ No. No BTC is locked anywhere. There is no custodian. Your BTC stays on Bitcoin.
 
 No. QBTC is a native token on its own chain.
 
+### Can claiming QBTC cost me any Bitcoin?
+
+No. Nothing about claiming moves, spends, or locks your BTC. The zero-knowledge proof is generated locally from your Bitcoin private key. No Bitcoin transaction is ever sent. Your BTC sits on Bitcoin throughout the process, untouched.
+
+## Custody
+
+### What if my BTC is on an exchange (Coinbase, Binance, Kraken, etc.)?
+
+The exchange controls the private keys, which means the exchange controls the claim. Whether they pass it on to you, sell it, or ignore it is up to them. Historical airdrop precedent is mixed: some exchanges credit users, others do not. If you want certainty about your claim, the safest path is to withdraw to self-custody before mainnet.
+
+### What if my BTC is on a hardware wallet (Ledger, Trezor)?
+
+You control your keys, so you control your claim. Hardware-wallet integration paths will be published before mainnet through QBTC-compatible wallet partners.
+
+### What if my BTC is in a paper wallet or seed phrase I have stored offline?
+
+You control your keys. As long as you can access the private key when mainnet ships, you can claim.
+
+### What if my BTC is in an ETF or other wrapped product (IBIT, GBTC, etc.)?
+
+ETF and similar wrapped products do not pass through to the underlying holder. The custodian holds the BTC and thus holds the claim. Each issuer decides independently how to handle it.
+
+### What if I lost my BTC private key?
+
+If you can't sign a proof of ownership, you can't claim. This is the same security model as Bitcoin itself: keys equal ownership.
+
 ## Claims
 
 ### Do I need to do anything now?
@@ -34,17 +60,17 @@ When mainnet is live, you'll use a quantum-safe wallet to generate a zero-knowle
 
 The QBTC chain continuously mirrors Bitcoin's UTXO set, not a frozen snapshot. Whoever currently controls a BTC UTXO controls the corresponding QBTC claim. If you sent your BTC to a new address (your own or someone else's), the new address holds the new claim. The mirror tracks live state, so moves on Bitcoin propagate to QBTC.
 
-### What if I lose my BTC private key?
-
-If you can't sign a proof of ownership, you can't claim. This is the same security model as Bitcoin itself: keys equal ownership.
-
 ### Can I claim multiple addresses at once?
 
 Yes. A single transaction can claim up to 50 UTXOs from the same Bitcoin address. For different addresses, you submit one transaction per address (each requires its own ZK proof).
 
 ### Does claiming reveal my Bitcoin public key?
 
-No. The ZK proof keeps your public key (and private key, and signature) entirely hidden. Only the Hash160 of the address and the destination QBTC address are revealed on-chain. The migration itself stays quantum-safe.
+No. The ZK proof keeps your public key, private key, and signature entirely hidden. Only the hash of the address and the destination QBTC address are revealed on-chain. The migration itself stays quantum-safe.
+
+### Will QBTC be tradeable at launch?
+
+Honest answer: v1 has no native QBTC liquidity pool. The chain ships with IBC enabled, so QBTC can move to other Cosmos chains that choose to support it. Centralized exchange listings depend on third parties. A native BTC ↔ QBTC pool is in the post-MVP roadmap.
 
 ## Quantum threat
 
@@ -94,7 +120,7 @@ No. ML-DSA throughout the consensus path. ECDSA is only the *thing being claimed
 
 ### Are there audits?
 
-The most security-critical components (the ML-DSA integration, the PLONK verifier, the chain code) will receive multiple independent audits before mainnet. Reports will be published on the [Audits](../resources/glossary.md) page when they complete.
+The most security-critical components (the ML-DSA integration, the PLONK verifier, the chain code) will receive multiple independent audits before mainnet. Reports will be linked from the [Security Model](../research/security-model.md) page when they complete.
 
 ## Status
 
@@ -108,4 +134,4 @@ A specific date will be announced when one is reliable. Follow [@qbtcnet on X](h
 
 ### What's actually in the code today vs. just specified?
 
-See the [Roadmap](roadmap.md) page. Short version: the post-quantum consensus, the ZK claim verifier, the Bitcoin block ingestion, and the reserve-funded emission are all in code. The native liquidity pool, liquid staking, and the 17-year dormant-UTXO re-mining mechanism are part of the design vision but not in v1.
+See the [Roadmap](roadmap.md) status table. Short version: the post-quantum consensus, the ZK claim verifier, the Bitcoin block ingestion, the user claim mechanism, the Reserve Module, and vanilla `x/gov` are all in code. Governance reclamation of dormant exposed-key BTC is part of v1 tokenomics, activated via governance after mainnet. The native liquidity pool, liquid staking, and cross-chain vault are post-MVP.

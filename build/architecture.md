@@ -56,7 +56,7 @@ QBTC depends on a fork of CometBFT that introduces a new `crypto/mldsa` package 
 
 Every validator's consensus key is an ML-DSA key, every vote is signed with ML-DSA, every block-commit signature is ML-DSA. No wrapper or sidecar layer. The fork is maintained at `github.com/btcq-org/cometbft`.
 
-ML-DSA signatures are larger than Ed25519 (roughly 2.5 KB vs. 64 bytes), which affects block size and bandwidth. The trade-off is intentional: a chain that exists to be quantum-safe cannot have any ECDSA or Ed25519 dependency in its consensus path.
+ML-DSA-65 signatures are larger than Ed25519 (3309 bytes vs. 64 bytes per FIPS 204), which affects block size and bandwidth. The trade-off is intentional: a chain that exists to be quantum-safe cannot have any ECDSA or Ed25519 dependency in its consensus path.
 
 See [Quantum Resistance (ML-DSA)](quantum-resistance.md) for details.
 

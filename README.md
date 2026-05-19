@@ -4,9 +4,9 @@ description: Quantum-safe Bitcoin. Claimable by every BTC holder, secured agains
 
 # Welcome to QBTC
 
-QBTC is a quantum-resistant chain that mirrors Bitcoin's UTXO set. Every Bitcoin holder has a 1:1 entitlement of QBTC waiting for them, claimable by proving ownership of their BTC without ever broadcasting their public key.
+**If you own Bitcoin today, you'll be able to claim an equal amount of QBTC — a new coin built to survive quantum computers that could otherwise steal Bitcoin.**
 
-Bitcoin's signatures will eventually fall to quantum computers. QBTC is the safe harbor: a parallel ledger built on post-quantum cryptography from day one, so holders can move to safety on their own timeline without forking Bitcoin itself.
+Bitcoin's signatures will eventually fall to quantum computers. QBTC is the safe harbor: a new chain that runs on quantum-resistant cryptography from day one and already knows your Bitcoin balance. You move on your own schedule. Your Bitcoin stays on Bitcoin.
 
 {% hint style="warning" %}
 **Pre-mainnet.** The protocol is in active development. The [Roadmap](learn/roadmap.md) lists what is built and what is still planned.
@@ -40,13 +40,13 @@ The formal protocol specification, the quantum risk assessment, the security mod
 {% endtab %}
 {% endtabs %}
 
-## The core idea, in three sentences
+## The core idea, briefly
 
-1. Bitcoin's signatures are not quantum-safe. A sufficiently advanced quantum computer can derive the private key from any Bitcoin address whose public key has been revealed on-chain.
-2. QBTC is a separate chain that uses post-quantum signatures (ML-DSA / Dilithium) at the consensus layer and mirrors Bitcoin's UTXO set, so every BTC holder has a 1:1 claim of QBTC waiting for them.
-3. To claim, you prove control of your BTC address using a zero-knowledge proof that verifies ownership without exposing the public key, so the migration itself is quantum-safe.
+Quantum computers will eventually break the math that protects Bitcoin addresses. Once that happens, every Bitcoin address whose public key has ever been revealed (which includes every address that has ever spent) becomes vulnerable.
 
-No bridge. No peg. No locked BTC. Your bitcoin stays on Bitcoin. QBTC is the safe harbor that exists in parallel.
+QBTC is a separate chain built on quantum-resistant cryptography (a NIST-standardized scheme called ML-DSA). The chain keeps a continuous mirror of who owns what on Bitcoin. To move your balance over, you prove you own your Bitcoin address using a zero-knowledge proof — a cryptographic technique that confirms ownership without revealing your public key. The migration itself is therefore safe from quantum attack.
+
+Nothing happens to your Bitcoin. No bridge, no peg, no locked coins, no custodian.
 
 ## What QBTC is not
 
