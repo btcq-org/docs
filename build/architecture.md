@@ -1,8 +1,8 @@
-# Architecture Overview
+# Architecture
 
-QBTC is a Cosmos SDK application chain that runs on a forked CometBFT consensus engine using post-quantum signatures. It maintains a continuous mirror of the Bitcoin UTXO set inside its own state, accepts zero-knowledge proofs of BTC ownership as claims against that mirror, and runs a native liquidity pool secured by a threshold-signature vault.
+QBTC is a Cosmos SDK application chain that runs on a forked CometBFT consensus engine using post-quantum signatures. It maintains a mirror of the Bitcoin UTXO set inside its own state and accepts zero-knowledge proofs of BTC ownership as claims against that mirror.
 
-This page is a tour of the system at the component level. For deeper specifications, see the linked sub-pages.
+This page is a tour of the system at the component level. For deeper specifications, see the [Protocol Specification (v1)](../research/protocol-spec.md).
 
 ## High-level picture
 
@@ -14,9 +14,9 @@ This page is a tour of the system at the component level. For deeper specificati
                                         │  RPC
                           ┌─────────────▼──────────────┐
                           │   bifrost (sidecar daemon) │
-                          │   - watches BTC blocks     │
-                          │   - signs with ML-DSA      │
-                          │   - gossips via LibP2P     │
+                          │   watches BTC blocks       │
+                          │   signs with ML-DSA        │
+                          │   gossips via LibP2P       │
                           └─────────────┬──────────────┘
                                         │  gRPC
    ┌────────────────────────────────────▼──────────────────────────────────┐
@@ -24,10 +24,10 @@ This page is a tour of the system at the component level. For deeper specificati
    │                                                                        │
    │  ┌─────────────────┐   ┌────────────────────┐   ┌──────────────────┐  │
    │  │  CometBFT (PQ)  │   │  Cosmos SDK core   │   │     x/qbtc       │  │
-   │  │  ML-DSA consensus│  │  auth, bank, stake,│   │  - UTXO mirror   │  │
-   │  │                  │  │  gov, IBC, wasm    │   │  - claims        │  │
-   │  └─────────────────┘   └────────────────────┘   │  - ZK verifier   │  │
-   │                                                  │  - ebifrost      │  │
+   │  │  ML-DSA consensus│  │  auth, bank, stake,│   │  UTXO mirror     │  │
+   │  │                  │  │  gov, IBC, wasm    │   │  claims          │  │
+   │  └─────────────────┘   └────────────────────┘   │  ZK verifier     │  │
+   │                                                  │  ebifrost        │  │
    │                                                  └──────────────────┘  │
    └────────────────────────────────────────────────────────────────────────┘
                                         ▲
@@ -46,17 +46,17 @@ This page is a tour of the system at the component level. For deeper specificati
 
 Notable chain parameters:
 
-- **Bech32 prefixes:** `qbtc` (accounts), `qbtcvaloper` (validators), `qbtcvalcons` (consensus).
-- **Default bond denom:** `qbtc`.
-- **Coin type:** 118 (standard Cosmos).
+* **Bech32 prefixes:** `qbtc` (accounts), `qbtcvaloper` (validators), `qbtcvalcons` (consensus).
+* **Default bond denom:** `qbtc`.
+* **Coin type:** 118 (standard Cosmos).
 
 ### 2. The post-quantum consensus engine (CometBFT, forked)
 
 QBTC depends on a fork of CometBFT that introduces a new `crypto/mldsa` package and routes consensus signing through ML-DSA (CRYSTALS-Dilithium / FIPS 204) instead of Ed25519.
 
-This is not a wrapper or a sidecar — every validator's consensus key is an ML-DSA key, every vote is signed with ML-DSA, every block-commit signature is ML-DSA. The fork is maintained at `github.com/btcq-org/cometbft`.
+This is not a wrapper or a sidecar. Every validator's consensus key is an ML-DSA key, every vote is signed with ML-DSA, every block-commit signature is ML-DSA. The fork is maintained at `github.com/btcq-org/cometbft`.
 
-ML-DSA signatures are larger than Ed25519 (~2.5 KB vs. ~64 bytes), which affects block size and bandwidth. The trade-off is intentional: a chain that exists to be quantum-safe cannot have any ECDSA or Ed25519 dependency in its consensus path.
+ML-DSA signatures are larger than Ed25519 (roughly 2.5 KB vs. 64 bytes), which affects block size and bandwidth. The trade-off is intentional: a chain that exists to be quantum-safe cannot have any ECDSA or Ed25519 dependency in its consensus path.
 
 See [Quantum Resistance (ML-DSA)](quantum-resistance.md) for details.
 
@@ -66,9 +66,9 @@ The single custom module handles everything QBTC-specific:
 
 | Subfolder | Responsibility |
 |---|---|
-| `keeper/` | State management and message handlers for claims, UTXO mirror, and rewards |
-| `types/` | Protobuf-generated types, message validation |
-| `module/` | Cosmos module wiring, genesis state loader (parses the genesis UTXO snapshot) |
+| `keeper/` | State management and message handlers for claims and UTXO mirror |
+| `types/` | Protobuf-generated types and message validation |
+| `module/` | Cosmos module wiring and genesis state loader |
 | `zk/` | PLONK circuits and the on-chain verifier for claim proofs |
 | `ebifrost/` | "Enshrined bifrost" — in-chain logic that accepts gossiped Bitcoin blocks from validator sidecars and injects them as special transactions |
 
@@ -90,7 +90,7 @@ This means QBTC's view of Bitcoin is itself produced by a Byzantine-fault-tolera
 
 ZK proofs for QBTC claims take roughly 60 seconds and 8 GB of RAM to generate. This is too expensive for a phone or modest laptop. The `proof-service` is a standalone HTTP service that generates proofs on behalf of users.
 
-Anyone can host one. Multiple instances exist. Users select a proof service the same way they select a wallet — by trust, by latency, or by convenience. The proof service never sees the user's BTC private key in a way that lets it forge claims; the proof inputs are constructed locally and the service computes the cryptographic proof.
+Anyone can host one. Multiple instances will exist. Users select a proof service the same way they select a wallet, by trust, by latency, or by convenience. The proof service never sees the user's BTC private key in a way that lets it forge claims; the proof inputs are constructed locally and the service computes the cryptographic proof.
 
 A CLI version (`zkprover`) is available for users who want to generate proofs locally on adequate hardware.
 
@@ -103,17 +103,15 @@ A CLI version (`zkprover`) is available for users who want to generate proofs lo
 | `proof-service` | Remote PLONK prover (optional infrastructure, anyone can host) |
 | `zkprover` | CLI for local proof generation |
 | `utxo-indexer` | Builds the genesis UTXO snapshot from a Bitcoin node |
-| `tss-emulator` | Mock TSS signer used in tests |
-| `dkls-tss` | Threshold-signature signer for the cross-chain vault |
 
 ## The data flow for a single claim
 
 1. User decides to claim their BTC at address `1A1z...` to a QBTC address `qbtc1...`.
 2. User opens a quantum-safe wallet, which constructs the proof inputs locally: the BTC private key, the destination QBTC address, and the UTXO reference.
 3. The wallet either generates the ZK proof locally (`zkprover`) or sends the proof inputs to a `proof-service` instance.
-4. The completed proof is submitted to QBTC as a `MsgClaim` transaction.
-5. A QBTC validator picks up the transaction, runs the on-chain PLONK verifier, checks the UTXO has an outstanding claim, and checks the destination address is valid.
-6. The transaction lands in a block. The claim is released to the destination QBTC address and the corresponding entry is deleted from the claim pool, preventing double-claims.
+4. The completed proof is submitted to QBTC as a `MsgClaimWithProof` transaction. A single transaction can claim up to 50 UTXOs at once.
+5. A QBTC validator picks up the transaction, runs the on-chain PLONK verifier, checks each referenced UTXO has an outstanding claim, and checks the destination address is valid.
+6. The transaction lands in a block. The claim is released to the destination QBTC address and the corresponding entry is marked as exhausted, preventing double-claims.
 
 The user's BTC is never moved. The user's BTC public key is never broadcast.
 
@@ -122,19 +120,19 @@ The user's BTC is never moved. The user's BTC public key is never broadcast.
 1. Bitcoin produces a block.
 2. Each validator's `bifrost` reads the block from its Bitcoin node.
 3. Each `bifrost` gzips the block, signs it with the validator's ML-DSA consensus key, and gossips it.
-4. The QBTC `ebifrost` module aggregates signatures. When >2/3 of bonded validator power has attested to the same block, it is accepted.
+4. The QBTC `ebifrost` module aggregates signatures. When more than 2/3 of bonded validator power has attested to the same block, it is accepted.
 5. The accepted block is injected as a special transaction in the next QBTC block. The transaction updates the UTXO mirror: new outputs become claims, spent outputs are reconciled.
-6. Coinbase outputs add new claim entries — Bitcoin miners get their corresponding QBTC claim as well.
+6. Coinbase outputs add new claim entries. Bitcoin miners receive a corresponding QBTC claim as well.
 
 ## What's intentionally not here
 
-- **No EVM compatibility.** QBTC uses CosmWasm for smart contracts. The Cosmos SDK module set provides the rest of the application surface.
-- **No bridge to Bitcoin.** There is no two-way peg, no locked BTC, no custodial multisig. The relationship to Bitcoin is one-way and read-only: QBTC reads Bitcoin's state, never writes to it.
-- **No off-chain prover required.** The proof service is a convenience. The on-chain verifier is the source of truth, and users can generate proofs locally if they prefer.
+* **No EVM compatibility.** QBTC uses CosmWasm for smart contracts. The Cosmos SDK module set provides the rest of the application surface.
+* **No bridge to Bitcoin.** There is no two-way peg, no locked BTC, no custodial multisig. The relationship to Bitcoin is one-way and read-only: QBTC reads Bitcoin's state, never writes to it.
+* **No off-chain prover required.** The proof service is a convenience. The on-chain verifier is the source of truth, and users can generate proofs locally if they prefer.
 
 ## Read next
 
-- [Quantum Resistance (ML-DSA)](quantum-resistance.md)
-- [Consensus & Validators](consensus.md)
-- [Claim Mechanism](claim-mechanism.md)
-- [Liquidity & sQBTC](liquidity-and-sqbtc.md)
+* [Quantum Resistance (ML-DSA)](quantum-resistance.md)
+* [Consensus & Validators](consensus.md)
+* [Claim Mechanism](claim-mechanism.md)
+* [Protocol Specification (v1)](../research/protocol-spec.md)

@@ -16,16 +16,16 @@ There are roughly five ways to give Bitcoin holders access to quantum-safe stora
 
 Adding post-quantum signatures to Bitcoin via soft fork is the most "respectful" option and is actively being discussed in the Bitcoin developer community. It has serious problems:
 
-- **Every user has to migrate to new addresses.** Old addresses with exposed public keys (P2PK, reused P2PKH) remain vulnerable forever. There is no mechanism to recover funds from an address whose owner cannot or will not move them.
-- **Post-quantum signatures are large.** Even with aggregation, the bandwidth and storage cost is significant. Block-space economics shift.
-- **Activation takes years.** BIP discussion, soft-fork signaling, miner activation, and user migration each compound. Realistic timelines run 5–10 years.
-- **It does not protect dormant Satoshi-era coins.** Roughly 1 million BTC sits in P2PK outputs that have never moved. Those coins cannot defend themselves. Under any soft-fork scheme, they are still spendable by whoever runs Shor's algorithm first.
+* **Every user has to migrate to new addresses.** Old addresses with exposed public keys (P2PK, reused P2PKH) remain vulnerable forever. There is no mechanism to recover funds from an address whose owner cannot or will not move them.
+* **Post-quantum signatures are large.** Even with aggregation, the bandwidth and storage cost is significant. Block-space economics shift.
+* **Activation takes years.** BIP discussion, soft-fork signaling, miner activation, and user migration each compound. Realistic timelines run 5 to 10 years.
+* **It does not protect dormant Satoshi-era coins.** Roughly 1 million BTC sits in P2PK outputs that have never moved. Those coins cannot defend themselves. Under any soft-fork scheme, they are still spendable by whoever runs Shor's algorithm first.
 
 A soft fork buys safety for active users *eventually*, but does nothing for the largest pool of at-risk coins, and may not arrive in time.
 
 ## Why not a hard fork
 
-A Bitcoin hard fork that requires post-quantum signatures for all future spends — and re-mines dormant exposed UTXOs into safe addresses — would technically solve the problem.
+A Bitcoin hard fork that requires post-quantum signatures for all future spends, and re-mines dormant exposed UTXOs into safe addresses, would technically solve the problem.
 
 It will not happen. Bitcoin's social consensus does not accept hard forks that change the rules in ways that affect existing holders' coins, even to protect them. Every prior attempt has failed or split off. A hard fork that re-allocates dormant Satoshi-era UTXOs would be the most contentious change in Bitcoin's history.
 
@@ -33,13 +33,13 @@ QBTC accepts this reality. It performs the hard-fork-equivalent migration **on a
 
 ## Why not a bridge
 
-A bridge moves BTC into a quantum-safe chain by locking it under a custodian or multisig. This has been done many times — wBTC, sBTC, tBTC, and others.
+A bridge moves BTC into a quantum-safe chain by locking it under a custodian or multisig. This has been done many times (wBTC, sBTC, tBTC, and others).
 
 Bridges fail QBTC's requirements for several reasons:
 
-- **They reintroduce custodial risk.** The thing protecting your BTC is now a multisig signed with — wait for it — ECDSA keys. The bridge custodians' keys are themselves quantum-vulnerable. Quantum capability that breaks Bitcoin breaks the bridge custodians' keys at the same moment.
-- **They require an action from the holder.** Every BTC holder would have to actively bridge, paying fees and trusting the operator. Inactive holders — the largest category of at-risk coins — remain exposed.
-- **They are not universal.** Bridges typically support a subset of address types and require interactive participation. They cannot protect dormant P2PK outputs whose owners are unreachable.
+* **They reintroduce custodial risk.** The thing protecting your BTC is now a multisig signed with, wait for it, ECDSA keys. The bridge custodians' keys are themselves quantum-vulnerable. Quantum capability that breaks Bitcoin breaks the bridge custodians' keys at the same moment.
+* **They require an action from the holder.** Every BTC holder would have to actively bridge, paying fees and trusting the operator. Inactive holders, the largest category of at-risk coins, remain exposed.
+* **They are not universal.** Bridges typically support a subset of address types and require interactive participation. They cannot protect dormant P2PK outputs whose owners are unreachable.
 
 ## Why not a wrapped asset
 
@@ -49,10 +49,10 @@ Wrapping BTC as a token on another chain (e.g., Ethereum, a Cosmos chain) has al
 
 QBTC takes a different approach: **pre-allocate the claim at genesis, then let the holder exercise it whenever they choose.**
 
-- At launch, QBTC mirrors the entire Bitcoin UTXO set. Every BTC address has a corresponding claim entry in QBTC's state, sized to match its BTC balance.
-- The mirror is updated with every new Bitcoin block. New UTXOs become new claims. Spent UTXOs are reconciled. Coinbase outputs add to the claim pool.
-- A holder converts their claim to spendable QBTC by submitting a **zero-knowledge proof** of ownership. The proof verifies that they control the BTC private key for a given address, without ever broadcasting the public key.
-- Claims do not expire. Holders can wait years, decades, or forever.
+* At launch, QBTC mirrors the entire Bitcoin UTXO set. Every BTC address has a corresponding claim entry in QBTC's state, sized to match its BTC balance.
+* The mirror is updated with every new Bitcoin block. New UTXOs become new claims. Spent UTXOs are reconciled. Coinbase outputs add to the claim pool.
+* A holder converts their claim to spendable QBTC by submitting a **zero-knowledge proof** of ownership. The proof verifies that they control the BTC private key for a given address, without ever broadcasting the public key.
+* Claims do not expire. Holders can wait years, decades, or forever.
 
 This design has properties the alternatives don't:
 
@@ -70,10 +70,10 @@ This design has properties the alternatives don't:
 
 QBTC is not Bitcoin. It is a separate ledger with its own validator set, its own block history, its own social contract. A QBTC unit and a BTC unit are not the same asset.
 
-What QBTC offers is a credible safe harbor: a place that already knows your balance, that you can move to on your schedule, that doesn't need Bitcoin to change, and that doesn't ask you to trust a custodian. That is the trade.
+What QBTC offers is a credible safe harbor. A place that already knows your balance, that you can move to on your schedule, that doesn't need Bitcoin to change, and that doesn't ask you to trust a custodian. That is the trade.
 
 ## Read next
 
-- [Architecture Overview](../protocol/architecture.md)
-- [Claim Mechanism](../protocol/claim-mechanism.md)
-- [Fair Launch Principles](fair-launch.md)
+* [Architecture](../build/architecture.md)
+* [Claim Mechanism](../build/claim-mechanism.md)
+* [Fair Launch Principles](fair-launch.md)

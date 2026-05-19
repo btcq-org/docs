@@ -2,54 +2,37 @@
 
 * [Welcome](README.md)
 
-## Introduction
+## Learn
 
-* [What is QBTC?](introduction/what-is-qbtc.md)
-* [The Quantum Threat to Bitcoin](introduction/quantum-threat.md)
-* [Why a Parallel Chain](introduction/why-parallel-chain.md)
-* [Fair Launch Principles](introduction/fair-launch.md)
+* [What is QBTC?](learn/what-is-qbtc.md)
+* [The Quantum Threat to Bitcoin](learn/quantum-threat.md)
+* [Why a Parallel Chain](learn/why-parallel-chain.md)
+* [Fair Launch Principles](learn/fair-launch.md)
+* [For BTC Holders](learn/for-btc-holders.md)
+* [Roadmap](learn/roadmap.md)
+* [FAQ](learn/faq.md)
 
-## Getting Started
+## Build
 
-* [For BTC Holders](getting-started/for-btc-holders.md)
-* [For Developers](getting-started/for-developers.md)
-* [For Researchers & Institutions](getting-started/for-researchers.md)
-* [Claiming QBTC](getting-started/claiming-qbtc.md)
+* [Overview](build/README.md)
+* [Architecture](build/architecture.md)
+* [Quantum Resistance (ML-DSA)](build/quantum-resistance.md)
+* [Consensus & Validators](build/consensus.md)
+* [Claim Mechanism](build/claim-mechanism.md)
+* [Running a Node](build/running-a-node.md)
+* [API Reference](build/api-reference.md)
 
-## Protocol
+## Research
 
-* [Architecture Overview](protocol/architecture.md)
-* [Quantum Resistance (ML-DSA)](protocol/quantum-resistance.md)
-* [Consensus & Validators](protocol/consensus.md)
-* [Claim Mechanism](protocol/claim-mechanism.md)
-* [Liquidity & sQBTC](protocol/liquidity-and-sqbtc.md)
-* [Governance](protocol/governance.md)
-
-## Tokenomics
-
-* [Overview](tokenomics/README.md)
-* [Supply & Distribution](tokenomics/supply-and-distribution.md)
-* [Validator Rewards & Emission](tokenomics/rewards-and-emission.md)
-* [Community Tax](tokenomics/community-tax.md)
-* [DeFi Activation Thresholds](tokenomics/defi-activation.md)
-
-## Developers
-
-* [Overview](developers/README.md)
-* [Running a Node](developers/running-a-node.md)
-* [API Reference](developers/api-reference.md)
-* [Vesting Module](developers/vesting-module.md)
-
-## Security
-
-* [Security Model](security/README.md)
-* [Quantum Risk Assessment](security/quantum-risk-assessment.md)
-* [sQBTC Security Review](security/sqbtc-review.md)
-* [Audits](security/audits.md)
+* [Overview](research/README.md)
+* [Protocol Specification (v1)](research/protocol-spec.md)
+* [Vision & Roadmap](research/vision-and-roadmap.md)
+* [Quantum Risk Assessment](research/quantum-risk-assessment.md)
+* [Security Model](research/security-model.md)
+* [Tokenomics](research/tokenomics.md)
 
 ## Resources
 
-* [FAQ](resources/faq.md)
 * [Glossary](resources/glossary.md)
 * [Whitepaper](resources/whitepaper.md)
 * [Brand Assets](resources/brand-assets.md)
