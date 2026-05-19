@@ -19,7 +19,7 @@ A soft fork is the more likely path for the Bitcoin community, embedding post-qu
 * **Every user has to migrate on-chain to new addresses.** Old addresses with exposed public keys (P2PK, reused P2PKH) remain vulnerable forever. There is no mechanism to recover funds from an address whose owner cannot or will not move them.
 * **Post-quantum signatures are large.** ML-DSA-65 signatures are about 3.3 KB versus 70 bytes for ECDSA, generating problematic scaling issues for Bitcoin's block space. Even with aggregation, the bandwidth and storage cost is significant.
 * **Activation takes years.** BIP discussion, soft-fork signaling, miner activation, and user migration each compound. Realistic timelines run 5 to 10 years.
-* **Entire categories of at-risk UTXOs would remain vulnerable.** Satoshi-era P2PK balances, roughly 1 million BTC that has never moved, cannot defend themselves under any soft-fork scheme. They are still spendable by whoever runs Shor's algorithm first.
+* **Entire categories of at-risk UTXOs would remain vulnerable.** Satoshi-era P2PK balances (~1.7M BTC that has never moved) cannot defend themselves under any soft-fork scheme. They are still spendable by whoever runs Shor's algorithm first. Per-category breakdown: [explorer.qbtc.net](https://explorer.qbtc.net).
 * **Consensus fractures.** A subset of the community would inevitably push for a hard fork anyway, creating a messy and uncertain transition.
 
 A soft fork buys safety for active users *eventually*, does nothing for the largest pool of at-risk coins, and may not arrive in time.

@@ -10,7 +10,7 @@
 >
 > And it must still be Bitcoin.
 
-**Roughly 1 million Bitcoin sits in addresses that can be stolen the moment a sufficiently large quantum computer exists.** Most of these are the oldest coins on the network, including a large portion of Satoshi-era holdings. Every actively-spent address is also exposed during the brief window when a transaction is broadcast.
+**Roughly 1.7 million Bitcoin sits in Satoshi-era P2PK outputs that can be stolen the moment a sufficiently large quantum computer exists.** Several million more sit in reused addresses where the public key has been revealed by prior spending. Every actively-spent address is also exposed during the brief window when a transaction is broadcast. Per-script-type breakdown: **[explorer.qbtc.net](https://explorer.qbtc.net)**.
 
 Bitcoin needs to migrate before quantum computers reach that scale. The cryptography community, NIST, and a growing number of standards bodies broadly agree that this window arrives within the next decade. QBTC exists so Bitcoin holders have somewhere to migrate to, on their own schedule, before the window closes.
 
@@ -54,12 +54,16 @@ This is the "**short-range attack**" or "**live key attack**." It threatens ever
 
 ## How much Bitcoin is at risk
 
-Published estimates converge in the same range:
+Approximate measurements of permanently-exposed-key BTC, by category:
 
-* Over **1 million BTC** is estimated to sit in P2PK and reused-address outputs whose public keys are permanently exposed. This includes most of the dormant Satoshi-era coins.
-* **Effectively all actively-spent BTC** is exposed during the mempool window of each transaction.
+* **~1.7 million BTC** in P2PK outputs (Satoshi-era, public key permanently on-chain).
+* **~3 million BTC** in reused-address outputs across P2PKH and P2WPKH (public key revealed by prior spending).
+* **~4.9 million BTC** conservative total (P2PK + reused P2PKH + reused P2WPKH).
+* **~7 million BTC** broad total including all reused P2SH and P2WSH addresses.
 
-The total economically exposed surface, depending on how you count reused addresses and the time horizon, is in the millions of BTC.
+Per-script-type breakdown and current numbers: **[explorer.qbtc.net](https://explorer.qbtc.net)**.
+
+In addition, **effectively all actively-spent BTC** is exposed during the mempool window of each transaction, because the spending transaction broadcasts the public key.
 
 ## The timeline is closer than most people think
 

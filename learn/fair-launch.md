@@ -42,7 +42,7 @@ A holder can claim today, in a decade, or never at all, with one exception descr
 
 ### Path 2: Governance reclaims dormant exposed-key BTC
 
-Bitcoin holds an estimated 1 million+ BTC in UTXOs older than 17 years whose public keys are exposed on-chain (P2PK outputs, reused-address outputs). On Bitcoin Legacy, these are the coins that will be stolen first by a quantum-capable attacker.
+Bitcoin holds roughly 1.7M BTC in Satoshi-era P2PK outputs (public key permanently on-chain) plus additional BTC in reused-address outputs where the public key has been revealed. On Bitcoin Legacy, these are the coins that will be stolen first by a quantum-capable attacker. Per-category breakdown: [explorer.qbtc.net](https://explorer.qbtc.net).
 
 QBTC governance reclaims these UTXOs. Through standard `x/gov` proposals on a roughly two-week voting cadence, validators vote on which dormant exposed-key UTXOs to reclaim. When a proposal passes:
 
