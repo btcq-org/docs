@@ -66,7 +66,7 @@ Propagation makes governance reclamation (see [Tokenomics](../research/tokenomic
 
 Proofs are generated client-side. Two paths exist:
 
-* **Native wallet flow.** Quantum-safe wallet partners ship ZK proving natively. Users see claiming as a normal in-wallet action. Wallet partner integrations are in progress; specific partners will be named ahead of mainnet.
+* **Native wallet flow.** An established Bitcoin wallet partner is implementing native ML-DSA signing and ZK claim-proof generation, with rollout planned at mainnet. Users see claiming as a normal in-wallet action. The partner will be named ahead of launch.
 * **Hosted proof service.** Independent operators run `proof-service` HTTP endpoints that wallets can use to offload computation on constrained devices. Multiple operators run these so users can choose.
 * **Local CLI prover.** `zkprover` lets advanced users generate proofs themselves.
 
