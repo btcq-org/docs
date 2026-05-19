@@ -2,7 +2,7 @@
 
 QBTC is a Cosmos SDK application chain that runs on a forked CometBFT consensus engine using post-quantum signatures. It maintains a mirror of the Bitcoin UTXO set inside its own state and accepts zero-knowledge proofs of BTC ownership as claims against that mirror.
 
-This page is a tour of the system at the component level. For deeper specifications, see the [Protocol Specification (v1)](../research/protocol-spec.md).
+For deeper specifications, see the [Protocol Specification (v1)](../research/protocol-spec.md).
 
 ## High-level picture
 
@@ -54,7 +54,7 @@ Notable chain parameters:
 
 QBTC depends on a fork of CometBFT that introduces a new `crypto/mldsa` package and routes consensus signing through ML-DSA (CRYSTALS-Dilithium / FIPS 204) instead of Ed25519.
 
-This is not a wrapper or a sidecar. Every validator's consensus key is an ML-DSA key, every vote is signed with ML-DSA, every block-commit signature is ML-DSA. The fork is maintained at `github.com/btcq-org/cometbft`.
+Every validator's consensus key is an ML-DSA key, every vote is signed with ML-DSA, every block-commit signature is ML-DSA. No wrapper or sidecar layer. The fork is maintained at `github.com/btcq-org/cometbft`.
 
 ML-DSA signatures are larger than Ed25519 (roughly 2.5 KB vs. 64 bytes), which affects block size and bandwidth. The trade-off is intentional: a chain that exists to be quantum-safe cannot have any ECDSA or Ed25519 dependency in its consensus path.
 
@@ -84,7 +84,7 @@ Each validator runs a `bifrost` process alongside `qbtcd`. Its job is narrow:
 
 The chain's `x/qbtc/ebifrost` module receives these signed blocks via gRPC and includes them in QBTC blocks as **injected transactions**. A Bitcoin block is only considered ingested once more than **2/3 of bonded validator power** has attested to it.
 
-This means QBTC's view of Bitcoin is itself produced by a Byzantine-fault-tolerant consensus, not by a single oracle or trusted relayer.
+QBTC's view of Bitcoin is itself produced by a Byzantine-fault-tolerant consensus, not by a single oracle or trusted relayer.
 
 ### 5. The proof service (`proof-service`)
 

@@ -22,7 +22,7 @@ Terms used throughout the QBTC documentation.
 * **proof-service** — A standalone HTTP service that generates ZK claim proofs on behalf of users.
 * **Q-day** — The day on which a CRQC capable of breaking Bitcoin's ECDSA becomes operational.
 * **Quantum-safe wallet** — A wallet that can construct a QBTC claim proof and sign QBTC transactions with ML-DSA keys.
-* **Reserve Module** — A module account on the QBTC chain holding the non-circulating remainder of the 21M cap. Two outflows (validator emission, mirroring new BTC coinbase outputs) and one inflow (governance-driven reclamation of dormant exposed-key BTC entitlements). No new QBTC is minted to fund validator rewards.
+* **Reserve Module** — A module account on the QBTC chain that funds validator emission. Has one inflow (governance reclamation of dormant exposed-key BTC UTXOs mints QBTC into the Reserve) and one outflow (per-block release to validators via `x/distribution`).
 * **Shor's algorithm** — A quantum algorithm that solves the discrete logarithm problem efficiently. Breaks Bitcoin's ECDSA signatures (given a CRQC).
 * **UTXO** — Unspent Transaction Output. The unit of Bitcoin balance. QBTC mirrors Bitcoin's UTXO set.
 * **utxo-indexer** — A CLI tool that crawls a Bitcoin node and produces the genesis UTXO snapshot file.

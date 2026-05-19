@@ -29,7 +29,7 @@ What the proof keeps hidden:
 * The Bitcoin **private key**.
 * The ECDSA signature.
 
-This matters because once a Bitcoin public key is broadcast (for example, when you spend from an address), a quantum-capable adversary could derive the private key from it. The ZK proof lets QBTC verify ownership cryptographically without ever exposing the public key on a public network. The migration itself is quantum-safe.
+Once a Bitcoin public key is broadcast (for example, when you spend from an address), a quantum-capable adversary can derive the private key from it. The ZK proof lets QBTC verify ownership cryptographically without ever exposing the public key on a public network. The migration itself stays quantum-safe.
 
 ## What QBTC is, technically
 

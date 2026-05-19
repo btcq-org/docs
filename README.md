@@ -9,7 +9,7 @@ QBTC is a quantum-resistant chain that mirrors Bitcoin's UTXO set. Every Bitcoin
 Bitcoin's signatures will eventually fall to quantum computers. QBTC is the safe harbor: a parallel ledger built on post-quantum cryptography from day one, so holders can move to safety on their own timeline without forking Bitcoin itself.
 
 {% hint style="warning" %}
-**Pre-mainnet.** The protocol is in active development. These docs describe the design and what is currently in the code. The [Roadmap](learn/roadmap.md) is honest about what is built and what is still planned.
+**Pre-mainnet.** The protocol is in active development. The [Roadmap](learn/roadmap.md) lists what is built and what is still planned.
 {% endhint %}
 
 ## Choose your path

@@ -12,13 +12,13 @@ Every validator vote, every block-commit signature, every consensus message is s
 
 A claim is only accepted if the submitted PLONK proof verifies. The proof attests that the claimant controls a Bitcoin private key whose public-key Hash160 matches the claimed UTXO, without revealing the public key.
 
-**Trust assumption:** PLONK's soundness rests on the discrete log assumption over a pairing-friendly elliptic curve. This is a pre-quantum assumption. For the lifetime of the migration window, this is acceptable: a quantum attacker who can break the ZK proof can also derive the Bitcoin private key directly, so the ZK soundness is not the bottleneck. Long-term, this is a known migration target (move to a fully post-quantum SNARK).
+**Trust assumption:** PLONK's soundness rests on the discrete log assumption over a pairing-friendly elliptic curve, a pre-quantum assumption. For the lifetime of the migration window, a quantum attacker who can break the ZK proof can also derive the Bitcoin private key directly, so ZK soundness is not the bottleneck. Migration to a fully post-quantum SNARK is on the long-term research agenda.
 
 ## 3. Bitcoin attestation by 2/3+ of validators
 
 Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` independently watches Bitcoin, signs the block it sees with its ML-DSA consensus key, and gossips. The `ebifrost` module accepts a block only after more than 2/3 of bonded validator power has attested.
 
-**Trust assumption:** At any given time, more than 1/3 of bonded validator power is honest. This is the standard Byzantine fault tolerance assumption.
+**Trust assumption:** At any given time, more than 1/3 of bonded validator power is honest. Standard Byzantine fault tolerance.
 
 ## Threat model
 
@@ -36,7 +36,7 @@ Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` 
 
 ## Known weaknesses
 
-* **PLONK is not post-quantum.** As noted above, this is bounded by Bitcoin's own pre-quantum nature. Future migration to a fully post-quantum SNARK is a research direction.
+* **PLONK is not post-quantum.** Bounded by Bitcoin's own pre-quantum nature. Migration to a fully post-quantum SNARK is a research direction.
 * **The bifrost design assumes honest majority for Bitcoin block ingestion.** A coordinated attack by more than 1/3 of bonded validator power could feed a false Bitcoin block. Slashing applies, but only after detection.
 * **The proof service can deny service.** Multiple operators mitigate this. Local proof generation is always available.
 

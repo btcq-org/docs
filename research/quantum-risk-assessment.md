@@ -6,9 +6,7 @@
 
 ## Summary of published findings
 
-Current published assessments converge on a window of roughly **2029 to 2035** for the arrival of cryptographically-relevant quantum computers (CRQCs), defined as quantum computers capable of breaking 256-bit elliptic-curve cryptography in practical time.
-
-This is the cryptography that protects Bitcoin's ECDSA signatures.
+Current published assessments converge on a window of roughly **2029 to 2035** for the arrival of cryptographically-relevant quantum computers (CRQCs), defined as quantum computers capable of breaking 256-bit elliptic-curve cryptography in practical time. This is the cryptography behind Bitcoin's ECDSA signatures.
 
 Methodologies vary across published assessments:
 

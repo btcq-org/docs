@@ -1,8 +1,8 @@
 # Protocol Specification (v1)
 
-This is the canonical specification of what the QBTC chain code does at v1 mainnet. It is the source of truth for implementers, auditors, and researchers. Forward-looking design (a native liquidity pool, liquid staking, etc.) lives in [Vision & Roadmap](vision-and-roadmap.md).
+Canonical specification of the QBTC chain code at v1 mainnet. Source of truth for implementers, auditors, and researchers. Forward-looking design (a native liquidity pool, liquid staking, etc.) lives in [Vision & Roadmap](vision-and-roadmap.md).
 
-Citations in this document refer to the QBTC source code at `github.com/btcq-org/qbtc`.
+Citations refer to the QBTC source code at `github.com/btcq-org/qbtc`.
 
 ## 1. Consensus
 
@@ -81,19 +81,31 @@ Hidden inputs to the ZK circuit:
 * BTC private key.
 * ECDSA signature.
 
-This is what makes the migration itself quantum-safe: the BTC public key is never broadcast.
+The BTC public key is never broadcast, making the migration itself quantum-safe.
 
-### 2.4 Double-claim prevention
+### 2.4 Double-claim prevention and taint propagation
 
 A claimed UTXO's `EntitledAmount` is set to 0. Subsequent attempts to claim the same UTXO fail at the validation step (line 66, 123 of `handle_msg_claim_with_proof.go`).
 
-There is no UTXO weight parameter for partial-claim scenarios in v1. The model is binary: a UTXO is either claimed or unclaimed.
+When the `ebifrost` module ingests a new Bitcoin block, the claimed status propagates to descendant UTXOs. If a transaction spends from any claimed UTXO, the outputs of that transaction inherit the claimed status in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed.
+
+This mechanism makes governance reclamation (§2.5) permanent: once a UTXO is reclaimed into the Reserve Module, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO through Bitcoin to a new address.
 
 ### 2.5 The Reserve Module and validator emission
 
-QBTC's non-circulating supply is held in the **Reserve Module**, a module account. Two outflows and one inflow govern the Reserve. The 21M cap is preserved by construction.
+There are two minting paths in QBTC, and only two.
 
-#### Outflow 1: Validator emission
+**Path 1: User claim.** A successful `MsgClaimWithProof` mints QBTC into the claimer's account, equal to the sum of the referenced UTXOs' BTC values.
+
+**Path 2: Governance reclamation.** Through standard `x/gov` proposals on a ~2-week voting cadence, validators vote on which dormant exposed-key UTXOs (older than 17 years, with on-chain public keys) to reclaim. When a proposal passes:
+
+1. Each referenced UTXO is marked as claimed in the mirror (`EntitledAmount → 0`), identically to a user claim.
+2. QBTC equal to the reclaimed BTC value is minted into the **Reserve Module**.
+3. Descendant UTXOs inherit the claimed status via the propagation described in §2.4.
+
+The Reserve Module is the only source of validator emission. It has no other inflows.
+
+#### Validator emission, from the Reserve Module
 
 Per `x/qbtc/keeper/network_manager.go:24–47`:
 
@@ -107,27 +119,26 @@ Per `x/qbtc/keeper/network_manager.go:24–47`:
 Constants (per `constants/constants.go`):
 
 * `EmissionCurve = 5`
-* `BlocksPerYear = 52,560,000` (approximately 10 blocks per minute)
+* `BlocksPerYear = 52,560,000` (~10 blocks per minute)
 
-#### Outflow 2: Mirroring new Bitcoin coinbase outputs
-
-When the `ebifrost` module ingests a new Bitcoin block, the coinbase output's BTC amount is added to the claim mirror as a new entitlement. The corresponding QBTC is debited from the Reserve Module to preserve the cap invariant.
-
-#### Inflow: Governance-driven reclamation of dormant exposed-key UTXOs
-
-Bitcoin UTXOs that satisfy both of (a) older than 17 years, and (b) have a publicly-exposed public key (P2PK outputs or reused-address outputs) are structurally indefensible against a quantum-capable attacker. By governance proposal, the QBTC entitlement attached to such UTXOs is removed from the claim mirror and credited to the Reserve Module.
-
-In v1, this is **governance-driven**: the chain does not enforce it automatically. The mechanism is activated by passing standard `x/gov` proposals once mainnet is established. This is intentional, to allow the validator set to set parameters (which categories of UTXOs, which block-height cutoffs, what dispute window) without forking the chain code.
+The Reserve Module's balance evolves as a function of governance activity: it grows when reclamation proposals pass and decreases as validators are paid.
 
 #### Cap invariant
 
-At all times:
+At any time:
 
 ```
-claim_mirror_outstanding + reserve_balance + circulating_supply == 21,000,000 QBTC
+total_QBTC_minted = sum(user claims) + sum(governance reclamations)
+                  ≤ 21,000,000 QBTC
 ```
 
-There is no minting in QBTC. Tokens move between these three locations; they are never created from nothing.
+The cap holds because:
+
+* No Bitcoin UTXO can be claimed twice (the `claimed_flag` propagates per §2.4).
+* Each claim mints exactly the BTC amount of that UTXO.
+* Bitcoin's total supply is capped at 21M.
+
+There is no inflationary minting anywhere in the chain code.
 
 See [Tokenomics](tokenomics.md) for the economic framing.
 

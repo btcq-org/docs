@@ -66,11 +66,11 @@ This design has properties the alternatives don't:
 | Holder controls timing | Yes | No | Yes | Yes | **Yes** |
 | Available before CRQC arrives | No (too slow) | No | Yes | Yes | **Yes** |
 
-## The honest trade-off
+## The trade-off
 
 QBTC is not Bitcoin. It is a separate ledger with its own validator set, its own block history, its own social contract. A QBTC unit and a BTC unit are not the same asset.
 
-What QBTC offers is a credible safe harbor. A place that already knows your balance, that you can move to on your schedule, that doesn't need Bitcoin to change, and that doesn't ask you to trust a custodian. That is the trade.
+QBTC offers a credible safe harbor: a chain that already knows your balance, that you can move to on your schedule, that does not need Bitcoin to change, and that does not ask you to trust a custodian.
 
 ## Read next
 

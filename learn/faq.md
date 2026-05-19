@@ -44,7 +44,7 @@ Yes. A single transaction can claim up to 50 UTXOs from the same Bitcoin address
 
 ### Does claiming reveal my Bitcoin public key?
 
-No. The ZK proof keeps your public key (and private key, and signature) entirely hidden. Only the Hash160 of the address and the destination QBTC address are revealed on-chain. This is what makes the migration itself quantum-safe.
+No. The ZK proof keeps your public key (and private key, and signature) entirely hidden. Only the Hash160 of the address and the destination QBTC address are revealed on-chain. The migration itself stays quantum-safe.
 
 ## Quantum threat
 
@@ -72,7 +72,7 @@ No. No team premine, no investor allocation, no advisor allocation. The entire c
 
 ### Where do validator rewards come from?
 
-From the **Reserve Module**, a module account on the chain that holds the non-circulating remainder of the 21M cap. Each block, a fraction of the Reserve is released to validators via standard Cosmos `x/distribution`. No new QBTC is ever minted, so the 21M cap holds for all time. See [Tokenomics](../research/tokenomics.md).
+From the **Reserve Module**, a module account on the chain. The Reserve is funded only when governance passes proposals to reclaim dormant exposed-key Bitcoin UTXOs (P2PK outputs and reused-address outputs older than 17 years). Each successful proposal mints QBTC into the Reserve equal to the reclaimed BTC value. Each block, a fraction of the Reserve's balance is released to validators via standard Cosmos `x/distribution`. See [Tokenomics](../research/tokenomics.md).
 
 ### Was there an ICO?
 

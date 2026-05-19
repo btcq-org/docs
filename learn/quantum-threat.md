@@ -2,7 +2,7 @@
 
 Bitcoin's security depends on ECDSA signatures over the secp256k1 elliptic curve. A sufficiently large quantum computer running **Shor's algorithm** can derive a private key from a public key on this curve in polynomial time. When that becomes practical, every Bitcoin address whose public key has ever been exposed becomes spendable by whoever runs the algorithm first.
 
-This is not a hypothetical "post-2100" concern. It is the consensus view of cryptographers and quantum researchers that this capability will arrive within the next decade or so. Bitcoin must migrate before then.
+Cryptographers and quantum researchers converge on a window in the next decade for this capability to arrive. Bitcoin must migrate before then.
 
 ## Which Bitcoin is exposed, and when
 
@@ -64,7 +64,7 @@ Bitcoin can in principle add post-quantum signatures via a soft fork. This is be
 * **A subset of the community will push for a hard fork instead.** Soft-fork PQ migration of Bitcoin is contentious. There is real risk of a chain split.
 * **The timeline is years.** BIP discussion, consensus, activation, and migration would each take years individually. The total likely runs longer than the window before quantum capability arrives.
 
-This is the gap QBTC exists to fill. A parallel, quantum-safe ledger that every BTC holder can migrate to on their own schedule, without waiting for Bitcoin's consensus process to complete.
+QBTC fills this gap: a parallel quantum-safe ledger that every BTC holder can migrate to on their own schedule, without waiting for Bitcoin's consensus process to complete.
 
 ## Read next
 

@@ -15,7 +15,7 @@ You do not have to act now. Claims do not expire. You can wait years, or never c
 * **You own the claim if you own the BTC.** The claim is computed from the Bitcoin UTXO set, not from a registration or signup. Whoever controls the private key for a Bitcoin address controls the corresponding QBTC claim.
 * **You'll need a quantum-safe wallet.** A wallet that supports the QBTC chain (with ML-DSA signatures) and that can construct a ZK proof of BTC ownership for the claim. Wallet partners will be announced before mainnet.
 * **Generating the proof is computationally expensive.** Roughly 60 seconds and 8 GB of RAM. You can either run a local prover or use a hosted "proof service." Multiple operators will host proof services.
-* **The proof keeps your BTC public key hidden.** This is the whole point. The proof reveals only the Hash160 of the address being claimed and the destination QBTC address. The BTC public key, private key, and signature are all hidden cryptographic inputs.
+* **The proof keeps your BTC public key hidden.** It reveals only the Hash160 of the address being claimed and the destination QBTC address. The BTC public key, private key, and signature are all hidden cryptographic inputs.
 * **You can batch claims.** A single transaction can claim up to 50 UTXOs from the same Bitcoin address.
 
 ## What you should do now

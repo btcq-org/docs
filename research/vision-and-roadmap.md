@@ -1,12 +1,10 @@
 # Vision & Roadmap
 
-This page describes features that are part of the QBTC design vision but are *not* part of the v1 chain code. They are recorded here to make the gap between specification and implementation explicit. The canonical "what is built" surface is the [Protocol Specification (v1)](protocol-spec.md).
+Features here are part of the QBTC design vision but not part of the v1 chain code. The canonical "what is built" surface is the [Protocol Specification (v1)](protocol-spec.md).
 
-## Why this page exists
+QBTC's original whitepaper described an ambitious end-state: a quantum-safe chain with a native liquidity pool, a cross-chain threshold-signature vault, liquid staking, and bonded validator economics linked to pool liquidity. Building all of that into v1 would have shipped a much larger attack surface before the network has users.
 
-QBTC's original whitepaper described an ambitious end-state: a quantum-safe chain with a native liquidity pool, a cross-chain threshold-signature vault, liquid staking, dormant-UTXO re-mining, and bonded validator economics linked to pool liquidity. Building all of that into the v1 chain code would have meant shipping a much larger surface area with much more attack surface, before the network has any users.
-
-Instead, the v1 chain is the substrate. The economic and DeFi layer comes later, opened through governance once the network has the participants and the float to support it.
+The v1 chain is the substrate. The economic and DeFi layer activates later, through governance, once the network has the participants and the float to support it.
 
 ## Status by feature
 
@@ -14,7 +12,7 @@ Instead, the v1 chain is the substrate. The economic and DeFi layer comes later,
 
 **Reclamation of dormant exposed-key BTC into the Reserve Module**
 
-This is a structural part of QBTC's tokenomic design, not a post-MVP add-on. See [Tokenomics](tokenomics.md) for the full treatment. Summarized here for the implementation-status framing:
+Part of QBTC's v1 tokenomic design, not a post-MVP add-on. See [Tokenomics](tokenomics.md) for the full treatment. Implementation status:
 
 * **What it does.** Removes the QBTC entitlement attached to quantum-vulnerable dormant Bitcoin UTXOs (P2PK outputs and reused-address outputs older than 17 years) from the claim mirror, and credits the corresponding QBTC to the Reserve Module. This sustains validator emission and removes value from vulnerable circulation by redistributing it to a quantum-safe address (the Reserve).
 * **Implementation status.** The reclamation is activated through standard `x/gov` proposals rather than enforced automatically by the chain code. This is intentional: the validator set sets the activation parameters (UTXO categories, block-height cutoffs, dispute windows) through governance without requiring chain forks.

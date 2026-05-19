@@ -35,7 +35,7 @@ The proof's hidden inputs (kept secret):
 * The Bitcoin private key.
 * An ECDSA signature.
 
-What this gets you: the chain can verify ownership without the public key ever being broadcast. This is what makes the claim itself quantum-safe.
+The chain verifies ownership without the public key ever being broadcast. This is what keeps the claim itself quantum-safe.
 
 ## Validator handling
 
@@ -48,11 +48,13 @@ When a validator receives a `MsgClaimWithProof`, the handler (`x/qbtc/keeper/han
    * Verify the UTXO's stored Hash160 matches the proven address.
 3. **Atomic disbursement.** If any check fails, the entire batch reverts (cache-context semantics). If all pass, the cumulative `EntitledAmount` is transferred to the destination, and each claimed UTXO's `EntitledAmount` is set to 0.
 
-## Double-claim prevention
+## Double-claim prevention and taint propagation
 
 A claimed UTXO has `EntitledAmount == 0`. Any subsequent attempt to claim it fails at step 2 of validator handling.
 
-There is no UTXO weight parameter in v1. The model is binary: a UTXO is claimed or unclaimed.
+The claimed status also propagates through Bitcoin spends. When the `ebifrost` module ingests a new Bitcoin block, any transaction that spends from a claimed UTXO carries the claimed status to its outputs. A child of a fully-claimed UTXO has `EntitledAmount = 0` and cannot be claimed.
+
+Propagation makes governance reclamation (see [Tokenomics](../research/tokenomics.md)) permanent: once a UTXO is reclaimed into the Reserve Module, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO to a new address.
 
 ## What claims do not do
 

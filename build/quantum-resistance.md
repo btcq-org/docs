@@ -8,7 +8,7 @@ The chain's consensus signing path uses **ML-DSA** (Module-Lattice-Based Digital
 
 Every validator's consensus key is an ML-DSA key. Every consensus vote, every block-commit signature, every gossip message is signed with ML-DSA. There is no ECDSA or Ed25519 dependency anywhere in the consensus path.
 
-This is implemented via a fork of CometBFT at `github.com/btcq-org/cometbft`, which adds a `crypto/mldsa` package and routes signing through it.
+Implemented via a fork of CometBFT at `github.com/btcq-org/cometbft`, which adds a `crypto/mldsa` package and routes signing through it.
 
 ### Why it matters
 
@@ -23,11 +23,11 @@ ML-DSA signatures are larger than Ed25519:
 * Ed25519 signature: 64 bytes.
 * Ed25519 public key: 32 bytes.
 
-This affects block size and bandwidth. The chain absorbs the cost as part of the design.
+Block size and bandwidth costs are higher accordingly. The chain absorbs the cost as part of the design.
 
 ## At the claim layer: ZK proofs
 
-A user claiming QBTC submits a zero-knowledge proof that they control the private key for a Bitcoin address, **without** broadcasting the public key. This matters because once a Bitcoin public key is broadcast (during a normal spend, for example), it becomes a target for Shor's algorithm.
+A user claiming QBTC submits a zero-knowledge proof that they control the private key for a Bitcoin address, **without** broadcasting the public key. Once a Bitcoin public key is broadcast (during a normal spend, for example), it becomes a target for Shor's algorithm.
 
 The proof system is **PLONK**, a SNARK-style construction. The circuit verifies:
 
@@ -48,7 +48,7 @@ Hidden inputs (kept secret):
 
 ### Practical implications
 
-Proof generation takes roughly **60 seconds** and **8 GB of RAM** on commodity hardware. This is too expensive for a phone. Users will typically generate proofs via a hosted **proof service** rather than locally. The local CLI prover (`zkprover`) is also available for users with adequate hardware.
+Proof generation takes roughly **60 seconds** and **8 GB of RAM** on commodity hardware: too expensive for a phone. Users will typically generate proofs via a hosted **proof service** rather than locally. The local CLI prover (`zkprover`) is available for users with adequate hardware.
 
 The on-chain verifier is fast (sub-second). Verification cost is what matters for chain throughput.
 
