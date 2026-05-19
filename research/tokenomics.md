@@ -16,7 +16,7 @@ QBTC's chain state contains a continuous mirror of Bitcoin's UTXO set. For each 
 (BTC_UTXO_id, Hash160(address), BTC_amount, claimed_flag)
 ```
 
-The mirror is not a token balance. It is a record of who is *allowed* to mint QBTC against which Bitcoin UTXOs.
+The mirror is a record of who is *allowed* to mint QBTC against which Bitcoin UTXOs. Tokens are minted only when an entitlement is exercised.
 
 The mirror updates with every new Bitcoin block:
 

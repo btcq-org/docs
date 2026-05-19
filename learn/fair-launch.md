@@ -30,7 +30,7 @@ QBTC has a hard cap of **21 million QBTC**, mirroring Bitcoin. No QBTC is pre-mi
 
 QBTC's chain state contains a continuous mirror of Bitcoin's UTXO set. For every live Bitcoin UTXO, the mirror records an **entitlement**: who can mint how much QBTC by proving ownership.
 
-The mirror is not a pool of pre-minted tokens. It is a ledger of promises. QBTC tokens are only created when a promise is exercised.
+The mirror is a ledger of entitlements. QBTC tokens are minted only when an entitlement is exercised.
 
 Whoever currently controls a Bitcoin UTXO controls the corresponding entitlement. If you spend your BTC on Bitcoin, the new outputs at the recipient addresses carry the entitlement instead.
 
