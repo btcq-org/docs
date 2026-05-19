@@ -19,7 +19,7 @@ Holders can claim immediately at mainnet, wait years, or never claim. The only e
 ## What you need to know
 
 * **You own the claim if you own the BTC.** The claim is computed from the Bitcoin UTXO set, not from a registration or signup. Whoever controls the private key for a Bitcoin address controls the corresponding QBTC claim.
-* **You will use a quantum-safe wallet.** An established multi-chain, self-custody wallet partner is implementing native post-quantum signing (ML-DSA) and QBTC claim-proof generation, with rollout planned at mainnet. The partner will be named ahead of launch. Claiming will be a normal in-wallet action.
+* **You will use a quantum-safe wallet.** An established multi-chain, seedless self-custody wallet partner is implementing native post-quantum signing (ML-DSA) and QBTC claim-proof generation, with rollout planned at mainnet. The partner will be named ahead of launch. Claiming will be a normal in-wallet action.
 * **The proof runs on the wallet side.** No Bitcoin transaction is sent. No public key is broadcast. Independent operators also run hosted "proof service" endpoints that wallets can use to offload computation if the device is constrained.
 * **The proof keeps your BTC public key hidden.** It reveals only the hash of the address being claimed and the destination QBTC address. The BTC public key, private key, and signature are all hidden cryptographic inputs.
 * **You can batch claims.** A single transaction can claim up to 50 UTXOs from the same Bitcoin address.

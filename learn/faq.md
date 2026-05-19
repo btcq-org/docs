@@ -54,7 +54,7 @@ No, with one caveat. Most holders can claim whenever they want, or never. The ex
 
 ### How do I claim?
 
-When mainnet is live, you'll use a quantum-safe wallet to generate a zero-knowledge proof of ownership of your Bitcoin address, then submit it to QBTC. An established multi-chain, self-custody wallet partner is implementing native post-quantum signing (ML-DSA) and QBTC claim-proof generation for rollout at mainnet, and will be named ahead of launch. See [For BTC Holders](for-btc-holders.md).
+When mainnet is live, you'll use a quantum-safe wallet to generate a zero-knowledge proof of ownership of your Bitcoin address, then submit it to QBTC. An established multi-chain, seedless self-custody wallet partner is implementing native post-quantum signing (ML-DSA) and QBTC claim-proof generation for rollout at mainnet, and will be named ahead of launch. See [For BTC Holders](for-btc-holders.md).
 
 ### What if I've already moved my BTC?
 
