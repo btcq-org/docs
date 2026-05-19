@@ -5,22 +5,22 @@
 {% endhint %}
 
 {% hint style="info" %}
-**Pre-mainnet.** The claim flow described here goes live when QBTC mainnet ships. You do not need to take any action right now. Your BTC is yours. Your QBTC claim will be waiting.
+**Pre-mainnet, targeting Q3 2026.** The claim flow described here goes live when QBTC mainnet ships. You do not need to take any action right now. Your BTC is yours. Your QBTC claim will be waiting.
 {% endhint %}
 
 ## The short version
 
 If you hold Bitcoin, you have a claim on an equal amount of QBTC. When mainnet launches, you can convert your claim into spendable QBTC by submitting a zero-knowledge proof of ownership of your Bitcoin address. The proof never reveals your public key, so the migration is itself quantum-safe.
 
-You do not have to act now. Claims do not expire. You can wait years, or never claim at all. Your BTC stays on Bitcoin either way.
+Holders can claim immediately at mainnet, wait years, or never claim. The only exception: **dormant exposed-key BTC** (UTXOs older than 17 years whose public keys are visible on-chain — overwhelmingly Satoshi-era P2PK outputs and ancient reused addresses) is subject to reclamation by on-chain governance. If your BTC is not in those categories, your claim is not affected.
 
 **Claiming QBTC cannot cost you any Bitcoin.** Nothing about the process moves, spends, or locks your BTC. The ZK proof is generated locally from your Bitcoin private key and never sends a Bitcoin transaction.
 
 ## What you need to know
 
 * **You own the claim if you own the BTC.** The claim is computed from the Bitcoin UTXO set, not from a registration or signup. Whoever controls the private key for a Bitcoin address controls the corresponding QBTC claim.
-* **You'll need a quantum-safe wallet.** A wallet that supports the QBTC chain (with ML-DSA signatures) and that can construct a ZK proof of BTC ownership. Wallet partners will be announced before mainnet.
-* **Generating the proof is computationally expensive.** Roughly 60 seconds and 8 GB of RAM. You can either run a local prover or use a hosted "proof service." Multiple operators will host proof services. Your wallet will handle this for you.
+* **You will use a quantum-safe wallet.** QBTC is partnering with an established Bitcoin wallet to ship ML-DSA signing and ZK proof generation natively. The integration will be live at mainnet so claiming is a normal in-wallet action.
+* **The proof runs on the wallet side.** No Bitcoin transaction is sent. No public key is broadcast. Independent operators also run hosted "proof service" endpoints that wallets can use to offload computation if the device is constrained.
 * **The proof keeps your BTC public key hidden.** It reveals only the hash of the address being claimed and the destination QBTC address. The BTC public key, private key, and signature are all hidden cryptographic inputs.
 * **You can batch claims.** A single transaction can claim up to 50 UTXOs from the same Bitcoin address.
 

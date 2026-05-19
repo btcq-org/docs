@@ -50,7 +50,7 @@ If you can't sign a proof of ownership, you can't claim. This is the same securi
 
 ### Do I need to do anything now?
 
-No. Claims do not expire. You can wait as long as you want, or never claim at all. Your BTC remains yours.
+No, with one caveat. Most holders can claim whenever they want, or never. The exception is **dormant exposed-key BTC** — UTXOs older than 17 years whose public keys are already on-chain (Satoshi-era P2PK outputs and very old reused addresses). Those are subject to reclamation by QBTC governance. If your BTC is not in that category, your claim is not affected by waiting.
 
 ### How do I claim?
 
@@ -70,13 +70,13 @@ No. The ZK proof keeps your public key, private key, and signature entirely hidd
 
 ### Will QBTC be tradeable at launch?
 
-Honest answer: v1 has no native QBTC liquidity pool. The chain ships with IBC enabled, so QBTC can move to other Cosmos chains that choose to support it. Centralized exchange listings depend on third parties. A native BTC ↔ QBTC pool is in the post-MVP roadmap.
+At mainnet, the chain ships with IBC enabled, so QBTC can move to other Cosmos chains that choose to support it. Centralized exchange listings depend on third parties.
 
 ## Quantum threat
 
 ### How real is the quantum threat?
 
-Real enough that NIST has standardized post-quantum signatures (FIPS 204 / ML-DSA) and is migrating federal infrastructure. Expert consensus places cryptographically-relevant quantum computers in the late 2020s to mid-2030s. See [The Quantum Threat to Bitcoin](quantum-threat.md).
+Real enough that NIST has standardized post-quantum signatures (FIPS 204 / ML-DSA) and is migrating federal infrastructure. In March 2026, a [Google Quantum AI paper](https://arxiv.org/abs/2603.28846) reduced the qubit count needed to break Bitcoin's curve from ~7 million to under 500 thousand, with runtime in minutes. Google's own internal target for post-quantum readiness is **2029**, [reported by Bloomberg](https://www.bloomberg.com/news/articles/2026-03-31/google-paper-warns-crypto-on-quantum-risk-ahead-of-2029-timeline). See [The Quantum Threat to Bitcoin](quantum-threat.md).
 
 ### Why can't Bitcoin just upgrade itself?
 
@@ -130,8 +130,8 @@ No. QBTC is pre-mainnet. The protocol is in active development. See [Roadmap](ro
 
 ### When does mainnet ship?
 
-A specific date will be announced when one is reliable. Follow [@qbtcnet on X](https://x.com/qbtcnet).
+**Targeting Q3 2026.** Specific date and launch sequencing will be announced as the audit and testnet milestones close. Follow [@qbtcnet on X](https://x.com/qbtcnet).
 
 ### What's actually in the code today vs. just specified?
 
-See the [Roadmap](roadmap.md) status table. Short version: the post-quantum consensus, the ZK claim verifier, the Bitcoin block ingestion, the user claim mechanism, the Reserve Module, and vanilla `x/gov` are all in code. Governance reclamation of dormant exposed-key BTC is part of v1 tokenomics, activated via governance after mainnet. The native liquidity pool, liquid staking, and cross-chain vault are post-MVP.
+See the [Roadmap](roadmap.md) status table. Short version: the post-quantum consensus, the ZK claim verifier, the Bitcoin block ingestion, the user claim mechanism, the Reserve Module, and Cosmos `x/gov` are all in code. Governance reclamation of dormant exposed-key BTC is activated via on-chain governance after mainnet.

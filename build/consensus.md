@@ -25,19 +25,14 @@ In addition to standard Cosmos validator duties, QBTC validators also:
 
 ## Validator rewards
 
-Validators earn from the **Reserve Module** (drawn down per the chain's emission formula) plus transaction fees. There is no inflationary minting. See [Tokenomics](../research/tokenomics.md) and the [Protocol Specification (v1) §2.5](../research/protocol-spec.md).
+Validators earn from the **Reserve Module** (drawn down per the chain's emission formula) plus transaction fees. There is no inflationary minting. See [Tokenomics](../research/tokenomics.md) and the [Protocol Specification §2.5](../research/protocol-spec.md).
 
 ## Governance
 
 Standard Cosmos `x/gov`. Proposals follow the standard voting period, deposit requirements, and threshold rules. No custom QBTC governance logic.
 
-## What is not here
-
-* No pool-bonded validator economics in v1. Validators bond QBTC, not liquidity-pool units. See [Vision & Roadmap](../research/vision-and-roadmap.md) for the post-MVP design.
-* No age-weighted voting, depth-gated proposals, or three-layer governance. Standard `x/gov` only.
-
 ## Read next
 
 * [Architecture](architecture.md), the system-level view.
 * [Quantum Resistance (ML-DSA)](quantum-resistance.md).
-* [Protocol Specification (v1)](../research/protocol-spec.md).
+* [Protocol Specification](../research/protocol-spec.md).

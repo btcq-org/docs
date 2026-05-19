@@ -25,8 +25,7 @@
 ## Research
 
 * [Overview](research/README.md)
-* [Protocol Specification (v1)](research/protocol-spec.md)
-* [Vision & Roadmap](research/vision-and-roadmap.md)
+* [Protocol Specification](research/protocol-spec.md)
 * [Quantum Risk Assessment](research/quantum-risk-assessment.md)
 * [Security Model](research/security-model.md)
 * [Tokenomics](research/tokenomics.md)

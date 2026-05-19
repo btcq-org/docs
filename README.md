@@ -9,7 +9,7 @@ description: Quantum-safe Bitcoin. Claimable by every BTC holder, secured agains
 Bitcoin's signatures will eventually fall to quantum computers. QBTC is the safe harbor: a new chain that runs on quantum-resistant cryptography from day one and already knows your Bitcoin balance. You move on your own schedule. Your Bitcoin stays on Bitcoin.
 
 {% hint style="warning" %}
-**Pre-mainnet.** The protocol is in active development. The [Roadmap](learn/roadmap.md) lists what is built and what is still planned.
+**Pre-mainnet. Targeting Q3 2026.** The protocol is in active development. See the [Roadmap](learn/roadmap.md).
 {% endhint %}
 
 ## Choose your path
@@ -36,7 +36,7 @@ Architecture, consensus, claim mechanism, APIs, and how to run a node.
 
 The formal protocol specification, the quantum risk assessment, the security model, and the tokenomics.
 
-[Protocol Specification (v1)](research/protocol-spec.md) → [Quantum Risk Assessment](research/quantum-risk-assessment.md) → [Security Model](research/security-model.md)
+[Protocol Specification](research/protocol-spec.md) → [Quantum Risk Assessment](research/quantum-risk-assessment.md) → [Security Model](research/security-model.md)
 {% endtab %}
 {% endtabs %}
 
@@ -48,9 +48,3 @@ QBTC is a separate chain built on quantum-resistant cryptography (a NIST-standar
 
 Nothing happens to your Bitcoin. No bridge, no peg, no locked coins, no custodian.
 
-## What QBTC is not
-
-* **Not a fork of Bitcoin.** Bitcoin's chain is untouched.
-* **Not a bridge.** No BTC is custodied or locked anywhere.
-* **Not an ICO or pre-sale.** The entire supply is claimable by existing Bitcoin holders. No team premine, no investor allocation.
-* **Not a wrapped asset.** QBTC is a native token on its own chain, secured by its own validator set.

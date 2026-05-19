@@ -51,13 +51,23 @@ Published estimates converge in the same range:
 
 The total economically exposed surface, depending on how you count reused addresses and the time horizon, is in the millions of BTC.
 
-## The expert consensus on timing
+## The timeline is closer than most people think
 
-Cryptographers and quantum researchers converge on a window in roughly the late 2020s to mid-2030s for cryptographically-relevant quantum computers (CRQCs), defined as machines capable of breaking 256-bit elliptic-curve cryptography in practical time.
+In March 2026, a paper from Google Quantum AI ([arXiv:2603.28846](https://arxiv.org/abs/2603.28846)) showed that breaking 256-bit elliptic-curve cryptography requires fewer than 500,000 superconducting qubits, with a runtime measured in **minutes**. The earlier estimate was 7 million qubits. The resource curve has bent sharply.
 
-NIST has already standardized post-quantum signatures (FIPS 204 / ML-DSA) on the assumption that migration of public infrastructure should be substantially complete well before that window.
+Coverage from the major business press anchored quickly to a 2029 timeline:
 
-The practical implication for Bitcoin: the migration path needs to exist and be usable *now*, so holders can move on their own timeline rather than during a crisis.
+* [Bloomberg, Mar 31 2026](https://www.bloomberg.com/news/articles/2026-03-31/google-paper-warns-crypto-on-quantum-risk-ahead-of-2029-timeline) — "Google Paper Warns Crypto on Quantum Risk Ahead of 2029 Timeline."
+* [CoinDesk, Mar 31 2026](https://www.coindesk.com/tech/2026/03/31/bitcoin-bulls-scramble-for-post-quantum-protection-as-google-drops-bombshell-paper) — "Bitcoin cracked in 9 minutes."
+* [The Block, Mar 31 2026](https://www.theblock.co/post/395814/google-quantum-computing-earlier) — "Google warns quantum computing may break bitcoin earlier than thought."
+
+Google itself, per the same paper, treats **2029** as the internal target for being post-quantum-ready across its own infrastructure. Google Cloud has shipped ML-DSA-65 in [Cloud KMS](https://cloud.google.com/blog/products/identity-security/announcing-quantum-safe-digital-signatures-in-cloud-kms) already. The US federal government has a [2035 transition deadline](https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/) (NSM-10), with NIST's [IR 8547](https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf) anchoring the schedule for federal systems.
+
+Independent expert surveys (the Mosca / Global Risk Institute annual survey, IBM and PsiQuantum public roadmaps) place median estimates in the early-to-mid 2030s, with substantial dispersion. The Google paper has pulled the lower bound forward materially.
+
+NIST has already standardized post-quantum signatures (FIPS 204 / ML-DSA) on the assumption that migration of public infrastructure should be substantially complete well before quantum computers can break elliptic-curve cryptography.
+
+For Bitcoin, the practical implication is straightforward. The migration path needs to exist and be usable *now*, so holders can move on their own timeline rather than during a crisis.
 
 ## Why "harvest now, decrypt later" doesn't apply to signatures (but a related risk does)
 

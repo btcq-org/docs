@@ -20,4 +20,4 @@ Documentation for developers, integrators, and node operators. If you want to un
 ## Source
 
 * Chain code: [github.com/btcq-org](https://github.com/btcq-org).
-* Modules in use are documented in the [Protocol Specification (v1)](../research/protocol-spec.md).
+* Modules in use are documented in the [Protocol Specification](../research/protocol-spec.md).

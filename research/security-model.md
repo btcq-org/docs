@@ -30,7 +30,7 @@ Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` 
 | Quantum forgery of Bitcoin signatures during a claim | The ZK proof never broadcasts the BTC public key. Public key remains hidden inputs. |
 | Double-claim of the same UTXO | `EntitledAmount` set to 0 after claim. Subsequent attempts fail. |
 | Replay of a valid proof against a different destination | Destination address is a public input bound into the proof. A different destination produces a different proof. |
-| Malicious proof-service operator | The proof service does not have power to forge claims (proof inputs are user-constructed). It can refuse service, but cannot create false claims. |
+| Malicious proof-service operator | The proof service does not have power to forge claims (proof inputs are user-constructed). Multiple independent operators run proof services; users select from a decentralized provider set, plus local proving is always available. |
 | Stolen or compromised user wallet | Same as Bitcoin: control of the BTC private key equals control of the claim. |
 | Front-running of a claim transaction | Standard Cosmos mempool. Claims are not high-MEV (the same UTXO can only be claimed by the holder of the matching key). |
 
@@ -38,7 +38,6 @@ Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` 
 
 * **PLONK is not post-quantum.** Bounded by Bitcoin's own pre-quantum nature. Migration to a fully post-quantum SNARK is a research direction.
 * **The bifrost design assumes honest majority for Bitcoin block ingestion.** A coordinated attack by more than 1/3 of bonded validator power could feed a false Bitcoin block. Slashing applies, but only after detection.
-* **The proof service can deny service.** Multiple operators mitigate this. Local proof generation is always available.
 
 ## Audits
 
@@ -47,4 +46,4 @@ Audit reports will be linked here as they complete. The most security-critical c
 ## See also
 
 * [Quantum Risk Assessment](quantum-risk-assessment.md)
-* [Protocol Specification (v1)](protocol-spec.md)
+* [Protocol Specification](protocol-spec.md)

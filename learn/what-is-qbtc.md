@@ -59,18 +59,11 @@ Once a Bitcoin public key has been broadcast (during a normal Bitcoin spend), a 
 
 1. **At launch.** QBTC starts with a snapshot of the Bitcoin UTXO set. Every UTXO becomes an entitlement entry in QBTC's state.
 2. **Continuous updates.** As Bitcoin produces new blocks, QBTC's validators ingest them and update the mirror. New UTXOs become new entitlement entries; spent ones are reconciled; coinbase outputs add new entries. Whoever currently controls a Bitcoin UTXO controls the corresponding QBTC entitlement.
-3. **User claims.** A holder runs a quantum-safe wallet, signs a ZK proof for the UTXO they want to claim, and submits it. A single transaction can claim up to 50 UTXOs from the same Bitcoin address.
+3. **User claims.** A holder uses a quantum-safe wallet to sign a ZK proof for the UTXO they want to claim, then submits it. QBTC is partnering with an established wallet to deliver this; native support will be live at mainnet. A single transaction can claim up to 50 UTXOs from the same Bitcoin address.
 4. **Verification.** Validators verify three things: the ZK proof is valid, the UTXO has an outstanding entitlement, and the destination QBTC address is well-formed.
 5. **Release.** The QBTC is minted into the destination address. The entitlement is exhausted to prevent double-claims. The original Bitcoin UTXO is untouched and remains on Bitcoin.
 
-Claims do not expire. Holders can claim immediately, wait years, or never claim at all.
-
-## What QBTC is not
-
-* **Not a fork of Bitcoin.** Bitcoin's chain is untouched. QBTC is a separate chain with its own history starting from its own genesis block.
-* **Not a bridge or peg.** No Bitcoin is locked anywhere. There is no custodian, no multisig holding BTC, no wrapped representation.
-* **Not a rollup or layer-2.** QBTC does not post data or proofs back to Bitcoin. It is a sovereign chain.
-* **Not an ICO.** There is no public sale, no presale, no investor allocation, and no team premine. The entire supply is claimable by existing Bitcoin holders.
+Holders can claim immediately, wait years, or never claim at all. The only exception: **governance can reclaim dormant exposed-key BTC** (UTXOs older than 17 years whose public keys are visible on-chain) into the chain's Reserve Module on a roughly two-week voting cadence. See [Tokenomics](../research/tokenomics.md).
 
 ## Read next
 

@@ -2,7 +2,7 @@
 
 QBTC is a Cosmos SDK application chain that runs on a forked CometBFT consensus engine using post-quantum signatures. It maintains a mirror of the Bitcoin UTXO set inside its own state and accepts zero-knowledge proofs of BTC ownership as claims against that mirror.
 
-For deeper specifications, see the [Protocol Specification (v1)](../research/protocol-spec.md).
+For deeper specifications, see the [Protocol Specification](../research/protocol-spec.md).
 
 ## High-level picture
 
@@ -124,15 +124,9 @@ The user's BTC is never moved. The user's BTC public key is never broadcast.
 5. The accepted block is injected as a special transaction in the next QBTC block. The transaction updates the UTXO mirror: new outputs become claims, spent outputs are reconciled.
 6. Coinbase outputs add new claim entries. Bitcoin miners receive a corresponding QBTC claim as well.
 
-## What's intentionally not here
-
-* **No EVM compatibility.** QBTC uses CosmWasm for smart contracts. The Cosmos SDK module set provides the rest of the application surface.
-* **No bridge to Bitcoin.** There is no two-way peg, no locked BTC, no custodial multisig. The relationship to Bitcoin is one-way and read-only: QBTC reads Bitcoin's state, never writes to it.
-* **No off-chain prover required.** The proof service is a convenience. The on-chain verifier is the source of truth, and users can generate proofs locally if they prefer.
-
 ## Read next
 
 * [Quantum Resistance (ML-DSA)](quantum-resistance.md)
 * [Consensus & Validators](consensus.md)
 * [Claim Mechanism](claim-mechanism.md)
-* [Protocol Specification (v1)](../research/protocol-spec.md)
+* [Protocol Specification](../research/protocol-spec.md)

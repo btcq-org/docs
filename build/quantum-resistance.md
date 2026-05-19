@@ -48,16 +48,15 @@ Hidden inputs (kept secret):
 
 ### Practical implications
 
-Proof generation takes roughly **60 seconds** and **8 GB of RAM** on commodity hardware: too expensive for a phone. Users will typically generate proofs via a hosted **proof service** rather than locally. The local CLI prover (`zkprover`) is available for users with adequate hardware.
+The on-chain verifier is fast (~2–5 ms verification per proof, proof size ~1 KB). Verification cost is what matters for chain throughput.
 
-The on-chain verifier is fast (sub-second). Verification cost is what matters for chain throughput.
+Proof generation happens client-side. Wallets handle it natively. Independent operators also run hosted "proof service" endpoints that wallets can use to offload computation on constrained devices. The local CLI prover (`zkprover`) is available for users who want to generate proofs themselves.
+
+The trusted setup for the PLONK circuit reuses the Hermez/Polygon Powers of Tau 2²¹ ceremony, an existing public ceremony with multiple participants.
 
 ## Why both layers
 
-Either alone is insufficient:
-
-* If only consensus were ML-DSA, the act of broadcasting your BTC public key during a claim would expose it to a quantum attacker who could race you for the BTC on Bitcoin Legacy before your QBTC claim settles.
-* If only claims used ZK, validators could be quantum-attacked and the chain could be rewritten.
+Either alone is insufficient. If only consensus were ML-DSA, the act of broadcasting your BTC public key during a claim would expose it to a quantum attacker who could race you for the BTC on Bitcoin Legacy before your QBTC claim settles. If only claims used ZK, validators could be quantum-attacked and the chain could be rewritten.
 
 Together, the chain is post-quantum end to end.
 
@@ -66,4 +65,4 @@ Together, the chain is post-quantum end to end.
 * NIST FIPS 204: ML-DSA specification.
 * `github.com/btcq-org/cometbft`: the forked CometBFT.
 * `x/qbtc/zk/`: PLONK circuits and on-chain verifier in the chain code.
-* [Protocol Specification (v1) §1, §2.3](../research/protocol-spec.md).
+* [Protocol Specification §1, §2.3](../research/protocol-spec.md).

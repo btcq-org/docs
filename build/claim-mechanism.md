@@ -64,16 +64,19 @@ Propagation makes governance reclamation (see [Tokenomics](../research/tokenomic
 
 ## Proof generation
 
-ZK proof generation takes approximately 60 seconds and 8 GB of RAM. Two paths exist:
+Proofs are generated client-side. Two paths exist:
 
-* **Hosted proof service.** Multiple operators run a `proof-service` HTTP endpoint. Wallets typically use these.
-* **Local CLI prover.** `zkprover` generates proofs on the user's machine. Suitable for users with adequate hardware.
+* **Native wallet flow.** Quantum-safe wallet partners ship ZK proving natively. Users see claiming as a normal in-wallet action. QBTC is partnering with an established Bitcoin wallet for this integration, live at mainnet.
+* **Hosted proof service.** Independent operators run `proof-service` HTTP endpoints that wallets can use to offload computation on constrained devices. Multiple operators run these so users can choose.
+* **Local CLI prover.** `zkprover` lets advanced users generate proofs themselves.
 
-Neither path requires trusting the prover with the user's BTC private key in a way that lets them forge claims; proof inputs are constructed locally and the prover only computes the cryptographic output.
+Proof inputs (including private key material) are constructed locally. The proof service computes only the cryptographic output and cannot forge claims against UTXOs whose keys it has not seen.
+
+On the chain side, verification takes ~2–5 ms per proof (proof size ~1 KB), so claims clear quickly.
 
 ## References
 
 * `x/qbtc/keeper/handle_msg_claim_with_proof.go`: handler logic.
 * `x/qbtc/zk/`: PLONK circuit definition.
 * `proto/qbtc/qbtc/v1/msg_claim_with_proof.proto`: message format.
-* [Protocol Specification (v1) §2.3, §2.4](../research/protocol-spec.md).
+* [Protocol Specification §2.3, §2.4](../research/protocol-spec.md).

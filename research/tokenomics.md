@@ -2,15 +2,13 @@
 
 QBTC's economic design rests on three invariants:
 
-1. **Cap matches Bitcoin.** Total supply is hard-capped at 21,000,000 QBTC. Enforced because no Bitcoin UTXO can produce QBTC twice.
+1. **Cap matches Bitcoin.** Total supply is hard-capped at 21,000,000 QBTC.
 2. **Nothing is pre-minted.** No QBTC exists at genesis. Tokens come into existence only when a Bitcoin UTXO is claimed, by either a user or by governance.
-3. **The claim mirror is a ledger of promises**, not a pool of tokens.
-
-Forward-looking economic mechanisms attached to the post-MVP feature set are covered in [Vision & Roadmap](vision-and-roadmap.md).
+3. **The claim mirror is a ledger of entitlements**, not a pool of tokens. Tokens are minted only when an entitlement is exercised.
 
 ## The claim mirror
 
-QBTC's chain state contains a continuous mirror of Bitcoin's UTXO set. For each live Bitcoin UTXO, the mirror stores an **entitlement record** with the form:
+The chain state contains a continuous mirror of Bitcoin's UTXO set. For each live Bitcoin UTXO, the mirror stores an entitlement record:
 
 ```
 (BTC_UTXO_id, Hash160(address), BTC_amount, claimed_flag)
@@ -53,20 +51,32 @@ On QBTC, governance reclaims it productively. Through standard `x/gov` proposals
 
 1. A proposal identifies one or more UTXOs meeting the dormant exposed-key criteria.
 2. Validators vote.
-3. If the proposal passes, each referenced UTXO is marked as claimed (same `claimed_flag` as a user claim), and **QBTC equal to the BTC value is minted into the Reserve Module**.
-4. The reclaimed UTXOs and any descendants are permanently ineligible for user claim (via the `claimed_flag` propagation in the mirror).
+3. If the proposal passes, each referenced UTXO is marked as claimed (same `claimed_flag` as a user claim), and **QBTC equal to the reclaimed BTC value is minted on the QBTC chain**.
+4. The reclaimed UTXOs and any descendants are permanently ineligible for user claim.
 
-Value that would otherwise be captured by a quantum attacker is minted into a quantum-safe address (the Reserve Module), which funds the network securing the post-quantum migration.
+Value that would otherwise be captured by a quantum attacker is minted into a quantum-safe address structure, which funds the network securing the post-quantum migration.
 
-Governance reclamation is the only inflow to the Reserve. There is no other source of validator emission funding.
+### How reclaimed QBTC is distributed
+
+Each successful reclamation proposal mints QBTC and splits it across three on-chain accounts at a fixed ratio:
+
+| Destination | Share | Purpose |
+|---|---|---|
+| **Reserve Module** | 90% | Funds validator emission (the main use of QBTC reclaimed by governance). |
+| **Development Fund** | 5% | Funds continued protocol development. Spends require governance approval. |
+| **Ecosystem Fund** | 5% | Funds adoption, education, and ecosystem growth. Spends require governance approval. |
+
+The Development and Ecosystem funds are on-chain accounts. They are not controlled by any private wallet. Every disbursement passes through `x/gov` and is publicly recorded. Validators set the split parameters and can modify them through governance.
+
+Each governance reclamation is a public, recorded event: the proposal identifies the UTXOs, validators vote, the chain executes the split. There is no off-chain step, no privileged team unlock, no vesting cliff.
 
 ## The Reserve Module
 
-The Reserve Module is a module account on the chain. It holds QBTC tokens that have been minted via Path 2 (governance reclamation) but not yet paid out to validators.
+The Reserve Module is a module account on the chain. It holds QBTC that has been minted via governance reclamation (90% share above) but not yet paid out to validators.
 
 **One inflow:**
 
-* Governance reclamation of dormant exposed-key UTXOs (mint per passed proposal).
+* Governance reclamation of dormant exposed-key UTXOs.
 
 **One outflow:**
 
@@ -76,14 +86,12 @@ The Reserve Module is a module account on the chain. It holds QBTC tokens that h
 release_per_block = reserve_balance / (EmissionCurve × BlocksPerYear)
 ```
 
-Constants in v1 (per `constants/constants.go`):
+Constants (per `constants/constants.go`):
 
 * `EmissionCurve = 5`
 * `BlocksPerYear = 52,560,000`
 
 The released amount is transferred from the Reserve Module to the standard Cosmos fee collector, which distributes to validators and delegators via `x/distribution`.
-
-The Reserve Module's balance evolves as a function of governance activity: it grows when reclamation proposals pass and decreases as validators are paid.
 
 ## Sustainability
 
@@ -91,25 +99,20 @@ Typical proof-of-stake chains fund validator emission via inflationary minting. 
 
 QBTC funds validator emission by reclaiming value that Bitcoin would otherwise lose to quantum attackers, converting a one-time loss event (Q-day theft of dormant exposed-key coins) into a sustainable validator subsidy.
 
-The dormant exposed-key pool is estimated at 1M+ BTC, so the reclamation runway is long. Transaction fees grow as a share of validator revenue with adoption, complementing the diminishing emission stream.
+The dormant exposed-key pool is estimated at 1M+ BTC, so the reclamation runway is long. Transaction fees grow as a share of validator revenue with adoption, complementing the emission stream.
 
-## Cap enforcement, in detail
+## Cap enforcement
 
-At any point in time:
-
-```
-total_minted = (user claims to date) + (governance reclamations to date)
-```
-
-Each Bitcoin UTXO contributes to at most one of these (it's either user-claimed, governance-claimed, or unclaimed). The claimed flag in the mirror prevents double-claim across paths.
-
-Since Bitcoin's supply is capped at 21M:
+At any time:
 
 ```
-total_minted ≤ 21,000,000 QBTC
+total_QBTC_minted = sum(user claims) + sum(governance reclamations)
+                  ≤ 21,000,000 QBTC
 ```
 
-No inflationary minting exists anywhere in the chain code. The cap is enforced by construction.
+The cap holds because no Bitcoin UTXO can be claimed twice. The `claimed_flag` propagates through Bitcoin spends, so a reclaimed UTXO and its descendants are permanently ineligible. Each claim mints exactly the BTC amount of that UTXO. Bitcoin's total supply is capped at 21M, so QBTC's total minted supply is bounded by the same number.
+
+No inflationary minting exists anywhere in the chain code.
 
 ## Distribution of validator rewards
 
@@ -121,16 +124,9 @@ Once QBTC released from the Reserve Module hits the standard Cosmos fee collecto
 
 No custom QBTC mechanism is layered on top of `x/distribution`.
 
-## What is not in v1 economics
-
-* No community tax mechanism beyond the standard `x/distribution` community pool.
-* No custom vesting beyond what `x/auth/vesting` provides as a standard SDK feature.
-* No feature-activation thresholds tied to economic state.
-* No liquidity-pool fees (no pool in v1).
-
 ## Comparison to Bitcoin
 
-| Property | Bitcoin | QBTC v1 |
+| Property | Bitcoin | QBTC |
 |---|---|---|
 | Supply cap | 21M BTC | 21M QBTC |
 | Block reward source | Newly minted (halving schedule) | Reserve Module (funded by governance reclamation) |
@@ -138,9 +134,9 @@ No custom QBTC mechanism is layered on top of `x/distribution`.
 | Genesis premint | None | None |
 | Privileged founder allocation | None | None |
 | Recovery mechanism for quantum-lost coins | None | Governance reclamation into Reserve Module |
+| Funding for ongoing development | None on-chain (Bitcoin Core funded by donations/firms) | 5% of governance reclamations (on-chain Development Fund, gov-controlled) |
 
 ## See also
 
 * [Fair Launch Principles](../learn/fair-launch.md), the design philosophy in plain language.
-* [Protocol Specification (v1)](protocol-spec.md), the canonical chain reference.
-* [Vision & Roadmap](vision-and-roadmap.md), planned economic mechanisms tied to post-MVP features.
+* [Protocol Specification](protocol-spec.md), the canonical chain reference.

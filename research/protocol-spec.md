@@ -1,6 +1,6 @@
-# Protocol Specification (v1)
+# Protocol Specification
 
-Canonical specification of the QBTC chain code at v1 mainnet. Source of truth for implementers, auditors, and researchers. Forward-looking design (a native liquidity pool, liquid staking, etc.) lives in [Vision & Roadmap](vision-and-roadmap.md).
+Canonical specification of the QBTC chain code. Source of truth for implementers, auditors, and researchers.
 
 Citations refer to the QBTC source code at `github.com/btcq-org/qbtc`.
 
@@ -89,21 +89,24 @@ A claimed UTXO's `EntitledAmount` is set to 0. Subsequent attempts to claim the 
 
 When the `ebifrost` module ingests a new Bitcoin block, the claimed status propagates to descendant UTXOs. If a transaction spends from any claimed UTXO, the outputs of that transaction inherit the claimed status in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed.
 
-This mechanism makes governance reclamation (§2.5) permanent: once a UTXO is reclaimed into the Reserve Module, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO through Bitcoin to a new address.
+Propagation makes governance reclamation (§2.5) permanent: once a UTXO is reclaimed, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO through Bitcoin to a new address.
 
-### 2.5 The Reserve Module and validator emission
+### 2.5 Minting paths, the Reserve Module, and validator emission
 
-There are two minting paths in QBTC, and only two.
+There are two minting paths, and only two.
 
 **Path 1: User claim.** A successful `MsgClaimWithProof` mints QBTC into the claimer's account, equal to the sum of the referenced UTXOs' BTC values.
 
 **Path 2: Governance reclamation.** Through standard `x/gov` proposals on a ~2-week voting cadence, validators vote on which dormant exposed-key UTXOs (older than 17 years, with on-chain public keys) to reclaim. When a proposal passes:
 
 1. Each referenced UTXO is marked as claimed in the mirror (`EntitledAmount → 0`), identically to a user claim.
-2. QBTC equal to the reclaimed BTC value is minted into the **Reserve Module**.
+2. QBTC equal to the reclaimed BTC value is minted on the chain and split across three on-chain accounts at a fixed ratio:
+    * **90% → Reserve Module** (funds validator emission)
+    * **5% → Development Fund** (governance-gated spend)
+    * **5% → Ecosystem Fund** (governance-gated spend)
 3. Descendant UTXOs inherit the claimed status via the propagation described in §2.4.
 
-The Reserve Module is the only source of validator emission. It has no other inflows.
+The Reserve Module is the only direct source of per-block validator emission. The Development and Ecosystem funds are on-chain accounts spent via separate `x/gov` proposals.
 
 #### Validator emission, from the Reserve Module
 
@@ -132,30 +135,27 @@ total_QBTC_minted = sum(user claims) + sum(governance reclamations)
                   ≤ 21,000,000 QBTC
 ```
 
-The cap holds because:
+The cap holds because no Bitcoin UTXO can be claimed twice (the `claimed_flag` propagates per §2.4), each claim mints exactly the BTC amount of that UTXO, and Bitcoin's total supply is capped at 21M.
 
-* No Bitcoin UTXO can be claimed twice (the `claimed_flag` propagates per §2.4).
-* Each claim mints exactly the BTC amount of that UTXO.
-* Bitcoin's total supply is capped at 21M.
-
-There is no inflationary minting anywhere in the chain code.
+No inflationary minting exists anywhere in the chain code.
 
 See [Tokenomics](tokenomics.md) for the economic framing.
 
 ### 2.6 Governance
 
-QBTC v1 uses **standard Cosmos `x/gov`** with no custom logic. Proposals follow the standard voting period, deposit requirements, and threshold rules.
+QBTC uses **standard Cosmos `x/gov`**. Proposals follow the standard voting period, deposit requirements, and threshold rules.
 
-Future protocol changes (including activation of the dormant-UTXO re-mining mechanism described in [Vision & Roadmap](vision-and-roadmap.md)) will be enacted through on-chain governance.
+Dormant-UTXO reclamation proposals (§2.5 Path 2) are enacted through `x/gov` rather than as automatic chain rules. The validator set sets the activation parameters (UTXO categories, cutoffs, dispute windows) through governance.
 
 ## 3. Tokenomics summary
 
-* **Total supply cap**: 21 million QBTC. Matches Bitcoin's cap.
-* **Genesis claim pool**: sized to match the Bitcoin UTXO set at the mirror's reference height.
-* **Reserve Module**: a module account holding the non-circulating remainder of the 21M cap. Drawn down per the emission formula above and mirroring of new Bitcoin coinbase outputs; replenished by governance reclamation of dormant exposed-key UTXO entitlements.
-* **No team allocation**. No investor allocation. No premine.
+* **Total supply cap**: 21 million QBTC.
+* **Initial claim mirror**: sized to match the Bitcoin UTXO set at the mirror's reference height.
+* **Reserve Module**: a module account that holds QBTC reclaimed by governance, drawn down per block to validators via the emission formula above.
+* **Development Fund** (5%) and **Ecosystem Fund** (5%) from each governance reclamation. Both governance-gated.
+* No genesis allocation to any party.
 
-See [Research → Tokenomics](tokenomics.md) for the full breakdown.
+See [Tokenomics](tokenomics.md) for the full breakdown.
 
 ## 4. Modules in use (Cosmos SDK standard)
 
@@ -184,29 +184,14 @@ See [Research → Tokenomics](tokenomics.md) for the full breakdown.
 
 Standard SDK semantics apply for all of these.
 
-## 5. What is NOT in v1
-
-To prevent confusion with earlier whitepaper drafts:
-
-* **No XYK or any other liquidity pool.**
-* **No DKLS24 threshold-signature vault.**
-* **No liquid staking.**
-* **No custom vesting module beyond standard `x/auth/vesting`.**
-* **No custom community-tax mechanism beyond the standard `x/distribution` community pool.**
-* **No on-chain enforcement of dormant-UTXO reclamation.** The mechanism described in §2.5 (inflow) is activated by `x/gov` proposals, not by automatic chain rules. This is part of v1 tokenomics, just not chain-enforced.
-* **No "rolling claim" or UTXO weight parameter** for mixed-input scenarios (binary claim flag only).
-* **No age-weighted voting, depth-gated proposals, or three-layer governance** (vanilla `x/gov`).
-
-These are either deliberately staged for later phases or part of the design vision that will be revisited as the chain matures.
-
-## 6. Binaries
+## 5. Binaries
 
 | Binary | Purpose |
 |---|---|
 | `qbtcd` | Chain daemon |
 | `bifrost` | Bitcoin block watcher sidecar |
-| `proof-service` | Remote PLONK prover (HTTP) |
-| `zkprover` | Local PLONK prover (CLI) |
+| `proof-service` | PLONK prover (HTTP service) |
+| `zkprover` | PLONK prover (CLI) |
 | `utxo-indexer` | Genesis UTXO snapshot builder |
 
 ## References

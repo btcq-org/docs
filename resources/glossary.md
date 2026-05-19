@@ -8,10 +8,10 @@ Terms used throughout the QBTC documentation.
 * **CometBFT** — The BFT consensus engine used by Cosmos chains. QBTC uses a [forked CometBFT](https://github.com/btcq-org/cometbft) with ML-DSA signatures.
 * **Cosmos SDK** — The framework QBTC is built on. Provides standard modules for staking, governance, IBC, and others.
 * **CRQC** — Cryptographically-Relevant Quantum Computer. A quantum computer capable of breaking 256-bit elliptic-curve cryptography in practical time.
-* **DKLS24** — A threshold ECDSA signature scheme. Not in QBTC v1; part of the post-MVP cross-chain vault design. See [Vision & Roadmap](../research/vision-and-roadmap.md).
+* **DKLS24** — A threshold ECDSA signature scheme.
 * **ebifrost** — The "enshrined bifrost." The in-chain module that aggregates validator attestations on Bitcoin blocks and ingests them into QBTC state.
 * **ECDSA** — Elliptic Curve Digital Signature Algorithm. Bitcoin's signature scheme. Quantum-vulnerable.
-* **EmissionCurve** — A constant in `constants/constants.go` controlling how fast the validator reserve is drawn down. Set to 5 in v1.
+* **EmissionCurve** — A constant in `constants/constants.go` controlling how fast the Reserve Module is drawn down per block to validators. Set to 5.
 * **EntitledAmount** — The remaining QBTC claim amount for a given UTXO. Set at ingestion. Decremented to 0 after claim.
 * **FIPS 204** — The NIST standard for ML-DSA, published 2024.
 * **Hash160** — The 20-byte hash (RIPEMD-160 of SHA-256) of a Bitcoin public key. Encodes a Bitcoin address.
