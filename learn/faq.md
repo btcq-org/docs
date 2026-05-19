@@ -76,7 +76,13 @@ At mainnet, the chain ships with IBC enabled, so QBTC can move to other Cosmos c
 
 ### How real is the quantum threat?
 
-Real enough that NIST has standardized post-quantum signatures (FIPS 204 / ML-DSA) and is migrating federal infrastructure. In March 2026, a [Google Quantum AI paper](https://arxiv.org/abs/2603.28846) reduced the qubit count needed to break Bitcoin's curve from ~7 million to under 500 thousand, with runtime in minutes. Google's own internal target for post-quantum readiness is **2029**, [reported by Bloomberg](https://www.bloomberg.com/news/articles/2026-03-31/google-paper-warns-crypto-on-quantum-risk-ahead-of-2029-timeline). See [The Quantum Threat to Bitcoin](quantum-threat.md).
+Real enough that the institutions with the most to lose are already moving.
+
+NIST standardized post-quantum signatures (FIPS 204 / ML-DSA) and is migrating federal infrastructure. Google shipped ML-DSA-65 in [Cloud KMS](https://cloud.google.com/blog/products/identity-security/announcing-quantum-safe-digital-signatures-in-cloud-kms). The US government set a [2035 transition target](https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/) (NSM-10).
+
+Then in March 2026, a [Google Quantum AI paper](https://arxiv.org/abs/2603.28846) cut the qubit count needed to break Bitcoin's curve from ~7 million to under 500 thousand, with runtime in minutes. Google's own internal target for post-quantum readiness is **2029**, [reported by Bloomberg](https://www.bloomberg.com/news/articles/2026-03-31/google-paper-warns-crypto-on-quantum-risk-ahead-of-2029-timeline) and [CoinDesk](https://www.coindesk.com/tech/2026/03/31/bitcoin-bulls-scramble-for-post-quantum-protection-as-google-drops-bombshell-paper).
+
+See [The Quantum Threat to Bitcoin](quantum-threat.md) for the full picture.
 
 ### Why can't Bitcoin just upgrade itself?
 
