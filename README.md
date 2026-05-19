@@ -38,3 +38,5 @@ No bridge. No peg. No locked BTC. Your bitcoin stays on Bitcoin. QBTC is the saf
 - [What is QBTC?](introduction/what-is-qbtc.md) — Longer explanation with the protocol mechanics.
 - [The Quantum Threat to Bitcoin](introduction/quantum-threat.md) — Why this needs to exist now.
 - [Fair Launch Principles](introduction/fair-launch.md) — How QBTC avoids the failure modes of most token launches.
+
+<!-- sync trigger 1779186907 -->
