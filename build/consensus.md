@@ -25,7 +25,7 @@ In addition to standard Cosmos validator duties, QBTC validators also:
 
 ## Validator rewards
 
-Validators earn from a **pre-allocated reserve** drawn down per the chain's emission formula, plus transaction fees. There is no inflationary minting. See [Tokenomics](../research/tokenomics.md) and the [Protocol Specification (v1) §2.5](../research/protocol-spec.md).
+Validators earn from the **Reserve Module** (drawn down per the chain's emission formula) plus transaction fees. There is no inflationary minting. See [Tokenomics](../research/tokenomics.md) and the [Protocol Specification (v1) §2.5](../research/protocol-spec.md).
 
 ## Governance
 

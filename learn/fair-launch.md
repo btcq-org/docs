@@ -22,40 +22,51 @@ The standard token-launch pattern (VC-backed pre-sales, team allocations vesting
 
 QBTC was designed to avoid all three. Because entitlement is determined by an external population of Bitcoin holders, the team has no privileged position. Because the team earns the same way anyone else does, the team's economic interest aligns with the protocol's actual functioning.
 
-## Where the supply comes from
+## How the supply works
 
-Every unit of QBTC enters circulation through one of two mechanisms, both open to anyone.
+The 21 million QBTC cap is fixed at genesis. Every QBTC in existence flows through one of two state locations: the **claim mirror** (entitlements tied 1:1 to live Bitcoin UTXOs) and the **Reserve Module** (a module account holding everything else).
 
-### 1. Claims from the Bitcoin UTXO mirror
+The Reserve Module is the engine. Two flows out, one flow in.
 
-At genesis, QBTC's state contains a pre-allocated claim entry for every Bitcoin UTXO. Each entry is sized to match the BTC amount at that UTXO. A Bitcoin holder converts a claim into spendable QBTC by submitting a zero-knowledge proof of ownership for the corresponding BTC address. When a claim is exercised, it is deleted from the claim pool, preventing double-claims.
+### The claim mirror
 
-The total claim supply is fixed at the size of the Bitcoin UTXO set as of the mirror's reference height. No new claims are created over time.
+QBTC tracks Bitcoin's UTXO set continuously, not as a frozen snapshot. Every Bitcoin UTXO that exists right now has a corresponding QBTC entitlement of equal size in the mirror. When Bitcoin produces a new block, the mirror updates:
 
-### 2. Validator emission from a pre-allocated reserve
+* New UTXOs (including coinbase rewards) get new claim entries. The QBTC for these new entries is drawn from the Reserve Module, preserving the 21M cap.
+* Spent UTXOs are reconciled.
+* Whoever currently controls a Bitcoin UTXO controls its QBTC claim. If you move your BTC, the new address holds the new claim.
 
-QBTC's validators receive rewards from a **pre-allocated reserve** held by the chain, not from inflationary minting. At genesis, the reserve is funded as part of the 21 million QBTC cap. Each block, a small fraction of the reserve is released to validators, on a schedule defined by two parameters:
+A Bitcoin holder converts a claim into spendable QBTC by submitting a zero-knowledge proof of ownership for their Bitcoin address. The claim is then exhausted on QBTC, preventing double-claims. The BTC itself is untouched.
 
-* `EmissionCurve`, a divisor that controls how fast the reserve is drawn down.
-* `BlocksPerYear`, the expected block count per year.
+### Validator emission, from the Reserve Module
 
-Specifically, the amount released per block is approximately:
+Validators are paid from the Reserve Module. Each block, a small fraction of the Reserve's balance is released to validators via the standard Cosmos `x/distribution` flow:
 
 ```
 release_per_block = reserve_balance / (EmissionCurve × BlocksPerYear)
 ```
 
-Released QBTC flows into the standard Cosmos `x/distribution` fee collector, which pays validators and delegators according to standard proof-of-stake distribution.
+This is materially different from typical proof-of-stake chains, which mint *new* supply each block to fund validators. QBTC does not mint. The 21M cap holds for all time.
 
-Because emission comes from a finite reserve rather than from minting new supply, the total cap of 21 million QBTC is preserved. As the reserve depletes, per-block rewards decrease. There is no perpetual inflation.
+### Replenishment, via governance reclaiming dormant exposed-key BTC
 
-This is materially different from typical proof-of-stake chains, which mint new supply each block. QBTC chose the reserve model so that the 21M cap holds for all time, matching Bitcoin's monetary policy.
+Bitcoin holds an estimated 1 million+ BTC in UTXOs older than 17 years whose public keys are exposed on-chain (P2PK outputs, reused-address outputs). On Bitcoin Legacy, these coins will be the first stolen the moment a cryptographically-relevant quantum computer exists.
 
-### Also planned: re-mining dormant at-risk UTXOs (governance-driven)
+QBTC's tokenomics use this asymmetry productively. Through on-chain governance, the QBTC entitlement of these quantum-vulnerable dormant UTXOs is **reclaimed**: removed from the claim mirror and returned to the Reserve Module. The economic value that would otherwise be captured by a quantum attacker is instead recycled into the QBTC validator reward pool.
 
-The protocol specification defines a third source of validator rewards: re-mining the QBTC entitlement of **quantum-vulnerable dormant Bitcoin UTXOs older than 17 years**. The intent is to redirect the QBTC claim for such UTXOs back into the validator reward pool, on the principle that these coins would otherwise be the first stolen by a quantum-capable attacker on Bitcoin Legacy.
+The framing is straightforward. Bitcoin holds a pool of value sitting in addresses that can no longer be secured. QBTC removes that value from vulnerable circulation and redistributes it to a quantum-safe address: the Reserve, which secures the post-quantum migration.
 
-This mechanism is **governance-driven** rather than enforced in the v1 chain code. Validators will activate it through standard on-chain governance once mainnet is established. See the [Roadmap](roadmap.md) for status.
+This is a structural part of the tokenomic design, not an optional add-on. It is governed by the validator set through standard on-chain governance, with no privileged path.
+
+### The aggregate picture
+
+| State | Holds | Changes |
+|---|---|---|
+| Claim mirror | QBTC entitlements tied 1:1 to live BTC UTXOs | Grows as new BTC is mined. Shrinks as users claim, or as governance reclaims dormant exposed-key UTXOs. |
+| Reserve Module | The non-circulating remainder of the 21M cap | Decreases as new BTC is mirrored and as validators are paid. Increases as governance reclaims dormant exposed-key UTXOs. |
+| Circulation | QBTC that holders have actually claimed and validators have actually earned | Grows monotonically. |
+
+The cap is preserved by construction: the three state locations always sum to 21 million QBTC.
 
 ## What the team gets
 

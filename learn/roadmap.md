@@ -14,15 +14,13 @@ These are present in the chain code and will ship with mainnet.
 * **Bifrost sidecar** for ingesting Bitcoin blocks under Byzantine-fault-tolerant attestation by validators.
 * **ZK PLONK claim verifier** on-chain.
 * **Batch claims** of up to 50 UTXOs per transaction via `MsgClaimWithProof`.
-* **Reserve-funded validator emission**, drawing from a pre-allocated reserve via `EmissionCurve` and `BlocksPerYear` parameters. No inflationary minting.
+* **Reserve Module + validator emission**, drawing from a module-account reserve via `EmissionCurve` and `BlocksPerYear` parameters. No inflationary minting.
 * **Genesis UTXO snapshot** built by `utxo-indexer` from a Bitcoin node.
 * **Vanilla Cosmos `x/gov`** for governance.
 
-## What is specified, governance-driven
+## Governance-activated (part of v1 tokenomics)
 
-These are described in the QBTC specification and will be activated via on-chain governance after mainnet, not enforced in the v1 chain code.
-
-* **Re-mining of dormant quantum-vulnerable UTXOs older than 17 years.** The QBTC entitlement of such UTXOs will be redirected into the validator reward pool, on the principle that those coins would otherwise be the first stolen by a quantum-capable attacker on Bitcoin Legacy. Implemented via governance proposals once mainnet is established.
+* **Reclamation of dormant exposed-key BTC UTXOs into the Reserve Module.** This is a structural part of QBTC's tokenomic design: QBTC entitlements attached to quantum-vulnerable dormant Bitcoin UTXOs (P2PK outputs and reused-address outputs older than 17 years) are reclaimed from the claim mirror and credited to the Reserve Module, sustaining validator emission and removing the value from vulnerable circulation. The mechanism is activated through standard `x/gov` proposals after mainnet rather than enforced by chain rules, so the validator set can set the activation parameters (categories, cutoffs, dispute windows) without forking the code. See [Tokenomics](../research/tokenomics.md) for the full design.
 
 ## What is planned, post-MVP
 

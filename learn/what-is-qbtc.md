@@ -1,6 +1,6 @@
 # What is QBTC?
 
-QBTC is a **standalone, quantum-resistant blockchain that mirrors Bitcoin's UTXO set**. Every holder of Bitcoin has a pre-allocated 1:1 claim of QBTC waiting for them. To convert a claim into spendable QBTC, the holder proves control of their Bitcoin address using a zero-knowledge proof, without ever revealing their public key on-chain.
+QBTC is a **standalone, quantum-resistant blockchain that mirrors Bitcoin's UTXO set**. Every holder of Bitcoin has a 1:1 claim of QBTC waiting for them. To convert a claim into spendable QBTC, the holder proves control of their Bitcoin address using a zero-knowledge proof, without ever revealing their public key on-chain.
 
 The result is a parallel ledger of "Bitcoin balances" secured by post-quantum cryptography, available to every BTC holder, with no fork of Bitcoin and no bridge.
 

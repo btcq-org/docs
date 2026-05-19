@@ -10,14 +10,15 @@ Instead, the v1 chain is the substrate. The economic and DeFi layer comes later,
 
 ## Status by feature
 
-### Governance-driven, planned for early activation
+### Part of v1 tokenomics, governance-activated
 
-**Re-mining dormant quantum-vulnerable UTXOs (>17 years old)**
+**Reclamation of dormant exposed-key BTC into the Reserve Module**
 
-* **What it does.** Redirects the QBTC entitlement of dormant at-risk BTC UTXOs (P2PK outputs and reused-address outputs whose public keys are exposed and have not moved in over 17 years) into the validator reward pool, instead of leaving the claim available indefinitely.
-* **Rationale.** These coins are the most likely to be stolen first by a quantum-capable attacker on Bitcoin Legacy. Re-mining them on QBTC moves their economic value into the hands of the network securing the post-quantum migration, rather than letting an attacker capture it.
-* **Status.** **Spec'd, governance-driven.** Not enforced by the v1 chain code. Validators will activate this mechanism through standard on-chain governance after mainnet.
-* **Source for the design**: original whitepaper, §Re-mined Rewards.
+This is a structural part of QBTC's tokenomic design, not a post-MVP add-on. See [Tokenomics](tokenomics.md) for the full treatment. Summarized here for the implementation-status framing:
+
+* **What it does.** Removes the QBTC entitlement attached to quantum-vulnerable dormant Bitcoin UTXOs (P2PK outputs and reused-address outputs older than 17 years) from the claim mirror, and credits the corresponding QBTC to the Reserve Module. This sustains validator emission and removes value from vulnerable circulation by redistributing it to a quantum-safe address (the Reserve).
+* **Implementation status.** The reclamation is activated through standard `x/gov` proposals rather than enforced automatically by the chain code. This is intentional: the validator set sets the activation parameters (UTXO categories, block-height cutoffs, dispute windows) through governance without requiring chain forks.
+* **Source for the original design**: original whitepaper, §Re-mined Rewards.
 
 ### Planned, post-MVP
 

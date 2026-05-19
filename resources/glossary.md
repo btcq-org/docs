@@ -3,7 +3,8 @@
 Terms used throughout the QBTC documentation.
 
 * **bifrost** — Per-validator sidecar daemon that watches a Bitcoin full node and gossips signed blocks to peers via LibP2P.
-* **Claim** — A pre-allocated entitlement in QBTC's state, sized 1:1 to a Bitcoin UTXO, exercisable by the holder of the corresponding BTC private key via a ZK proof.
+* **Claim** — A QBTC entitlement tied 1:1 to a live Bitcoin UTXO in the chain's claim mirror. Exercisable by the holder of the corresponding BTC private key via a ZK proof.
+* **Claim mirror** — The set of all outstanding QBTC entitlements, each tied to a currently-live Bitcoin UTXO. Tracks Bitcoin's UTXO set continuously.
 * **CometBFT** — The BFT consensus engine used by Cosmos chains. QBTC uses a [forked CometBFT](https://github.com/btcq-org/cometbft) with ML-DSA signatures.
 * **Cosmos SDK** — The framework QBTC is built on. Provides standard modules for staking, governance, IBC, and others.
 * **CRQC** — Cryptographically-Relevant Quantum Computer. A quantum computer capable of breaking 256-bit elliptic-curve cryptography in practical time.
@@ -21,7 +22,7 @@ Terms used throughout the QBTC documentation.
 * **proof-service** — A standalone HTTP service that generates ZK claim proofs on behalf of users.
 * **Q-day** — The day on which a CRQC capable of breaking Bitcoin's ECDSA becomes operational.
 * **Quantum-safe wallet** — A wallet that can construct a QBTC claim proof and sign QBTC transactions with ML-DSA keys.
-* **Reserve** — The pre-allocated pool from which QBTC validator emissions are drawn. Held in a module account. No new QBTC is minted to fund validator rewards.
+* **Reserve Module** — A module account on the QBTC chain holding the non-circulating remainder of the 21M cap. Two outflows (validator emission, mirroring new BTC coinbase outputs) and one inflow (governance-driven reclamation of dormant exposed-key BTC entitlements). No new QBTC is minted to fund validator rewards.
 * **Shor's algorithm** — A quantum algorithm that solves the discrete logarithm problem efficiently. Breaks Bitcoin's ECDSA signatures (given a CRQC).
 * **UTXO** — Unspent Transaction Output. The unit of Bitcoin balance. QBTC mirrors Bitcoin's UTXO set.
 * **utxo-indexer** — A CLI tool that crawls a Bitcoin node and produces the genesis UTXO snapshot file.

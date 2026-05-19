@@ -43,7 +43,7 @@ The formal protocol specification, the quantum risk assessment, the security mod
 ## The core idea, in three sentences
 
 1. Bitcoin's signatures are not quantum-safe. A sufficiently advanced quantum computer can derive the private key from any Bitcoin address whose public key has been revealed on-chain.
-2. QBTC is a separate chain that uses post-quantum signatures (ML-DSA / Dilithium) at the consensus layer and mirrors Bitcoin's UTXO set, so every BTC holder has a pre-allocated 1:1 claim waiting for them.
+2. QBTC is a separate chain that uses post-quantum signatures (ML-DSA / Dilithium) at the consensus layer and mirrors Bitcoin's UTXO set, so every BTC holder has a 1:1 claim of QBTC waiting for them.
 3. To claim, you prove control of your BTC address using a zero-knowledge proof that verifies ownership without exposing the public key, so the migration itself is quantum-safe.
 
 No bridge. No peg. No locked BTC. Your bitcoin stays on Bitcoin. QBTC is the safe harbor that exists in parallel.

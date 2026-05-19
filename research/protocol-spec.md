@@ -89,9 +89,11 @@ A claimed UTXO's `EntitledAmount` is set to 0. Subsequent attempts to claim the 
 
 There is no UTXO weight parameter for partial-claim scenarios in v1. The model is binary: a UTXO is either claimed or unclaimed.
 
-### 2.5 Validator rewards (network emission)
+### 2.5 The Reserve Module and validator emission
 
-Validator rewards come from a **pre-allocated reserve** held in a module account, not from inflation.
+QBTC's non-circulating supply is held in the **Reserve Module**, a module account. Two outflows and one inflow govern the Reserve. The 21M cap is preserved by construction.
+
+#### Outflow 1: Validator emission
 
 Per `x/qbtc/keeper/network_manager.go:24–47`:
 
@@ -107,7 +109,27 @@ Constants (per `constants/constants.go`):
 * `EmissionCurve = 5`
 * `BlocksPerYear = 52,560,000` (approximately 10 blocks per minute)
 
-As the reserve depletes, per-block rewards decrease. The 21M cap is preserved for all time. There is no perpetual inflation.
+#### Outflow 2: Mirroring new Bitcoin coinbase outputs
+
+When the `ebifrost` module ingests a new Bitcoin block, the coinbase output's BTC amount is added to the claim mirror as a new entitlement. The corresponding QBTC is debited from the Reserve Module to preserve the cap invariant.
+
+#### Inflow: Governance-driven reclamation of dormant exposed-key UTXOs
+
+Bitcoin UTXOs that satisfy both of (a) older than 17 years, and (b) have a publicly-exposed public key (P2PK outputs or reused-address outputs) are structurally indefensible against a quantum-capable attacker. By governance proposal, the QBTC entitlement attached to such UTXOs is removed from the claim mirror and credited to the Reserve Module.
+
+In v1, this is **governance-driven**: the chain does not enforce it automatically. The mechanism is activated by passing standard `x/gov` proposals once mainnet is established. This is intentional, to allow the validator set to set parameters (which categories of UTXOs, which block-height cutoffs, what dispute window) without forking the chain code.
+
+#### Cap invariant
+
+At all times:
+
+```
+claim_mirror_outstanding + reserve_balance + circulating_supply == 21,000,000 QBTC
+```
+
+There is no minting in QBTC. Tokens move between these three locations; they are never created from nothing.
+
+See [Tokenomics](tokenomics.md) for the economic framing.
 
 ### 2.6 Governance
 
@@ -119,7 +141,7 @@ Future protocol changes (including activation of the dormant-UTXO re-mining mech
 
 * **Total supply cap**: 21 million QBTC. Matches Bitcoin's cap.
 * **Genesis claim pool**: sized to match the Bitcoin UTXO set at the mirror's reference height.
-* **Validator reserve**: pre-allocated portion of supply held in the reserve module, drawn down per the emission formula above.
+* **Reserve Module**: a module account holding the non-circulating remainder of the 21M cap. Drawn down per the emission formula above and mirroring of new Bitcoin coinbase outputs; replenished by governance reclamation of dormant exposed-key UTXO entitlements.
 * **No team allocation**. No investor allocation. No premine.
 
 See [Research → Tokenomics](tokenomics.md) for the full breakdown.
@@ -160,7 +182,7 @@ To prevent confusion with earlier whitepaper drafts:
 * **No liquid staking.**
 * **No custom vesting module beyond standard `x/auth/vesting`.**
 * **No custom community-tax mechanism beyond the standard `x/distribution` community pool.**
-* **No on-chain enforcement of the 17-year P2PK re-mining rule** (governance-driven, see [Vision & Roadmap](vision-and-roadmap.md)).
+* **No on-chain enforcement of dormant-UTXO reclamation.** The mechanism described in §2.5 (inflow) is activated by `x/gov` proposals, not by automatic chain rules. This is part of v1 tokenomics, just not chain-enforced.
 * **No "rolling claim" or UTXO weight parameter** for mixed-input scenarios (binary claim flag only).
 * **No age-weighted voting, depth-gated proposals, or three-layer governance** (vanilla `x/gov`).
 

@@ -6,7 +6,7 @@ Common questions, answered briefly. For longer explanations, follow the links.
 
 ### What is QBTC?
 
-A quantum-resistant blockchain that mirrors Bitcoin's UTXO set. Every Bitcoin holder has a pre-allocated 1:1 claim of QBTC, exercisable by proving ownership of their Bitcoin address using a zero-knowledge proof. See [What is QBTC?](what-is-qbtc.md).
+A quantum-resistant blockchain that mirrors Bitcoin's UTXO set. Every Bitcoin holder has a 1:1 claim of QBTC, exercisable by proving ownership of their Bitcoin address using a zero-knowledge proof. See [What is QBTC?](what-is-qbtc.md).
 
 ### Is QBTC a Bitcoin fork?
 
@@ -32,7 +32,7 @@ When mainnet is live, you'll use a quantum-safe wallet to generate a zero-knowle
 
 ### What if I've already moved my BTC?
 
-You claim from the address that controls the UTXO at the time of the genesis snapshot. If you spent your BTC before then, your claim is for whoever held it at snapshot time.
+The QBTC chain continuously mirrors Bitcoin's UTXO set, not a frozen snapshot. Whoever currently controls a BTC UTXO controls the corresponding QBTC claim. If you sent your BTC to a new address (your own or someone else's), the new address holds the new claim. The mirror tracks live state, so moves on Bitcoin propagate to QBTC.
 
 ### What if I lose my BTC private key?
 
@@ -72,7 +72,7 @@ No. No team premine, no investor allocation, no advisor allocation. The entire c
 
 ### Where do validator rewards come from?
 
-From a pre-allocated reserve, drawn down on a smooth schedule via the chain's emission curve. Not from minting new supply. This preserves the 21M cap. See [Tokenomics](../research/tokenomics.md).
+From the **Reserve Module**, a module account on the chain that holds the non-circulating remainder of the 21M cap. Each block, a fraction of the Reserve is released to validators via standard Cosmos `x/distribution`. No new QBTC is ever minted, so the 21M cap holds for all time. See [Tokenomics](../research/tokenomics.md).
 
 ### Was there an ICO?
 

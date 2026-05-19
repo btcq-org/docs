@@ -1,6 +1,6 @@
 # Claim Mechanism
 
-The claim mechanism is how a Bitcoin holder converts their pre-allocated QBTC entitlement into spendable QBTC. Everything described here is implemented in `x/qbtc` in the chain code.
+The claim mechanism is how a Bitcoin holder converts their QBTC entitlement into spendable QBTC. Everything described here is implemented in `x/qbtc` in the chain code.
 
 ## What's in QBTC's state
 
