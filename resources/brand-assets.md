@@ -6,7 +6,7 @@
 
 ## What's available
 
-QBTC's logo and wordmark are available in light and dark variants. Source SVGs are committed to the docs repository at [.gitbook/assets/](https://github.com/seaweedwise/qbtc-docs-preview/tree/main/.gitbook/assets).
+QBTC's logo and wordmark are available in light and dark variants. Source SVGs are committed to the docs repository at [.gitbook/assets/](https://github.com/btcq-org/docs/tree/main/.gitbook/assets).
 
 * `logo-light.svg`, wordmark for use on light backgrounds.
 * `logo-dark.svg`, wordmark for use on dark backgrounds.
