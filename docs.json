@@ -162,7 +162,7 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/qbtcnet",
+      "x": "https://x.com/qbtc_net",
       "github": "https://github.com/btcq-org"
     },
     "links": [
@@ -207,7 +207,7 @@
       "og:site_name": "QBTC Docs",
       "og:type": "website",
       "twitter:card": "summary_large_image",
-      "twitter:site": "@qbtcnet"
+      "twitter:site": "@qbtc_net"
     }
   },
   "search": {

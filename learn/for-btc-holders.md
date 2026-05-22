@@ -58,7 +58,7 @@ ETF and similar wrapped products do not pass through to the underlying holder. T
 Nothing is required. If you want to be prepared:
 
 1. **Make sure you control your BTC keys.** If you're on an exchange and want certainty about your claim, consider self-custody.
-2. **Follow [@qbtcnet on X](https://x.com/qbtcnet)** for mainnet launch announcements and wallet support news.
+2. **Follow [@qbtc_net on X](https://x.com/qbtc_net)** for mainnet launch announcements and wallet support news.
 3. **Read the [Quantum Threat](quantum-threat.md) page** so you understand why this matters even if you never plan to claim.
 
 ## Read next
