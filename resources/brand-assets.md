@@ -1,15 +1,18 @@
-# Brand Assets
+---
+title: "Brand Assets"
+description: "QBTC's logo and wordmark in light/dark variants, plus brand colors and typography. Source SVGs are committed to the docs repository."
+---
 
-{% hint style="info" %}
+<Info>
 **Coming soon.** Brand asset download bundle.
-{% endhint %}
+</Info>
 
 ## What's available
 
-QBTC's logo and wordmark are available in light and dark variants. Source SVGs are committed to the docs repository at [.gitbook/assets/](https://github.com/btcq-org/docs/tree/main/.gitbook/assets).
+QBTC's logo and wordmark are available in light and dark variants. Source SVGs are committed to the docs repository at [logo/](https://github.com/btcq-org/docs/tree/main/logo).
 
-* `logo-light.svg`, wordmark for use on light backgrounds.
-* `logo-dark.svg`, wordmark for use on dark backgrounds.
+* `qbtc-logo-light.svg`, wordmark for use on light backgrounds.
+* `qbtc-logo-dark.svg`, wordmark for use on dark backgrounds.
 * `favicon.svg`, the coin mark.
 
 A consolidated brand kit (with primary/secondary color values, typography rules, and usage examples) will be published here.

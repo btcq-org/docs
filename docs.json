@@ -1,0 +1,225 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "QBTC",
+  "description": "QBTC is the first quantum-resistant Bitcoin chain. 1:1 entitlement for every Bitcoin holder, claimable by ZK proof. Documentation for builders, researchers, and BTC holders.",
+  "colors": {
+    "primary": "#B6660A",
+    "light": "#FFA533",
+    "dark": "#F7931A"
+  },
+  "appearance": {
+    "default": "system"
+  },
+  "background": {
+    "color": {
+      "light": "#F5F1E8",
+      "dark": "#0B1220"
+    }
+  },
+  "fonts": {
+    "family": "Inter"
+  },
+  "logo": {
+    "light": "/logo/qbtc-logo-light.svg",
+    "dark": "/logo/qbtc-logo-dark.svg",
+    "href": "https://qbtc.net"
+  },
+  "favicon": "/favicon.svg",
+  "styling": {
+    "codeblocks": "system"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Learn",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "Start here",
+            "pages": [
+              "index",
+              "learn/what-is-qbtc",
+              "learn/quantum-threat",
+              "learn/why-parallel-chain"
+            ]
+          },
+          {
+            "group": "How it works",
+            "pages": [
+              "learn/fair-launch",
+              "learn/for-btc-holders",
+              "learn/roadmap",
+              "learn/faq"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Build",
+        "icon": "code",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["build/overview"]
+          },
+          {
+            "group": "Protocol",
+            "pages": [
+              "build/architecture",
+              "build/quantum-resistance",
+              "build/consensus",
+              "build/claim-mechanism"
+            ]
+          },
+          {
+            "group": "Operate",
+            "pages": [
+              "build/running-a-node",
+              "build/api-reference"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Research",
+        "icon": "flask",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["research/overview"]
+          },
+          {
+            "group": "Specifications",
+            "pages": [
+              "research/protocol-spec",
+              "research/tokenomics",
+              "research/security-model",
+              "research/quantum-risk-assessment"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Resources",
+        "icon": "folder-open",
+        "groups": [
+          {
+            "group": "Reference",
+            "pages": [
+              "resources/glossary",
+              "resources/whitepaper",
+              "resources/brand-assets"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Explorer",
+          "href": "https://explorer.qbtc.net",
+          "icon": "cube"
+        },
+        {
+          "anchor": "Indexer",
+          "href": "https://indexer.qbtc.net",
+          "icon": "chart-line"
+        },
+        {
+          "anchor": "Website",
+          "href": "https://qbtc.net",
+          "icon": "globe"
+        },
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/btcq-org",
+          "icon": "github"
+        }
+      ]
+    }
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Explorer",
+        "href": "https://explorer.qbtc.net"
+      },
+      {
+        "label": "Indexer",
+        "href": "https://indexer.qbtc.net"
+      },
+      {
+        "label": "Website",
+        "href": "https://qbtc.net"
+      }
+    ],
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/btcq-org"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/qbtcnet",
+      "github": "https://github.com/btcq-org"
+    },
+    "links": [
+      {
+        "header": "Learn",
+        "items": [
+          { "label": "What is QBTC?", "href": "/learn/what-is-qbtc" },
+          { "label": "The quantum threat", "href": "/learn/quantum-threat" },
+          { "label": "For BTC holders", "href": "/learn/for-btc-holders" }
+        ]
+      },
+      {
+        "header": "Build",
+        "items": [
+          { "label": "Architecture", "href": "/build/architecture" },
+          { "label": "Claim mechanism", "href": "/build/claim-mechanism" },
+          { "label": "Running a node", "href": "/build/running-a-node" }
+        ]
+      },
+      {
+        "header": "Research",
+        "items": [
+          { "label": "Protocol spec", "href": "/research/protocol-spec" },
+          { "label": "Tokenomics", "href": "/research/tokenomics" },
+          { "label": "Security model", "href": "/research/security-model" }
+        ]
+      },
+      {
+        "header": "Resources",
+        "items": [
+          { "label": "Explorer", "href": "https://explorer.qbtc.net" },
+          { "label": "Indexer", "href": "https://indexer.qbtc.net" },
+          { "label": "Glossary", "href": "/resources/glossary" },
+          { "label": "Brand assets", "href": "/resources/brand-assets" }
+        ]
+      }
+    ]
+  },
+  "seo": {
+    "indexing": "all",
+    "metatags": {
+      "og:site_name": "QBTC Docs",
+      "og:type": "website",
+      "twitter:card": "summary_large_image",
+      "twitter:site": "@qbtcnet"
+    }
+  },
+  "search": {
+    "prompt": "Search QBTC docs..."
+  },
+  "metadata": {
+    "timestamp": true
+  },
+  "contextual": {
+    "options": ["copy", "view", "chatgpt", "claude"]
+  },
+  "redirects": [
+    { "source": "/", "destination": "/index" }
+  ]
+}

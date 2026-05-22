@@ -1,4 +1,7 @@
-# What is QBTC?
+---
+title: "What is QBTC?"
+description: "QBTC explained in plain English: a quantum-resistant blockchain that mirrors Bitcoin, claimable 1:1 by every BTC holder via zero-knowledge proof."
+---
 
 QBTC is a new blockchain that mirrors Bitcoin. Every Bitcoin holder will be able to claim an equal amount of QBTC by proving they own their Bitcoin address. The proof never reveals the public key, so the claim itself is safe from quantum-computer attack.
 

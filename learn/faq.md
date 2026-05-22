@@ -1,4 +1,7 @@
-# FAQ
+---
+title: "FAQ"
+description: "Common questions about QBTC, answered briefly: how to claim, what happens to dormant BTC, how the chain pays validators, and how it differs from a bridge."
+---
 
 Common questions, answered briefly. For longer explanations, follow the links.
 
@@ -123,6 +126,10 @@ No. ML-DSA throughout the consensus path. ECDSA is only the *thing being claimed
 ### Where can I read the code?
 
 [github.com/btcq-org](https://github.com/btcq-org).
+
+### Where can I look up QBTC transactions, blocks, and balances?
+
+The QBTC block explorer is at [explorer.qbtc.net](https://explorer.qbtc.net). For aggregate stats on Bitcoin's quantum-vulnerable UTXO surface (per-script-type breakdowns of P2PK, reused P2PKH/P2WPKH, etc.) see the risk indexer at [indexer.qbtc.net](https://indexer.qbtc.net).
 
 ### Are there audits?
 

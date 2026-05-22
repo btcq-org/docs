@@ -1,4 +1,7 @@
-# Fair Launch Principles
+---
+title: "Fair Launch Principles"
+description: "QBTC has no pre-sale, no investor allocation, no team premine. Every QBTC entitlement belongs to people who already hold Bitcoin."
+---
 
 QBTC launches on terms that mirror Bitcoin's own. No pre-sale. No investor allocation. No team premine. The entire claimable supply belongs to people who already hold Bitcoin. There is no genesis allocation to anyone.
 
@@ -42,7 +45,7 @@ A holder can claim today, in a decade, or never at all, with one exception descr
 
 ### Path 2: Governance reclaims dormant exposed-key BTC
 
-Bitcoin holds roughly 1.7M BTC in Satoshi-era P2PK outputs (public key permanently on-chain) plus additional BTC in reused-address outputs where the public key has been revealed. On Bitcoin Legacy, these are the coins that will be stolen first by a quantum-capable attacker. Per-category breakdown: [explorer.qbtc.net](https://explorer.qbtc.net).
+Bitcoin holds roughly 1.7M BTC in Satoshi-era P2PK outputs (public key permanently on-chain) plus additional BTC in reused-address outputs where the public key has been revealed. On Bitcoin Legacy, these are the coins that will be stolen first by a quantum-capable attacker. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
 
 QBTC governance reclaims these UTXOs. Through standard `x/gov` proposals on a roughly two-week voting cadence, validators vote on which dormant exposed-key UTXOs to reclaim. When a proposal passes:
 

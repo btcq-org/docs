@@ -1,4 +1,7 @@
-# Security Model
+---
+title: "Security Model"
+description: "QBTC's three independent security foundations: post-quantum consensus, ZK claim proofs, and Bitcoin's own UTXO state. Plus the trust boundaries and failure modes."
+---
 
 QBTC's security rests on three independent foundations. A compromise in any one of them does not automatically compromise the others.
 

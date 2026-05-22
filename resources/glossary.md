@@ -1,4 +1,7 @@
-# Glossary
+---
+title: "Glossary"
+description: "Glossary of QBTC terms: bifrost, ebifrost, CometBFT, claim mirror, EntitledAmount, ML-DSA, PLONK, P2PK, Reserve Module, Hash160, Shor's algorithm, and more."
+---
 
 Terms used throughout the QBTC documentation.
 
@@ -13,7 +16,9 @@ Terms used throughout the QBTC documentation.
 * **EmissionCurve** — A constant in `constants/constants.go` controlling how fast the Reserve Module is drawn down per block to validators. Set to 5.
 * **EntitledAmount** — The remaining QBTC claim amount for a given UTXO. Set at ingestion. Decremented to 0 after claim.
 * **FIPS 204** — The NIST standard for ML-DSA, published 2024.
+* **Explorer** — The canonical QBTC block explorer at [explorer.qbtc.net](https://explorer.qbtc.net). Lookup for transactions, blocks, addresses, and claim activity on QBTC.
 * **Hash160** — The 20-byte hash (RIPEMD-160 of SHA-256) of a Bitcoin public key. Encodes a Bitcoin address.
+* **Indexer** — The QBTC risk indexer at [indexer.qbtc.net](https://indexer.qbtc.net). Aggregate stats on Bitcoin's quantum-vulnerable UTXO surface, broken down by script type (P2PK, reused P2PKH/P2WPKH, P2SH/P2WSH, etc.).
 * **ML-DSA** — Module-Lattice-Based Digital Signature Algorithm. NIST-standardized lattice signature scheme. Formerly CRYSTALS-Dilithium. QBTC's consensus signature scheme.
 * **P2PK** — Pay-to-Public-Key. An early Bitcoin output format that places the public key directly on-chain. Quantum-vulnerable.
 * **P2PKH / P2WPKH** — Pay-to-Public-Key-Hash. Modern Bitcoin output formats that store only the hash of the public key. Quantum-resistant until spent.

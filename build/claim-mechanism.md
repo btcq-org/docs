@@ -1,4 +1,7 @@
-# Claim Mechanism
+---
+title: "Claim Mechanism"
+description: "How a BTC holder converts their QBTC entitlement into spendable QBTC: ZK proof of ownership, batch claims up to 50 UTXOs, taint propagation rules."
+---
 
 The claim mechanism is how a Bitcoin holder converts their QBTC entitlement into spendable QBTC. Everything described here is implemented in `x/qbtc` in the chain code.
 

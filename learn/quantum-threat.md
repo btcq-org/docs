@@ -1,4 +1,7 @@
-# The Quantum Threat to Bitcoin
+---
+title: "The Quantum Threat to Bitcoin"
+description: "Why Bitcoin's ECDSA signatures will fall to quantum computers, which categories of BTC are at risk first, and the published evidence behind the 2029-2035 CRQC window."
+---
 
 > Quantum is coming.
 >
@@ -10,7 +13,7 @@
 >
 > And it must still be Bitcoin.
 
-**Roughly 1.7 million Bitcoin sits in Satoshi-era P2PK outputs that can be stolen the moment a sufficiently large quantum computer exists.** Several million more sit in reused addresses where the public key has been revealed by prior spending. Every actively-spent address is also exposed during the brief window when a transaction is broadcast. Per-script-type breakdown: **[explorer.qbtc.net](https://explorer.qbtc.net)**.
+**Roughly 1.7 million Bitcoin sits in Satoshi-era P2PK outputs that can be stolen the moment a sufficiently large quantum computer exists.** Several million more sit in reused addresses where the public key has been revealed by prior spending. Every actively-spent address is also exposed during the brief window when a transaction is broadcast. Per-script-type breakdown: **[indexer.qbtc.net](https://indexer.qbtc.net)**.
 
 Bitcoin needs to migrate before quantum computers reach that scale. The cryptography community, NIST, and a growing number of standards bodies broadly agree that this window arrives within the next decade. QBTC exists so Bitcoin holders have somewhere to migrate to, on their own schedule, before the window closes.
 
@@ -61,7 +64,7 @@ Approximate measurements of permanently-exposed-key BTC, by category:
 * **~4.9 million BTC** conservative total (P2PK + reused P2PKH + reused P2WPKH).
 * **~7 million BTC** broad total including all reused P2SH and P2WSH addresses.
 
-Per-script-type breakdown and current numbers: **[explorer.qbtc.net](https://explorer.qbtc.net)**.
+Per-script-type breakdown and current numbers: **[indexer.qbtc.net](https://indexer.qbtc.net)**.
 
 In addition, **effectively all actively-spent BTC** is exposed during the mempool window of each transaction, because the spending transaction broadcasts the public key.
 

@@ -1,4 +1,7 @@
-# Research
+---
+title: "Research"
+description: "QBTC research material: formal protocol specification, tokenomics, security model, and quantum risk assessment for cryptographers and institutional analysts."
+---
 
 Formal specification and analysis material for cryptographers, researchers, institutions, and anyone evaluating QBTC at depth.
 

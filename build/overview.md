@@ -1,4 +1,7 @@
-# Build
+---
+title: "Build"
+description: "Build with QBTC: architecture, post-quantum cryptography (ML-DSA), consensus, claim mechanism, node operation, and API reference."
+---
 
 Documentation for developers, integrators, and node operators. If you want to understand QBTC at a conceptual level first, see the [Learn](../learn/what-is-qbtc.md) section.
 

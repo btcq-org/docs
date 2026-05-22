@@ -1,0 +1,82 @@
+/*
+  QBTC docs — editorial polish over Mintlify mint theme.
+  Design tokens mirror sites/landing/web/tailwind.config.ts.
+  Parchment (#F5F1E8) / Navy (#0B1220) / Ink (#1A1A1A) / Bone (#E8E6E0) / Bitcoin orange (#F7931A).
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --qbtc-parchment: #F5F1E8;
+  --qbtc-parchment-50: #FBF9F3;
+  --qbtc-parchment-200: #EDE7D6;
+  --qbtc-navy: #0B1220;
+  --qbtc-navy-50: #1A2438;
+  --qbtc-ink: #1A1A1A;
+  --qbtc-ink-muted: #4A4A4A;
+  --qbtc-ink-faint: #6A6A6A;
+  --qbtc-ink-rule: #D4CFC0;
+  --qbtc-bone: #E8E6E0;
+  --qbtc-bone-muted: #B4B1A6;
+  --qbtc-bitcoin: #F7931A;
+  --qbtc-bitcoin-bright: #FFA533;
+  --qbtc-bitcoin-deep: #B6660A;
+  --qbtc-serif: 'Instrument Serif', Charter, Georgia, serif;
+  --qbtc-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Editorial display serif for h1 and hero headings */
+h1 {
+  font-family: var(--qbtc-serif);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+/* h2/h3 stay in the body sans (Inter) for scan-ability */
+h2,
+h3 {
+  letter-spacing: -0.01em;
+}
+
+/* Monospace tightens up — JetBrains Mono replaces default code font */
+code,
+pre,
+kbd {
+  font-family: var(--qbtc-mono);
+}
+
+/* Ornamental rule under page titles (matches landing site editorial polish) */
+.eyebrow {
+  font-family: var(--qbtc-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--qbtc-ink-faint);
+}
+
+html.dark .eyebrow {
+  color: var(--qbtc-bone-muted);
+}
+
+/* Bitcoin-orange link accent — replaces default link blue without yelling */
+a:not(.no-underline):not([class*="button"]) {
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+
+/* Callout polish — Mintlify's defaults are fine but we tighten contrast on parchment */
+html:not(.dark) .callout-info,
+html:not(.dark) .callout-note {
+  background-color: var(--qbtc-parchment-50);
+  border-color: var(--qbtc-ink-rule);
+}
+
+/* Tab-router cards on landing get a hairline border that matches the editorial look */
+.tabs-cards [role="tabpanel"] {
+  border-color: var(--qbtc-ink-rule);
+}
+
+html.dark .tabs-cards [role="tabpanel"] {
+  border-color: var(--qbtc-navy-50);
+}

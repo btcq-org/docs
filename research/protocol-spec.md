@@ -1,4 +1,7 @@
-# Protocol Specification
+---
+title: "Protocol Specification"
+description: "Canonical specification of the QBTC chain: state, ingestion, claim verification, taint propagation, emission, and governance."
+---
 
 Canonical specification of the QBTC chain code. Source of truth for implementers, auditors, and researchers.
 

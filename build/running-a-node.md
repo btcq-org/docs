@@ -1,8 +1,11 @@
-# Running a Node
+---
+title: "Running a Node"
+description: "Running a QBTC validator or full node. (Detailed operator documentation publishes as testnet stabilizes.)"
+---
 
-{% hint style="info" %}
+<Info>
 **Coming soon.** Detailed node-operator documentation will be published as testnet stabilizes.
-{% endhint %}
+</Info>
 
 ## What you'll need (high level)
 

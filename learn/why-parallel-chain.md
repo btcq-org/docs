@@ -1,4 +1,7 @@
-# Why a Parallel Chain
+---
+title: "Why a Parallel Chain"
+description: "Soft fork, hard fork, bridge, wrapped asset, or parallel chain — five paths to quantum-safe Bitcoin, and why QBTC takes the parallel-chain route."
+---
 
 Bitcoin faces an inevitable challenge: the arrival of quantum computers capable of breaking its ECDSA signatures. The only paths to survival are a protocol upgrade or a migration. Both are hard. Each existing option fails on at least one critical axis.
 
@@ -18,7 +21,7 @@ A soft fork is the more likely path for the Bitcoin community, embedding post-qu
 
 * **Bitcoin's block space was not sized for PQ signatures.** ML-DSA-65 signatures are about 3.3 KB versus 70 bytes for ECDSA. Adding them to Bitcoin means roughly a 47× expansion of signature data inside a block-space budget that has been politically immovable for a decade. QBTC, by contrast, was built for ML-DSA from genesis; the chain's bandwidth, storage, and fee market were sized for PQ signatures from day one rather than retrofitted into a constrained format.
 * **Activation takes years Bitcoin may not have.** BIP discussion, soft-fork signaling, miner activation, and user migration each compound. Realistic timelines run 5 to 10 years, on a clock set by a CRQC arrival window that published assessments place between 2029 and 2035. QBTC ships its post-quantum migration on its own schedule, ahead of CRQC, without needing Bitcoin's social consensus to move first.
-* **The largest pool of at-risk BTC is structurally unfixable by soft fork.** Satoshi-era P2PK balances (~1.7M BTC that has never moved) and reused-address coins with on-chain public keys cannot defend themselves under any soft-fork scheme: there is no signer to migrate them. They remain spendable by whoever runs Shor's algorithm first. QBTC's governance reclamation is the only mechanism in the design space that addresses this category, by removing that value from the quantum attacker's reach *on a separate ledger* rather than touching the coins on Bitcoin. Per-category breakdown: [explorer.qbtc.net](https://explorer.qbtc.net).
+* **The largest pool of at-risk BTC is structurally unfixable by soft fork.** Satoshi-era P2PK balances (~1.7M BTC that has never moved) and reused-address coins with on-chain public keys cannot defend themselves under any soft-fork scheme: there is no signer to migrate them. They remain spendable by whoever runs Shor's algorithm first. QBTC's governance reclamation is the only mechanism in the design space that addresses this category, by removing that value from the quantum attacker's reach *on a separate ledger* rather than touching the coins on Bitcoin. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
 * **Consensus fractures.** A soft fork that quietly leaves dormant coins exposed will not satisfy the holders who want them protected; a soft fork that touches them will not pass. Either outcome fractures Bitcoin's social consensus. QBTC sidesteps the dilemma: Bitcoin's rules are unchanged, and the protection happens elsewhere for holders who opt in.
 
 A soft fork buys safety for active users *eventually*, does nothing for the largest pool of at-risk coins, and may not arrive in time. The fact that an active BTC holder must also take an action to claim QBTC is not a comparable cost: a QBTC claim is opt-in and does not require Bitcoin's protocol to change. A soft fork migration is opt-in only in the trivial sense that you can choose to leave your coins behind on a chain that has become unsafe for them.
@@ -56,15 +59,15 @@ QBTC executes the **Hard Fork now**, before quantum computers reach scale, on a 
 
 This design has properties the alternatives do not:
 
-| Property | Soft fork | Hard fork | Bridge | Wrapped | **QBTC** |
+| Property | **QBTC** | Soft fork | Hard fork | Bridge | Wrapped |
 |---|---|---|---|---|---|
-| Does not touch Bitcoin | Yes | No | Yes | Yes | **Yes** |
-| Allocates to every BTC UTXO | No | Yes | No | No | **Yes** |
-| Protects dormant exposed-key coins | No | Maybe | No | No | **Yes (reclaim)** |
-| Migration is itself quantum-safe | Partial | Yes | No (ECDSA bridge keys) | No | **Yes (ZK proof)** |
-| No custodian, no peg | Yes | Yes | No | No | **Yes** |
-| Holder controls timing | Yes | No | Yes | Yes | **Yes** |
-| Available before CRQC arrives | No (too slow) | No | Yes | Yes | **Yes** |
+| Does not touch Bitcoin | **Yes** | Yes | No | Yes | Yes |
+| Allocates to every BTC UTXO | **Yes** | No | Yes | No | No |
+| Protects dormant exposed-key coins | **Yes (reclaim)** | No | Maybe | No | No |
+| Migration is itself quantum-safe | **Yes (ZK proof)** | Partial | Yes | No (ECDSA bridge keys) | No |
+| No custodian, no peg | **Yes** | Yes | Yes | No | No |
+| Holder controls timing | **Yes** | Yes | No | Yes | Yes |
+| Available before CRQC arrives | **Yes** | No (too slow) | No | Yes | Yes |
 
 ## The trade-off
 

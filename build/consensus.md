@@ -1,4 +1,7 @@
-# Consensus & Validators
+---
+title: "Consensus & Validators"
+description: "QBTC consensus runs on CometBFT with ML-DSA signatures replacing Ed25519. Staking, distribution, and governance are standard Cosmos modules."
+---
 
 QBTC consensus is **CometBFT, forked** to use ML-DSA signatures instead of Ed25519. The economic layer is standard Cosmos `x/staking` and `x/distribution`. The only QBTC-specific consensus addition is the `ebifrost` module's handling of attested Bitcoin block ingestion.
 

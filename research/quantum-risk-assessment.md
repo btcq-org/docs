@@ -1,8 +1,11 @@
-# Quantum Risk Assessment
+---
+title: "Quantum Risk Assessment"
+description: "When cryptographically-relevant quantum computers arrive: 2029-2035 published convergence, implications for dormant exposed-key BTC, and the migration window."
+---
 
-{% hint style="info" %}
+<Info>
 **Coming soon.** A published expert-panel assessment will be hosted here.
-{% endhint %}
+</Info>
 
 ## Summary of published findings
 

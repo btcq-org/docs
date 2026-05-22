@@ -1,4 +1,7 @@
-# Architecture
+---
+title: "Architecture"
+description: "QBTC architecture: Cosmos SDK chain with forked ML-DSA CometBFT consensus, bifrost sidecars relaying Bitcoin blocks, and an on-chain UTXO mirror."
+---
 
 QBTC is a Cosmos SDK application chain that runs on a forked CometBFT consensus engine using post-quantum signatures. It maintains a mirror of the Bitcoin UTXO set inside its own state and accepts zero-knowledge proofs of BTC ownership as claims against that mirror.
 

@@ -1,52 +1,30 @@
----
-description: Quantum-safe Bitcoin. Claimable by every BTC holder, secured against the coming quantum threat.
----
+# QBTC Documentation
 
-# Welcome to QBTC
+Source for [docs.qbtc.net](https://docs.qbtc.net) — the QBTC project documentation.
 
-**If you own Bitcoin today, you'll be able to claim an equal amount of QBTC — a new coin built to survive quantum computers that could otherwise steal Bitcoin.**
+QBTC is the first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by ZK proof. The chain runs on ML-DSA (NIST FIPS 204) at consensus. Pre-mainnet, targeting Q3 2026.
 
-Bitcoin's signatures will eventually fall to quantum computers. QBTC is the safe harbor: a new chain that runs on quantum-resistant cryptography from day one and already knows your Bitcoin balance. You move on your own schedule. Your Bitcoin stays on Bitcoin.
+## Stack
 
-{% hint style="warning" %}
-**Pre-mainnet. Targeting Q3 2026.** The protocol is in active development. See the [Roadmap](learn/roadmap.md).
-{% endhint %}
+Built with [Mintlify](https://mintlify.com). Config lives in `docs.json`. Pages are MDX (`index.mdx`) or Markdown (`learn/`, `build/`, `research/`, `resources/`).
 
-## Choose your path
+## Local preview
 
-{% tabs %}
-{% tab title="BTC holder" %}
-**Start with [Learn](learn/what-is-qbtc.md).**
+```bash
+npm i -g mint
+mint dev
+```
 
-Plain-English explanations of what QBTC is, why the quantum threat matters, and what your claim will look like.
+Then open http://localhost:3000.
 
-[What is QBTC?](learn/what-is-qbtc.md) → [The Quantum Threat](learn/quantum-threat.md) → [For BTC Holders](learn/for-btc-holders.md)
-{% endtab %}
+## Contributing
 
-{% tab title="Developer" %}
-**Start with [Build](build/README.md).**
+Edit any `.md` / `.mdx` file directly. Pull requests deploy preview URLs automatically through the Mintlify GitHub App.
 
-Architecture, consensus, claim mechanism, APIs, and how to run a node.
+## Other QBTC resources
 
-[Architecture](build/architecture.md) → [Quantum Resistance](build/quantum-resistance.md) → [Claim Mechanism](build/claim-mechanism.md)
-{% endtab %}
-
-{% tab title="Researcher / Institution" %}
-**Start with [Research](research/README.md).**
-
-The formal protocol specification, the quantum risk assessment, the security model, and the tokenomics.
-
-[Protocol Specification](research/protocol-spec.md) → [Quantum Risk Assessment](research/quantum-risk-assessment.md) → [Security Model](research/security-model.md)
-{% endtab %}
-{% endtabs %}
-
-## The core idea, briefly
-
-Quantum computers will eventually break the math that protects Bitcoin addresses. Every Bitcoin address whose public key has ever been revealed (which includes every address that has ever spent) becomes vulnerable that day.
-
-QBTC is a separate chain built on quantum-resistant cryptography (a NIST-standardized scheme called ML-DSA). The chain keeps a continuous mirror of who owns what on Bitcoin. To move your balance over, you prove you own your Bitcoin address using a zero-knowledge proof, a cryptographic technique that confirms ownership without revealing your public key. The migration itself is therefore safe from quantum attack.
-
-Nothing happens to your Bitcoin. No bridge, no peg, no locked coins, no custodian.
-
-> **The same Bitcoin. Ready for what's coming.**
-
+- Project site: [qbtc.net](https://qbtc.net)
+- Block explorer: [explorer.qbtc.net](https://explorer.qbtc.net)
+- Risk indexer: [indexer.qbtc.net](https://indexer.qbtc.net)
+- Org: [github.com/btcq-org](https://github.com/btcq-org)
+- Twitter/X: [@qbtcnet](https://x.com/qbtcnet)

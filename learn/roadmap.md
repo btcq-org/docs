@@ -1,4 +1,7 @@
-# Roadmap
+---
+title: "Roadmap"
+description: "QBTC is pre-mainnet, targeting Q3 2026. Component-level status table: what is built in chain code, and what activates via governance after mainnet."
+---
 
 QBTC is pre-mainnet. The protocol substrate (post-quantum consensus, ZK-gated claims, the UTXO mirror) is implemented and undergoing testing.
 

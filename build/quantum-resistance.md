@@ -1,4 +1,7 @@
-# Quantum Resistance (ML-DSA)
+---
+title: "Quantum Resistance (ML-DSA)"
+description: "QBTC's two-layer post-quantum design: ML-DSA (NIST FIPS 204) at consensus, and PLONK zero-knowledge proofs at the claim layer."
+---
 
 QBTC achieves quantum resistance through two independent mechanisms operating on different layers of the chain.
 

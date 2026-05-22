@@ -1,4 +1,7 @@
-# Whitepaper
+---
+title: "Whitepaper"
+description: "The original QBTC whitepaper as a historical design document. The canonical chain reference now lives in the Protocol Specification."
+---
 
 The original QBTC whitepaper is the historical design document for the project.
 
@@ -9,6 +12,6 @@ For the current state of the chain, the canonical references are:
 
 These supersede the whitepaper for the purpose of evaluating what the QBTC chain does today.
 
-{% hint style="info" %}
+<Info>
 **Coming soon.** PDF mirror of the whitepaper.
-{% endhint %}
+</Info>

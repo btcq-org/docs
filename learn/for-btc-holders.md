@@ -1,12 +1,15 @@
-# For BTC Holders
+---
+title: "For BTC Holders"
+description: "What Bitcoin holders need to know about claiming QBTC: 1 BTC = 1 QBTC, no time limit, no fees, no signup, and a quantum-safe wallet flow that never broadcasts your public key."
+---
 
-{% hint style="success" %}
+<Check>
 **1 BTC held = 1 QBTC claimable.** No signup. No time limit. No fees to the project.
-{% endhint %}
+</Check>
 
-{% hint style="info" %}
+<Info>
 **Pre-mainnet, targeting Q3 2026.** The claim flow described here goes live when QBTC mainnet ships. You do not need to take any action right now. Your BTC is yours. Your QBTC claim will be waiting.
-{% endhint %}
+</Info>
 
 ## The short version
 
