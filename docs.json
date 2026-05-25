@@ -218,8 +218,5 @@
   },
   "contextual": {
     "options": ["copy", "view", "chatgpt", "claude"]
-  },
-  "redirects": [
-    { "source": "/", "destination": "/index" }
-  ]
+  }
 }
