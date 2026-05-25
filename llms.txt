@@ -1,0 +1,61 @@
+# QBTC
+
+> QBTC is the first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by zero-knowledge proof, with consensus secured by NIST FIPS 204 (ML-DSA) signatures from genesis. **Pre-mainnet, targeting Q3 2026.**
+
+Bitcoin's ECDSA signatures will fall to quantum computers within an arrival window published research converges on at 2029–2035. QBTC is the safe harbor: a separate chain on quantum-resistant cryptography that already knows your Bitcoin balance. Holders move on their own schedule. Bitcoin is never touched — no bridge, no peg, no custodian.
+
+The chain is built on Cosmos SDK with a forked CometBFT consensus engine that signs with ML-DSA instead of Ed25519. Claims are gated by PLONK zero-knowledge proofs that verify BTC ownership without revealing the public key. The chain continuously mirrors Bitcoin's UTXO set so the current holder of any BTC UTXO controls the corresponding QBTC entitlement.
+
+Total supply is hard-capped at 21M QBTC. No premine, no investor allocation, no team unlock. Validator emission is funded by governance reclamation of dormant exposed-key BTC UTXOs (older than 17 years), converting value that would otherwise be captured by quantum attackers into a sustainable validator subsidy.
+
+## Start here
+
+- [Welcome to QBTC](https://docs.qbtc.net/index): Hero introduction and persona-router for BTC holders, developers, and researchers.
+- [What is QBTC?](https://docs.qbtc.net/learn/what-is-qbtc): Plain-English explanation of QBTC, why it exists, and how the claim works.
+- [The Quantum Threat to Bitcoin](https://docs.qbtc.net/learn/quantum-threat): Why Bitcoin's signatures will fall to quantum computers, which BTC categories are at risk first, and the published evidence behind the 2029–2035 CRQC window.
+- [Why a Parallel Chain](https://docs.qbtc.net/learn/why-parallel-chain): Soft fork, hard fork, bridge, wrapped, or parallel chain — five paths to quantum-safe Bitcoin, and why QBTC takes the parallel-chain route.
+
+## For BTC holders
+
+- [For BTC Holders](https://docs.qbtc.net/learn/for-btc-holders): What holders need to know about claiming: 1 BTC = 1 QBTC, no time limit, no fees, no signup, and a quantum-safe wallet flow that never broadcasts your public key.
+- [Fair Launch Principles](https://docs.qbtc.net/learn/fair-launch): No pre-sale, no investor allocation, no team premine. Entitlement is determined entirely by the Bitcoin UTXO set.
+- [Roadmap](https://docs.qbtc.net/learn/roadmap): Component-level status. What's built in chain code today; what activates via governance after mainnet.
+- [FAQ](https://docs.qbtc.net/learn/faq): Common questions: how to claim, what happens to dormant BTC, where do validator rewards come from, how QBTC differs from a bridge.
+
+## For developers
+
+- [Build overview](https://docs.qbtc.net/build/overview): Index of architecture, cryptography, consensus, claim mechanism, node operation, and API reference.
+- [Architecture](https://docs.qbtc.net/build/architecture): Cosmos SDK chain with forked ML-DSA CometBFT consensus, bifrost sidecars relaying Bitcoin blocks, and an on-chain UTXO mirror in the `x/qbtc` module.
+- [Quantum Resistance (ML-DSA)](https://docs.qbtc.net/build/quantum-resistance): Two-layer post-quantum design: ML-DSA-65 (FIPS 204) at consensus, and PLONK zero-knowledge proofs at the claim layer.
+- [Consensus & Validators](https://docs.qbtc.net/build/consensus): CometBFT forked to use ML-DSA signatures instead of Ed25519. Staking, distribution, and governance are standard Cosmos modules.
+- [Claim Mechanism](https://docs.qbtc.net/build/claim-mechanism): How a BTC holder converts entitlement into spendable QBTC: `MsgClaimWithProof`, batch claims up to 50 UTXOs, taint propagation rules.
+- [Running a Node](https://docs.qbtc.net/build/running-a-node): Validator and full-node setup. Detailed operator documentation publishes as testnet stabilizes.
+- [API Reference](https://docs.qbtc.net/build/api-reference): Chain RPC, custom `x/qbtc` queries, block explorer, and risk indexer surfaces.
+
+## For researchers and institutions
+
+- [Research overview](https://docs.qbtc.net/research/overview): Index of the formal specification, tokenomics, security model, and quantum risk assessment.
+- [Protocol Specification](https://docs.qbtc.net/research/protocol-spec): Canonical chain specification: state, ingestion, claim verification, taint propagation, emission, and governance.
+- [Tokenomics](https://docs.qbtc.net/research/tokenomics): 21M supply cap, no premine. Governance reclamation of dormant exposed-key BTC funds the Reserve Module. 90% / 5% / 5% split (Reserve / Dev Fund / Ecosystem Fund).
+- [Security Model](https://docs.qbtc.net/research/security-model): Three independent security foundations: post-quantum consensus, ZK claim proofs, Bitcoin's UTXO state. Trust boundaries and failure modes.
+- [Quantum Risk Assessment](https://docs.qbtc.net/research/quantum-risk-assessment): Published convergence on CRQC arrival in 2029–2035. Implications for dormant exposed-key BTC.
+
+## Reference
+
+- [Glossary](https://docs.qbtc.net/resources/glossary): Defined terms — bifrost, ebifrost, CometBFT, claim mirror, EntitledAmount, ML-DSA, PLONK, P2PK, Reserve Module, Hash160, Shor's algorithm, Explorer, Indexer, Seedless wallet.
+- [Whitepaper](https://docs.qbtc.net/resources/whitepaper): The original QBTC whitepaper as a historical design document. The canonical chain reference is now the Protocol Specification.
+- [Brand Assets](https://docs.qbtc.net/resources/brand-assets): QBTC's logo, wordmark, colors, and typography.
+
+## External resources
+
+- [Project website](https://qbtc.net)
+- [Block explorer](https://explorer.qbtc.net)
+- [Risk indexer (per-script-type quantum-vulnerable BTC breakdown)](https://indexer.qbtc.net)
+- [GitHub organization](https://github.com/btcq-org)
+- [X / Twitter](https://x.com/qbtc_net)
+
+## Status
+
+- Mainnet target: **Q3 2026** (no premine; no investor allocation; no team unlock).
+- Wallet partner: an established multi-chain, seedless self-custody wallet partner is implementing native ML-DSA signing and QBTC claim-proof generation. Partner will be named ahead of launch.
+- Audits: in progress; reports will be linked from the Security Model page when they complete.
