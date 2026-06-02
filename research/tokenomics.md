@@ -1,6 +1,6 @@
 ---
 title: "Tokenomics"
-description: "QBTC's economic design: 21M supply cap, no premine, governance reclamation of dormant exposed-key BTC into the Reserve Module funding validator emission."
+description: "QBTC's economic design: 21M supply cap, no pre-sale, governance reclamation of dormant exposed-key BTC into the Reserve Module funding validator emission."
 ---
 
 QBTC's economic design rests on three invariants:

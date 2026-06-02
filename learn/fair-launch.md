@@ -1,6 +1,6 @@
 ---
 title: "Fair Launch Principles"
-description: "QBTC has no pre-sale, no investor allocation, no team premine. Every QBTC entitlement belongs to people who already hold Bitcoin."
+description: "QBTC has no pre-sale, no investor allocation, no advisor allocation. Every QBTC entitlement belongs to people who already hold Bitcoin."
 ---
 
 QBTC launches on terms that mirror Bitcoin's own. No pre-sale. No investor allocation. No team premine. The entire claimable supply belongs to people who already hold Bitcoin. There is no genesis allocation to anyone.

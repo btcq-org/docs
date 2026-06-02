@@ -91,6 +91,10 @@ See [The Quantum Threat to Bitcoin](quantum-threat.md) for the full picture.
 
 It can in principle, via a soft fork. But: (1) post-quantum signatures are much larger than ECDSA, (2) every user has to migrate to new addresses, (3) dormant Satoshi-era P2PK coins cannot be defended this way, (4) timelines are years and may not arrive in time. See [Why a Parallel Chain](why-parallel-chain.md).
 
+### Will QBTC become redundant if Bitcoin ships a post-quantum upgrade?
+
+No. QBTC and a Bitcoin soft fork (such as BIP-360) solve different problems and can coexist indefinitely. The soft fork, if and when Bitcoin Core ships it, gives holders a new post-quantum output type they can voluntarily migrate to. QBTC is a live post-quantum chain available today, with a zero-knowledge migration path that never broadcasts your public key, and a governance mechanism for the dormant-coin problem that no soft fork can address (the holders aren't there to migrate). The two paths do not become redundant when the soft fork ships — claim QBTC now, hold BTC on Bitcoin, migrate through the soft fork later. Both options stay open.
+
 ### What about a Bitcoin hard fork?
 
 Bitcoin's social consensus does not accept hard forks that change rules affecting existing holders' coins. A hard fork to re-allocate dormant Satoshi-era UTXOs would be the most contentious change in Bitcoin's history. QBTC performs the equivalent migration on a separate chain so Bitcoin's consensus is never touched.
@@ -103,7 +107,7 @@ Bitcoin's social consensus does not accept hard forks that change rules affectin
 
 ### Is there a team allocation?
 
-No. No team premine, no investor allocation, no advisor allocation. The entire claimable supply belongs to existing Bitcoin holders. See [Fair Launch Principles](fair-launch.md).
+No pre-sale, no investor allocation, no advisor allocation. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Ongoing development and ecosystem work is funded by a 5% Development Fund + 5% Ecosystem Fund — these are on-chain accounts that receive QBTC only when governance proposals to reclaim dormant exposed-key BTC pass, and every spend from them requires a separate `x/gov` vote. Nothing is allocated at genesis. See [Fair Launch Principles](fair-launch.md) for the full disclosure.
 
 ### Where do validator rewards come from?
 

@@ -6,7 +6,7 @@ Bitcoin's ECDSA signatures will fall to quantum computers within an arrival wind
 
 The chain is built on Cosmos SDK with a forked CometBFT consensus engine that signs with ML-DSA instead of Ed25519. Claims are gated by PLONK zero-knowledge proofs that verify BTC ownership without revealing the public key. The chain continuously mirrors Bitcoin's UTXO set so the current holder of any BTC UTXO controls the corresponding QBTC entitlement.
 
-Total supply is hard-capped at 21M QBTC. No premine, no investor allocation, no team unlock. Validator emission is funded by governance reclamation of dormant exposed-key BTC UTXOs (older than 17 years), converting value that would otherwise be captured by quantum attackers into a sustainable validator subsidy.
+Total supply is hard-capped at 21M QBTC. No pre-sale, no investor allocation, no advisor allocation; nothing is allocated at genesis. Validator emission is funded by governance reclamation of dormant exposed-key BTC UTXOs (older than 17 years), with each successful proposal also funding a 5% Development Fund and 5% Ecosystem Fund (on-chain accounts gated by per-spend governance votes). This converts value that would otherwise be captured by quantum attackers into a sustainable validator subsidy plus transparent project funding.
 
 ## Start here
 
@@ -18,7 +18,7 @@ Total supply is hard-capped at 21M QBTC. No premine, no investor allocation, no 
 ## For BTC holders
 
 - [For BTC Holders](https://docs.qbtc.net/learn/for-btc-holders): What holders need to know about claiming: 1 BTC = 1 QBTC, no time limit, no fees, no signup, and a quantum-safe wallet flow that never broadcasts your public key.
-- [Fair Launch Principles](https://docs.qbtc.net/learn/fair-launch): No pre-sale, no investor allocation, no team premine. Entitlement is determined entirely by the Bitcoin UTXO set.
+- [Fair Launch Principles](https://docs.qbtc.net/learn/fair-launch): No pre-sale, no investor allocation, no advisor allocation. Entitlement is determined entirely by the Bitcoin UTXO set. Includes the full disclosure of the governance-funded Dev / Ecosystem split.
 - [Roadmap](https://docs.qbtc.net/learn/roadmap): Component-level status. What's built in chain code today; what activates via governance after mainnet.
 - [FAQ](https://docs.qbtc.net/learn/faq): Common questions: how to claim, what happens to dormant BTC, where do validator rewards come from, how QBTC differs from a bridge.
 
@@ -36,7 +36,7 @@ Total supply is hard-capped at 21M QBTC. No premine, no investor allocation, no 
 
 - [Research overview](https://docs.qbtc.net/research/overview): Index of the formal specification, tokenomics, security model, and quantum risk assessment.
 - [Protocol Specification](https://docs.qbtc.net/research/protocol-spec): Canonical chain specification: state, ingestion, claim verification, taint propagation, emission, and governance.
-- [Tokenomics](https://docs.qbtc.net/research/tokenomics): 21M supply cap, no premine. Governance reclamation of dormant exposed-key BTC funds the Reserve Module. 90% / 5% / 5% split (Reserve / Dev Fund / Ecosystem Fund).
+- [Tokenomics](https://docs.qbtc.net/research/tokenomics): 21M supply cap, no pre-sale. Governance reclamation of dormant exposed-key BTC funds the Reserve Module. 90% / 5% / 5% split (Reserve / Dev Fund / Ecosystem Fund).
 - [Security Model](https://docs.qbtc.net/research/security-model): Three independent security foundations: post-quantum consensus, ZK claim proofs, Bitcoin's UTXO state. Trust boundaries and failure modes.
 - [Quantum Risk Assessment](https://docs.qbtc.net/research/quantum-risk-assessment): Published convergence on CRQC arrival in 2029–2035. Implications for dormant exposed-key BTC.
 
@@ -56,6 +56,6 @@ Total supply is hard-capped at 21M QBTC. No premine, no investor allocation, no 
 
 ## Status
 
-- Mainnet target: **Q3 2026** (no premine; no investor allocation; no team unlock).
+- Mainnet target: **Q3 2026** (no pre-sale; no investor allocation; no genesis allocation; Dev / Ecosystem funds populated only via governance proposals after mainnet).
 - Wallet partner: an established multi-chain, seedless self-custody wallet partner is implementing native ML-DSA signing and QBTC claim-proof generation. Partner will be named ahead of launch.
 - Audits: in progress; reports will be linked from the Security Model page when they complete.
