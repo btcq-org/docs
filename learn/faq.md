@@ -9,11 +9,11 @@ Common questions, answered briefly. For longer explanations, follow the links.
 
 ### What is QBTC?
 
-A quantum-resistant blockchain that mirrors Bitcoin's UTXO set. Every Bitcoin holder has a 1:1 claim of QBTC, exercisable by proving ownership of their Bitcoin address using a zero-knowledge proof. See [What is QBTC?](what-is-qbtc.md).
+A quantum-resistant blockchain that mirrors Bitcoin's UTXO set. Every Bitcoin holder has a 1:1 claim of QBTC, exercisable by proving ownership of their Bitcoin address using a zero-knowledge proof. See [What is QBTC?](/learn/what-is-qbtc).
 
 ### Is QBTC a Bitcoin fork?
 
-No. Bitcoin's chain is not touched. QBTC is a separate chain with its own genesis block, its own validator set, its own history. See [Why a Parallel Chain](why-parallel-chain.md).
+No. Bitcoin's chain is not touched. QBTC is a separate chain with its own genesis block, its own validator set, its own history. See [Why a Parallel Chain](/learn/why-parallel-chain).
 
 ### Is this a bridge?
 
@@ -57,7 +57,7 @@ No, with one caveat. Most holders can claim whenever they want, or never. The ex
 
 ### How do I claim?
 
-When mainnet is live, you'll use a quantum-safe wallet to generate a zero-knowledge proof of ownership of your Bitcoin address, then submit it to QBTC. An established multi-chain, seedless self-custody wallet partner is implementing native post-quantum signing (ML-DSA) and QBTC claim-proof generation for rollout at mainnet, and will be named ahead of launch. See [For BTC Holders](for-btc-holders.md).
+When mainnet is live, you'll use a quantum-safe wallet to generate a zero-knowledge proof of ownership of your Bitcoin address, then submit it to QBTC. An established multi-chain, seedless self-custody wallet partner is implementing native post-quantum signing (ML-DSA) and QBTC claim-proof generation for rollout at mainnet, and will be named ahead of launch. See [For BTC Holders](/learn/for-btc-holders).
 
 ### What if I've already moved my BTC?
 
@@ -85,11 +85,11 @@ NIST standardized post-quantum signatures (FIPS 204 / ML-DSA) and is migrating f
 
 Then in March 2026, a [Google Quantum AI paper](https://arxiv.org/abs/2603.28846) cut the qubit count needed to break Bitcoin's curve from ~7 million to under 500 thousand, with runtime in minutes. Google's own internal target for post-quantum readiness is **2029**, [reported by Bloomberg](https://www.bloomberg.com/news/articles/2026-03-31/google-paper-warns-crypto-on-quantum-risk-ahead-of-2029-timeline) and [CoinDesk](https://www.coindesk.com/tech/2026/03/31/bitcoin-bulls-scramble-for-post-quantum-protection-as-google-drops-bombshell-paper).
 
-See [The Quantum Threat to Bitcoin](quantum-threat.md) for the full picture.
+See [The Quantum Threat to Bitcoin](/learn/quantum-threat) for the full picture.
 
 ### Why can't Bitcoin just upgrade itself?
 
-It can in principle, via a soft fork. But: (1) post-quantum signatures are much larger than ECDSA, (2) every user has to migrate to new addresses, (3) dormant Satoshi-era P2PK coins cannot be defended this way, (4) timelines are years and may not arrive in time. See [Why a Parallel Chain](why-parallel-chain.md).
+It can in principle, via a soft fork. But: (1) post-quantum signatures are much larger than ECDSA, (2) every user has to migrate to new addresses, (3) dormant Satoshi-era P2PK coins cannot be defended this way, (4) timelines are years and may not arrive in time. See [Why a Parallel Chain](/learn/why-parallel-chain).
 
 ### Will QBTC become redundant if Bitcoin ships a post-quantum upgrade?
 
@@ -107,11 +107,11 @@ Bitcoin's social consensus does not accept hard forks that change rules affectin
 
 ### Is there a team allocation?
 
-No pre-sale, no investor allocation, no advisor allocation. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Ongoing development and ecosystem work is funded by a 5% Development Fund + 5% Ecosystem Fund — these are on-chain accounts that receive QBTC only when governance proposals to reclaim dormant exposed-key BTC pass, and every spend from them requires a separate `x/gov` vote. Nothing is allocated at genesis. See [Fair Launch Principles](fair-launch.md) for the full disclosure.
+No pre-sale, no investor allocation, no advisor allocation. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Ongoing development and ecosystem work is funded by a 5% Development Fund + 5% Ecosystem Fund — these are on-chain accounts that receive QBTC only when governance proposals to reclaim dormant exposed-key BTC pass, and every spend from them requires a separate `x/gov` vote. Nothing is allocated at genesis. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
 
 ### Where do validator rewards come from?
 
-From the **Reserve Module**, a module account on the chain. The Reserve is funded only when governance passes proposals to reclaim dormant exposed-key Bitcoin UTXOs (P2PK outputs and reused-address outputs older than 17 years). Each successful proposal mints QBTC into the Reserve equal to the reclaimed BTC value. Each block, a fraction of the Reserve's balance is released to validators via standard Cosmos `x/distribution`. See [Tokenomics](../research/tokenomics.md).
+From the **Reserve Module**, a module account on the chain. The Reserve is funded only when governance passes proposals to reclaim dormant exposed-key Bitcoin UTXOs (P2PK outputs and reused-address outputs older than 17 years). Each successful proposal mints QBTC into the Reserve equal to the reclaimed BTC value. Each block, a fraction of the Reserve's balance is released to validators via standard Cosmos `x/distribution`. See [Tokenomics](/research/tokenomics).
 
 ### Was there an ICO?
 
@@ -137,13 +137,13 @@ The QBTC block explorer is at [explorer.qbtc.net](https://explorer.qbtc.net). Fo
 
 ### Are there audits?
 
-The most security-critical components (the ML-DSA integration, the PLONK verifier, the chain code) will receive multiple independent audits before mainnet. Reports will be linked from the [Security Model](../research/security-model.md) page when they complete.
+The most security-critical components (the ML-DSA integration, the PLONK verifier, the chain code) will receive multiple independent audits before mainnet. Reports will be linked from the [Security Model](/research/security-model) page when they complete.
 
 ## Status
 
 ### Is QBTC live?
 
-No. QBTC is pre-mainnet. The protocol is in active development. See [Roadmap](roadmap.md).
+No. QBTC is pre-mainnet. The protocol is in active development. See [Roadmap](/learn/roadmap).
 
 ### When does mainnet ship?
 
@@ -151,4 +151,4 @@ No. QBTC is pre-mainnet. The protocol is in active development. See [Roadmap](ro
 
 ### What's actually in the code today vs. just specified?
 
-See the [Roadmap](roadmap.md) status table. Short version: the post-quantum consensus, the ZK claim verifier, the Bitcoin block ingestion, the user claim mechanism, the Reserve Module, and Cosmos `x/gov` are all in code. Governance reclamation of dormant exposed-key BTC is activated via on-chain governance after mainnet.
+See the [Roadmap](/learn/roadmap) status table. Short version: the post-quantum consensus, the ZK claim verifier, the Bitcoin block ingestion, the user claim mechanism, the Reserve Module, and Cosmos `x/gov` are all in code. Governance reclamation of dormant exposed-key BTC is activated via on-chain governance after mainnet.

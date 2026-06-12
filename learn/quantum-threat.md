@@ -107,6 +107,6 @@ QBTC fills this gap: a parallel quantum-safe ledger that every BTC holder can mi
 
 ## Read next
 
-* [Why a Parallel Chain](why-parallel-chain.md), why QBTC chose this design over alternatives.
-* [Quantum Resistance (ML-DSA)](../build/quantum-resistance.md), how QBTC's cryptography works.
-* [Quantum Risk Assessment](../research/quantum-risk-assessment.md), the detailed expert-panel timeline.
+* [Why a Parallel Chain](/learn/why-parallel-chain), why QBTC chose this design over alternatives.
+* [Quantum Resistance (ML-DSA)](/build/quantum-resistance), how QBTC's cryptography works.
+* [Quantum Risk Assessment](/research/quantum-risk-assessment), the detailed expert-panel timeline.

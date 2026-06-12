@@ -13,7 +13,7 @@ At genesis, the chain ingests a snapshot of the Bitcoin UTXO set. For every UTXO
 * The UTXO's BTC amount, scaled 1:1 to QBTC.
 * An `EntitledAmount` field, initially set to the claim amount and decremented to 0 when claimed.
 
-As new Bitcoin blocks are ingested via `ebifrost` (see [Architecture](architecture.md)), the mirror updates:
+As new Bitcoin blocks are ingested via `ebifrost` (see [Architecture](/build/architecture)), the mirror updates:
 
 * New UTXOs add new claim entries.
 * Spent UTXOs are reconciled.
@@ -57,7 +57,7 @@ A claimed UTXO has `EntitledAmount == 0`. Any subsequent attempt to claim it fai
 
 The claimed status also propagates through Bitcoin spends. When the `ebifrost` module ingests a new Bitcoin block, any transaction whose inputs include claimed UTXOs carries the claimed status to its outputs in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed. A child of a partially-claimed set of parents inherits a proportionally-reduced `EntitledAmount`.
 
-Propagation makes governance reclamation (see [Tokenomics](../research/tokenomics.md)) permanent: once a UTXO is reclaimed into the Reserve Module, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO to a new address.
+Propagation makes governance reclamation (see [Tokenomics](/research/tokenomics)) permanent: once a UTXO is reclaimed into the Reserve Module, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO to a new address.
 
 ## What claims do not do
 
@@ -82,4 +82,4 @@ On the chain side, verification takes ~2–5 ms per proof (proof size ~1 KB), so
 * `x/qbtc/keeper/handle_msg_claim_with_proof.go`: handler logic.
 * `x/qbtc/zk/`: PLONK circuit definition.
 * `proto/qbtc/qbtc/v1/msg_claim_with_proof.proto`: message format.
-* [Protocol Specification §2.3, §2.4](../research/protocol-spec.md).
+* [Protocol Specification §2.3, §2.4](/research/protocol-spec).

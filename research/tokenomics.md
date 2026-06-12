@@ -102,7 +102,7 @@ Typical proof-of-stake chains fund validator emission via inflationary minting. 
 
 QBTC funds validator emission by reclaiming value that Bitcoin would otherwise lose to quantum attackers, converting a one-time loss event (Q-day theft of dormant exposed-key coins) into a sustainable validator subsidy.
 
-The dormant exposed-key pool is several million BTC across Satoshi-era P2PK (~1.7M) and aged reused addresses (multi-million), so the reclamation runway is long. Per-category breakdown: [explorer.qbtc.net](https://explorer.qbtc.net). Transaction fees grow as a share of validator revenue with adoption, complementing the emission stream.
+The dormant exposed-key pool is several million BTC across Satoshi-era P2PK (~1.7M) and aged reused addresses (multi-million), so the reclamation runway is long. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net). Transaction fees grow as a share of validator revenue with adoption, complementing the emission stream.
 
 ## Cap enforcement
 
@@ -141,5 +141,5 @@ No custom QBTC mechanism is layered on top of `x/distribution`.
 
 ## See also
 
-* [Fair Launch Principles](../learn/fair-launch.md), the design philosophy in plain language.
-* [Protocol Specification](protocol-spec.md), the canonical chain reference.
+* [Fair Launch Principles](/learn/fair-launch), the design philosophy in plain language.
+* [Protocol Specification](/research/protocol-spec), the canonical chain reference.

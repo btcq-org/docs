@@ -66,4 +66,4 @@ Together, the chain is post-quantum end to end.
 * NIST FIPS 204: ML-DSA specification.
 * `github.com/btcq-org/cometbft`: the forked CometBFT.
 * `x/qbtc/zk/`: PLONK circuits and on-chain verifier in the chain code.
-* [Protocol Specification §1, §2.3](../research/protocol-spec.md).
+* [Protocol Specification §1, §2.3](/research/protocol-spec).

@@ -21,11 +21,11 @@ The convergence across methodologies is the signal.
 
 ## Implications
 
-* **Dormant exposed-key UTXOs are at risk first.** ~1.7M BTC sit in Satoshi-era P2PK outputs whose public keys are permanently on-chain; ~3M+ additional BTC sit in reused P2PKH / P2WPKH addresses where the public key has been revealed by prior spending. These become spendable by whoever runs Shor's algorithm first. Per-category breakdown: [explorer.qbtc.net](https://explorer.qbtc.net).
+* **Dormant exposed-key UTXOs are at risk first.** ~1.7M BTC sit in Satoshi-era P2PK outputs whose public keys are permanently on-chain; ~3M+ additional BTC sit in reused P2PKH / P2WPKH addresses where the public key has been revealed by prior spending. These become spendable by whoever runs Shor's algorithm first. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
 * **Live spending is at risk via the mempool window.** Any Bitcoin spend reveals the public key. A CRQC operator could race the spender to a competing transaction.
 * **The migration window is now.** Migrations of large-scale infrastructure take years. NIST has standardized post-quantum signatures (FIPS 204 / ML-DSA) on the assumption that public infrastructure should be substantially migrated well before CRQC arrival.
 
 ## See also
 
-* [The Quantum Threat to Bitcoin](../learn/quantum-threat.md), plain-language explainer.
-* [Quantum Resistance (ML-DSA)](../build/quantum-resistance.md), QBTC's cryptographic response.
+* [The Quantum Threat to Bitcoin](/learn/quantum-threat), plain-language explainer.
+* [Quantum Resistance (ML-DSA)](/build/quantum-resistance), QBTC's cryptographic response.

@@ -101,6 +101,6 @@ It also does not mean QBTC will be evenly distributed at launch. The Bitcoin UTX
 
 ## Read next
 
-* [What is QBTC?](what-is-qbtc.md)
-* [Roadmap](roadmap.md)
-* [Tokenomics (Research)](../research/tokenomics.md)
+* [What is QBTC?](/learn/what-is-qbtc)
+* [Roadmap](/learn/roadmap)
+* [Tokenomics (Research)](/research/tokenomics)

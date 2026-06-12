@@ -29,7 +29,7 @@ Terminology:
 
 QBTC entitlements attached to quantum-vulnerable dormant Bitcoin UTXOs (P2PK outputs and reused-address outputs older than 17 years) are reclaimed from the claim mirror and credited to the Reserve Module on a roughly two-week voting cadence. This sustains validator emission and removes value from vulnerable circulation, redistributing it to a quantum-safe address.
 
-See [Tokenomics](../research/tokenomics.md) for the full design.
+See [Tokenomics](/research/tokenomics) for the full design.
 
 ## Open research
 
@@ -39,6 +39,6 @@ See [Tokenomics](../research/tokenomics.md) for the full design.
 
 ## Out of scope
 
-* **A bridge that locks BTC under a custodian or multisig.** This would reintroduce custodial risk and would itself be quantum-vulnerable. See [Why a Parallel Chain](why-parallel-chain.md).
+* **A bridge that locks BTC under a custodian or multisig.** This would reintroduce custodial risk and would itself be quantum-vulnerable. See [Why a Parallel Chain](/learn/why-parallel-chain).
 * **A fork of Bitcoin.** Bitcoin's chain is not touched.
 * **A change to the 21M supply cap.** The cap holds for all time.

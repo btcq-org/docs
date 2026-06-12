@@ -22,5 +22,5 @@ description: "Running a QBTC validator or full node. (Detailed operator document
 
 ## See also
 
-* [Architecture](architecture.md), how the binaries fit together.
-* [Consensus & Validators](consensus.md), validator economics.
+* [Architecture](/build/architecture), how the binaries fit together.
+* [Consensus & Validators](/build/consensus), validator economics.

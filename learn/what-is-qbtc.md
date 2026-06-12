@@ -66,11 +66,11 @@ Once a Bitcoin public key has been broadcast (during a normal Bitcoin spend), a 
 4. **Verification.** Validators verify three things: the ZK proof is valid, the UTXO has an outstanding entitlement, and the destination QBTC address is well-formed.
 5. **Release.** The QBTC is minted into the destination address. The entitlement is exhausted to prevent double-claims. The original Bitcoin UTXO is untouched and remains on Bitcoin.
 
-Holders can claim immediately, wait years, or never claim at all. The only exception: **governance can reclaim dormant exposed-key BTC** (UTXOs older than 17 years whose public keys are visible on-chain) into the chain's Reserve Module on a roughly two-week voting cadence. See [Tokenomics](../research/tokenomics.md).
+Holders can claim immediately, wait years, or never claim at all. The only exception: **governance can reclaim dormant exposed-key BTC** (UTXOs older than 17 years whose public keys are visible on-chain) into the chain's Reserve Module on a roughly two-week voting cadence. See [Tokenomics](/research/tokenomics).
 
 ## Read next
 
-* [The Quantum Threat to Bitcoin](quantum-threat.md), why this needs to exist.
-* [Why a Parallel Chain](why-parallel-chain.md), why a soft fork, hard fork, or bridge does not solve this.
-* [For BTC Holders](for-btc-holders.md), what to do as a Bitcoin owner.
-* [Architecture](../build/architecture.md), the deeper technical view.
+* [The Quantum Threat to Bitcoin](/learn/quantum-threat), why this needs to exist.
+* [Why a Parallel Chain](/learn/why-parallel-chain), why a soft fork, hard fork, or bridge does not solve this.
+* [For BTC Holders](/learn/for-btc-holders), what to do as a Bitcoin owner.
+* [Architecture](/build/architecture), the deeper technical view.

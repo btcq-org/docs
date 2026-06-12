@@ -7,7 +7,7 @@ QBTC consensus is **CometBFT, forked** to use ML-DSA signatures instead of Ed255
 
 ## Consensus engine
 
-The chain depends on `github.com/btcq-org/cometbft`, a fork of CometBFT that replaces Ed25519 with ML-DSA throughout the consensus signing path. See [Quantum Resistance (ML-DSA)](quantum-resistance.md) for details.
+The chain depends on `github.com/btcq-org/cometbft`, a fork of CometBFT that replaces Ed25519 with ML-DSA throughout the consensus signing path. See [Quantum Resistance (ML-DSA)](/build/quantum-resistance) for details.
 
 ## Validator set
 
@@ -23,12 +23,12 @@ Validators bond QBTC via the standard Cosmos `x/staking` module. The validator s
 
 In addition to standard Cosmos validator duties, QBTC validators also:
 
-1. **Run a `bifrost` sidecar** that watches a Bitcoin full node and gossips signed BTC blocks to peers. See [Architecture](architecture.md) for the data flow.
+1. **Run a `bifrost` sidecar** that watches a Bitcoin full node and gossips signed BTC blocks to peers. See [Architecture](/build/architecture) for the data flow.
 2. **Attest to ingested BTC blocks**. The `ebifrost` module aggregates these attestations; a block is ingested into QBTC state once more than 2/3 of bonded validator power has attested.
 
 ## Validator rewards
 
-Validators earn from the **Reserve Module** (drawn down per the chain's emission formula) plus transaction fees. There is no inflationary minting. See [Tokenomics](../research/tokenomics.md) and the [Protocol Specification §2.5](../research/protocol-spec.md).
+Validators earn from the **Reserve Module** (drawn down per the chain's emission formula) plus transaction fees. There is no inflationary minting. See [Tokenomics](/research/tokenomics) and the [Protocol Specification §2.5](/research/protocol-spec).
 
 ## Governance
 
@@ -36,6 +36,6 @@ Standard Cosmos `x/gov`. Proposals follow the standard voting period, deposit re
 
 ## Read next
 
-* [Architecture](architecture.md), the system-level view.
-* [Quantum Resistance (ML-DSA)](quantum-resistance.md).
-* [Protocol Specification](../research/protocol-spec.md).
+* [Architecture](/build/architecture), the system-level view.
+* [Quantum Resistance (ML-DSA)](/build/quantum-resistance).
+* [Protocol Specification](/research/protocol-spec).

@@ -142,7 +142,7 @@ The cap holds because no Bitcoin UTXO can be claimed twice (the `claimed_flag` p
 
 No inflationary minting exists anywhere in the chain code.
 
-See [Tokenomics](tokenomics.md) for the economic framing.
+See [Tokenomics](/research/tokenomics) for the economic framing.
 
 ### 2.6 Governance
 
@@ -158,7 +158,7 @@ Dormant-UTXO reclamation proposals (§2.5 Path 2) are enacted through `x/gov` ra
 * **Development Fund** (5%) and **Ecosystem Fund** (5%) from each governance reclamation. Both governance-gated.
 * No genesis allocation to any party.
 
-See [Tokenomics](tokenomics.md) for the full breakdown.
+See [Tokenomics](/research/tokenomics) for the full breakdown.
 
 ## 4. Modules in use (Cosmos SDK standard)
 

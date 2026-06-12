@@ -77,6 +77,6 @@ QBTC offers a credible safe harbor: a chain that already knows your balance, tha
 
 ## Read next
 
-* [Architecture](../build/architecture.md)
-* [Claim Mechanism](../build/claim-mechanism.md)
-* [Fair Launch Principles](fair-launch.md)
+* [Architecture](/build/architecture)
+* [Claim Mechanism](/build/claim-mechanism)
+* [Fair Launch Principles](/learn/fair-launch)

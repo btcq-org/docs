@@ -5,7 +5,7 @@ description: "QBTC architecture: Cosmos SDK chain with forked ML-DSA CometBFT co
 
 QBTC is a Cosmos SDK application chain that runs on a forked CometBFT consensus engine using post-quantum signatures. It maintains a mirror of the Bitcoin UTXO set inside its own state and accepts zero-knowledge proofs of BTC ownership as claims against that mirror.
 
-For deeper specifications, see the [Protocol Specification](../research/protocol-spec.md).
+For deeper specifications, see the [Protocol Specification](/research/protocol-spec).
 
 ## High-level picture
 
@@ -46,7 +46,7 @@ Every validator's consensus key is an ML-DSA key, every vote is signed with ML-D
 
 ML-DSA-65 signatures are larger than Ed25519 (3309 bytes vs. 64 bytes per FIPS 204), which affects block size and bandwidth. The trade-off is intentional: a chain that exists to be quantum-safe cannot have any ECDSA or Ed25519 dependency in its consensus path.
 
-See [Quantum Resistance (ML-DSA)](quantum-resistance.md) for details.
+See [Quantum Resistance (ML-DSA)](/build/quantum-resistance) for details.
 
 ### 3. The custom module (`x/qbtc`)
 
@@ -114,7 +114,7 @@ The user's BTC is never moved. The user's BTC public key is never broadcast.
 
 ## Read next
 
-* [Quantum Resistance (ML-DSA)](quantum-resistance.md)
-* [Consensus & Validators](consensus.md)
-* [Claim Mechanism](claim-mechanism.md)
-* [Protocol Specification](../research/protocol-spec.md)
+* [Quantum Resistance (ML-DSA)](/build/quantum-resistance)
+* [Consensus & Validators](/build/consensus)
+* [Claim Mechanism](/build/claim-mechanism)
+* [Protocol Specification](/research/protocol-spec)

@@ -7,7 +7,7 @@ QBTC's security rests on three independent foundations. A compromise in any one 
 
 ## 1. Post-quantum consensus
 
-Every validator vote, every block-commit signature, every consensus message is signed with ML-DSA (FIPS 204). A quantum-capable adversary cannot forge validator signatures or rewrite chain history. See [Quantum Resistance (ML-DSA)](../build/quantum-resistance.md).
+Every validator vote, every block-commit signature, every consensus message is signed with ML-DSA (FIPS 204). A quantum-capable adversary cannot forge validator signatures or rewrite chain history. See [Quantum Resistance (ML-DSA)](/build/quantum-resistance).
 
 **Trust assumption:** ML-DSA is secure against both classical and quantum adversaries at NIST security level 3. This rests on the hardness of lattice problems, which has been the standard post-quantum assumption for over a decade and survived NIST's multi-year PQC standardization process.
 
@@ -48,5 +48,5 @@ Audit reports will be linked here as they complete. The most security-critical c
 
 ## See also
 
-* [Quantum Risk Assessment](quantum-risk-assessment.md)
-* [Protocol Specification](protocol-spec.md)
+* [Quantum Risk Assessment](/research/quantum-risk-assessment)
+* [Protocol Specification](/research/protocol-spec)
