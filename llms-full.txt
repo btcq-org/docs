@@ -1617,9 +1617,10 @@ Source: https://docs.qbtc.net/resources/brand-assets
 
 QBTC's logo and wordmark are available in light and dark variants. Source SVGs are committed to the docs repository at [logo/](https://github.com/btcq-org/docs/tree/main/logo).
 
-* `qbtc-logo-light.svg`, wordmark for use on light backgrounds.
-* `qbtc-logo-dark.svg`, wordmark for use on dark backgrounds.
-* `favicon.svg`, the coin mark.
+* `qbtc-logo-light.svg`, gold coin + wordmark for use on light backgrounds.
+* `qbtc-logo-dark.svg`, gold coin + wordmark for use on dark backgrounds.
+* `qbtc-coin.svg`, the gold coin mark (small-size optimized; also the site favicon).
+* `qbtc-coin-full.svg`, the full-detail engraved gold coin for large-format use (print, hero images, social cards).
 
 A consolidated brand kit (with primary/secondary color values, typography rules, and usage examples) will be published here.
 
@@ -1633,8 +1634,8 @@ A consolidated brand kit (with primary/secondary color values, typography rules,
 
 ## Typography
 
-* **Body sans**: Inter.
-* **Display serif**: Instrument Serif.
+* **Body sans**: Inter (used throughout the documentation).
+* **Display serif**: Instrument Serif (marketing site hero headings only).
 * **Monospace**: JetBrains Mono.
 
 ---

@@ -4,7 +4,7 @@
   Parchment (#F5F1E8) / Navy (#0B1220) / Ink (#1A1A1A) / Bone (#E8E6E0) / Bitcoin orange (#F7931A).
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 :root {
   --qbtc-parchment: #F5F1E8;
@@ -21,19 +21,16 @@
   --qbtc-bitcoin: #F7931A;
   --qbtc-bitcoin-bright: #FFA533;
   --qbtc-bitcoin-deep: #B6660A;
-  --qbtc-serif: 'Instrument Serif', Charter, Georgia, serif;
   --qbtc-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
-/* Editorial display serif for h1 and hero headings */
-h1 {
-  font-family: var(--qbtc-serif);
-  font-weight: 400;
-  letter-spacing: -0.025em;
-  line-height: 1.05;
-}
-
-/* h2/h3 stay in the body sans (Inter) for scan-ability */
+/* Uniform sans typography. The marketing site's display serif stays on
+   qbtc.net hero scale; in docs it read as an orphaned element inside
+   Mintlify's all-sans frame (and the face has no bold weight, so the
+   theme's font-bold utility faux-bolded it). Brand is carried instead
+   by the parchment/navy palette, Bitcoin-orange accents, mono labels,
+   and the coin logo. */
+h1,
 h2,
 h3 {
   letter-spacing: -0.01em;
