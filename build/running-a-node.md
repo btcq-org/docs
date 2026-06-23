@@ -143,6 +143,20 @@ For a throwaway local devnet, the repo includes a helper:
 ./scripts/start-node.sh
 ```
 
+## Chain ID for transactions
+
+The live testnet reports its chain ID as **`qbtc`** (confirmed from `…/cosmos/base/tendermint/v1beta1/blocks/latest`). The installer's client config currently sets a different value, so if you sign and broadcast transactions, pass the chain ID explicitly to avoid a signature-mismatch error:
+
+```bash
+qbtcd tx ... --chain-id qbtc
+```
+
+Always confirm the current chain ID from a live block before broadcasting — it changes at mainnet relaunch.
+
+## Querying without your own node
+
+To read chain state without running a full node, use the public Cosmos REST gateway documented in the [API Reference](/build/api-reference#qbtc-chain-access). Note it proxies only standard `/cosmos/...` module queries — CometBFT RPC and custom `x/qbtc` routes are not exposed.
+
 ## Becoming a validator
 
 A QBTC validator is a `qbtcd` node that has bonded stake and run `bifrost`. Validator onboarding (the `create-validator` flow, minimum self-bond, and slashing parameters) is finalized as the testnet stabilizes. Until those values are published, treat any validator setup as testnet-only and confirm the current procedure in the [chain repository](https://github.com/btcq-org/qbtc). See [Consensus & Validators](/build/consensus) for the economic model.
