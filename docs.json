@@ -128,19 +128,14 @@
           "icon": "chart-line"
         },
         {
-          "anchor": "Website",
-          "href": "https://qbtc.net",
-          "icon": "globe"
-        },
-        {
-          "anchor": "GitHub",
-          "href": "https://github.com/btcq-org",
-          "icon": "github"
-        },
-        {
           "anchor": "Discord",
           "href": "https://discord.gg/anMfAjtCPZ",
           "icon": "discord"
+        },
+        {
+          "anchor": "X (Twitter)",
+          "href": "https://x.com/qbtc_net",
+          "icon": "x-twitter"
         }
       ]
     }
