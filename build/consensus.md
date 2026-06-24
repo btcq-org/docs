@@ -11,13 +11,13 @@ The chain depends on `github.com/btcq-org/cometbft`, a fork of CometBFT that rep
 
 ## Validator set
 
-Validators bond QBTC via the standard Cosmos `x/staking` module. The validator set is selected by bonded stake, with the maximum size and slashing parameters configured at genesis.
+Validators bond QBTC via the standard Cosmos `x/staking` module (see [Becoming a validator](/build/running-a-node#becoming-a-validator) for the step-by-step). The validator set is selected by bonded stake, with the maximum size and slashing parameters configured at genesis.
 
-* **Bonding**: standard `x/staking` semantics.
-* **Slashing**: standard `x/slashing` for double-signing and downtime.
-* **Unbonding period**: parameter at genesis (typically 21 days for Cosmos chains; final value TBD before mainnet).
-* **Validator consensus key**: ML-DSA.
-* **Validator operator key**: standard Cosmos signing curve.
+* **Bonding**: standard `x/staking` semantics (self-bond from the validator's own account; no inflation, so rewards come from fees and Reserve emission).
+* **Slashing**: standard `x/slashing` — double-sign and downtime.
+* **Unbonding period**: 21 days on the current testnet (a genesis parameter; subject to change at mainnet relaunch).
+* **Validator consensus key**: ML-DSA (`/cosmos.crypto.mldsa.PubKey`).
+* **Validator operator (account) key**: also ML-DSA — QBTC's forked Cosmos SDK uses post-quantum account keys, not secp256k1.
 
 ## Validator responsibilities
 

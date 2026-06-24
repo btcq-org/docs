@@ -1,6 +1,6 @@
 ---
 title: "Running a Node"
-description: "Run a QBTC node: one-line install of qbtcd + bifrost, genesis download, Bitcoin RPC configuration, and systemd startup. Testnet."
+description: "Run a QBTC node and create a validator: one-line install of qbtcd + bifrost, Bitcoin RPC config, systemd startup, and the full create-validator flow (ML-DSA keys, self-bond, slashing). Testnet."
 ---
 
 <Info>
@@ -159,7 +159,98 @@ To read chain state without running a full node, use the public Cosmos REST gate
 
 ## Becoming a validator
 
-A QBTC validator is a `qbtcd` node that has bonded stake and run `bifrost`. Validator onboarding (the `create-validator` flow, minimum self-bond, and slashing parameters) is finalized as the testnet stabilizes. Until those values are published, treat any validator setup as testnet-only and confirm the current procedure in the [chain repository](https://github.com/btcq-org/qbtc). See [Consensus & Validators](/build/consensus) for the economic model.
+Validator creation is the **standard Cosmos SDK `x/staking` flow** (`qbtcd tx staking create-validator`), with three QBTC-specific differences:
+
+1. **Consensus keys are ML-DSA, not Ed25519.** The validator pubkey you submit has `@type` `/cosmos.crypto.mldsa.PubKey`. You get it from `qbtcd comet show-validator` exactly as on any Cosmos chain — the key material is just post-quantum.
+2. **Account keys are also ML-DSA, not secp256k1.** `qbtcd keys add` generates a post-quantum account key. This is unusual (most Cosmos chains use secp256k1 accounts) and means generic secp256k1 tooling and hardware wallets will not sign QBTC transactions.
+3. **A validator must also run `bifrost`.** Block production depends on validators attesting Bitcoin blocks (see [Architecture](/build/architecture)). Set up `bifrost` per the sections above before bonding.
+
+<Warning>
+**You do not send tokens to anyone to create a validator.** `create-validator` bonds QBTC **from your own validator account** — it moves your own balance from liquid to bonded (self-delegation). There is no deposit address to pay into. To fund your account on the current private testnet (which has no public faucet), generate your validator account first and ask the team for testnet QBTC to **your** `qbtc1…` address (via [Discord](https://discord.gg/anMfAjtCPZ)).
+</Warning>
+
+### Network parameters (current testnet)
+
+Verified live; all change at mainnet relaunch.
+
+| Parameter | Value |
+|---|---|
+| Bond denom | `qbtc` (1 QBTC = 100,000,000 base units) |
+| Unbonding period | 21 days (`1814400s`) |
+| Max validators | 100 |
+| Minimum self-delegation | operator-set, can be as low as `1` base unit |
+| Inflation | none (no mint module) — rewards come from fees and Reserve emission; on testnet, with the Reserve empty, rewards are negligible |
+| Downtime slashing | 1% + jail if you sign < 50% of the last 100 blocks; 10-minute jail |
+| Double-sign slashing | 5% + permanent tombstone |
+
+<Warning>
+**Never run the same consensus key on two nodes.** Double-signing is slashed 5% and tombstones the validator permanently. For multiple validators, each needs its **own** node home, its **own** consensus key, its **own** `bifrost`, and its **own** funded account.
+</Warning>
+
+### Step by step
+
+1. **Sync a full node and run `bifrost`** (sections above). Wait until `qbtcd` is caught up (`qbtcd status` → `sync_info.catching_up: false`).
+
+2. **Create your validator account key** (this is an ML-DSA key):
+
+   ```bash
+   qbtcd keys add my-validator
+   # note the qbtc1... address it prints
+   ```
+
+3. **Fund the account.** On testnet, send your `qbtc1…` address to the team and they fund it. Confirm the balance:
+
+   ```bash
+   qbtcd query bank balances "$(qbtcd keys show my-validator -a)"
+   ```
+
+4. **Get your consensus pubkey:**
+
+   ```bash
+   qbtcd comet show-validator
+   # → {"@type":"/cosmos.crypto.mldsa.PubKey","key":"..."}
+   ```
+
+5. **Write `validator.json`** — paste the pubkey output verbatim into the `pubkey` field:
+
+   ```json
+   {
+     "pubkey": {"@type":"/cosmos.crypto.mldsa.PubKey","key":"PASTE_FROM_STEP_4"},
+     "amount": "1000000000qbtc",
+     "moniker": "my-validator",
+     "commission-rate": "0.1",
+     "commission-max-rate": "0.2",
+     "commission-max-change-rate": "0.01",
+     "min-self-delegation": "1"
+   }
+   ```
+
+   `amount` is your self-bond, in base units (`1000000000qbtc` = 10 QBTC). It must be ≤ your funded balance.
+
+6. **Submit the transaction:**
+
+   ```bash
+   qbtcd tx staking create-validator validator.json \
+     --from my-validator \
+     --chain-id qbtc \
+     --gas auto --gas-adjustment 1.3
+   ```
+
+7. **Verify** you are bonded:
+
+   ```bash
+   qbtcd query staking validator "$(qbtcd keys show my-validator --bech val -a)"
+   ```
+
+   or via the public gateway: `…/qbtc-rpc/cosmos/staking/v1beta1/validators`.
+
+### Running multiple validators
+
+Repeat the whole flow per validator, on separate machines (or separate `--home` directories and ports), each with its own account, its own consensus key, and its own `bifrost`. Fund each account separately; each self-bonds independently.
+
+<Info>
+The exact subcommand names and flags above follow Cosmos SDK v0.53. If anything differs on your build, the binary is the source of truth — check `qbtcd tx staking create-validator --help` and `qbtcd comet --help`. See [Consensus & Validators](/build/consensus) for the economic model.
+</Info>
 
 ## See also
 
