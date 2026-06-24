@@ -28,3 +28,4 @@ Edit any `.md` / `.mdx` file directly. Pull requests deploy preview URLs automat
 - Risk indexer: [indexer.qbtc.net](https://indexer.qbtc.net)
 - Org: [github.com/btcq-org](https://github.com/btcq-org)
 - Twitter/X: [@qbtc_net](https://x.com/qbtc_net)
+- Discord: [discord.gg/anMfAjtCPZ](https://discord.gg/anMfAjtCPZ)

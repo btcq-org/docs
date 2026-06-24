@@ -136,6 +136,11 @@
           "anchor": "GitHub",
           "href": "https://github.com/btcq-org",
           "icon": "github"
+        },
+        {
+          "anchor": "Discord",
+          "href": "https://discord.gg/anMfAjtCPZ",
+          "icon": "discord"
         }
       ]
     }
@@ -163,7 +168,8 @@
   "footer": {
     "socials": {
       "x": "https://x.com/qbtc_net",
-      "github": "https://github.com/btcq-org"
+      "github": "https://github.com/btcq-org",
+      "discord": "https://discord.gg/anMfAjtCPZ"
     },
     "links": [
       {

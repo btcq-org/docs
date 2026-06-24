@@ -53,6 +53,7 @@ Total supply is hard-capped at 21M QBTC. No pre-sale, no investor allocation, no
 - [Risk indexer (per-script-type quantum-vulnerable BTC breakdown)](https://indexer.qbtc.net)
 - [GitHub organization](https://github.com/btcq-org)
 - [X / Twitter](https://x.com/qbtc_net)
+- [Discord](https://discord.gg/anMfAjtCPZ)
 
 ## Status
 

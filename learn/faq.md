@@ -147,7 +147,7 @@ No. QBTC is pre-mainnet. The protocol is in active development. See [Roadmap](/l
 
 ### When does mainnet ship?
 
-**Targeting Q3 2026.** Specific date and launch sequencing will be announced as the audit and testnet milestones close. Follow [@qbtc_net on X](https://x.com/qbtc_net).
+**Targeting Q3 2026.** Specific date and launch sequencing will be announced as the audit and testnet milestones close. Follow [@qbtc_net on X](https://x.com/qbtc_net) or join the [Discord](https://discord.gg/anMfAjtCPZ).
 
 ### What's actually in the code today vs. just specified?
 
