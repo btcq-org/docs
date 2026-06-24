@@ -153,11 +153,15 @@
       {
         "label": "Website",
         "href": "https://qbtc.net"
+      },
+      {
+        "type": "github",
+        "href": "https://github.com/btcq-org"
       }
     ],
     "primary": {
-      "type": "github",
-      "href": "https://github.com/btcq-org"
+      "type": "discord",
+      "href": "https://discord.gg/anMfAjtCPZ"
     }
   },
   "footer": {
