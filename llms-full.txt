@@ -1127,6 +1127,8 @@ The template the installer writes looks like this — fill in your Bitcoin RPC h
 }
 ```
 
+**Note:** **Validators: set `external_ip` to your node's public IP.** Bifrost peers reach each other at `external_ip:30006`. If you leave it empty, your advertised peer address comes back as `0.0.0.0:30006`, which nobody can connect to. See [Register your bifrost peer address](#register-your-bifrost-peer-address).
+
 ## Start the node
 
 ```bash
@@ -1203,7 +1205,7 @@ Validator creation is the **standard Cosmos SDK `x/staking` flow** (`qbtcd tx st
 
 1. **Consensus keys are ML-DSA, not Ed25519.** The validator pubkey you submit has `@type` `/cosmos.crypto.mldsa.PubKey`. You get it from `qbtcd comet show-validator` exactly as on any Cosmos chain — the key material is just post-quantum.
 2. **Account keys are also ML-DSA, not secp256k1.** `qbtcd keys add` generates a post-quantum account key. This is unusual (most Cosmos chains use secp256k1 accounts) and means generic secp256k1 tooling and hardware wallets will not sign QBTC transactions.
-3. **A validator must also run `bifrost`.** Block production depends on validators attesting Bitcoin blocks (see [Architecture](/build/architecture)). Set up `bifrost` per the sections above before bonding.
+3. **A validator must also run `bifrost` and register it on-chain.** Block production depends on validators attesting Bitcoin blocks (see [Architecture](/build/architecture)). Beyond running the sidecar, you publish its peer address with a custom `x/qbtc` transaction so other validators can reach it — see [Register your bifrost peer address](#register-your-bifrost-peer-address). Skipping this leaves your validator unable to attest.
 
 **Note:** **You do not send tokens to anyone to create a validator.** `create-validator` bonds QBTC **from your own validator account** — it moves your own balance from liquid to bonded (self-delegation). There is no deposit address to pay into. To fund your account on the current private testnet (which has no public faucet), generate your validator account first and ask the team for testnet QBTC to **your** `qbtc1…` address (via [Discord](https://discord.gg/anMfAjtCPZ)).
 
@@ -1279,6 +1281,44 @@ Verified live; all change at mainnet relaunch.
    ```
 
    or via the public gateway: `…/qbtc-rpc/cosmos/staking/v1beta1/validators`.
+
+### Register your bifrost peer address
+
+Bonding is not enough. Your validator's `bifrost` must be **discoverable** so other validators' `bifrost` processes can connect and exchange Bitcoin blocks. A validator whose `bifrost` cannot be reached does not attest BTC blocks — it fails its core duty and risks downtime jailing once active. This is a QBTC-specific step with no Cosmos equivalent.
+
+1. **Set `external_ip` and restart bifrost.** Confirm `external_ip` in `~/.bifrost/config.json` is your node's public IP (see the [bifrost config](#configure-bifrost) tip), then:
+
+   ```bash
+   sudo systemctl restart bifrost
+   ```
+
+2. **Read your full peer address** from the bifrost HTTP API. It returns `<peerID>@<external_ip>:<p2p-port>` ready to use:
+
+   ```bash
+   curl http://127.0.0.1:30007/peerid
+   # → 12D3KooWE2iVgm3YXDKwGX7Asqz7Q4JpoDZ12Vj8G6vVQMNVJEq9@149.28.169.249:30006
+   ```
+
+   If the IP comes back as `0.0.0.0`, `external_ip` is unset — fix step 1 first.
+
+3. **Register it on-chain** with the custom `x/qbtc` message, signed by your validator account:
+
+   ```bash
+   qbtcd tx qbtc set-node-peer-address \
+     --peer-address "12D3KooWE2iVgm3YXDKwGX7Asqz7Q4JpoDZ12Vj8G6vVQMNVJEq9@149.28.169.249:30006" \
+     --chain-id qbtc \
+     --from my-validator
+   ```
+
+4. **Verify** peering and the on-chain mapping:
+
+   ```bash
+   curl http://127.0.0.1:30007/connected-peers     # live bifrost connections
+   curl http://127.0.0.1:30007/validator-peers      # validator peers seen
+   qbtcd query qbtc all-node-peer-addresses          # the on-chain registry
+   ```
+
+   The custom `x/qbtc` queries are served by your own node, not the public REST gateway. If a subcommand differs on your build, check `qbtcd query qbtc --help`.
 
 ### Running multiple validators
 
