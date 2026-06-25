@@ -250,7 +250,10 @@ Verified live; all change at mainnet relaunch.
 
 ### Register your bifrost peer address
 
-Bonding is not enough. Your validator's `bifrost` must be **discoverable** so other validators' `bifrost` processes can connect and exchange Bitcoin blocks. A validator whose `bifrost` cannot be reached does not attest BTC blocks — it fails its core duty and risks downtime jailing once active. This is a QBTC-specific step with no Cosmos equivalent.
+This is a QBTC-specific step with no Cosmos equivalent, and it comes **after** your validator is created and bonded — not before.
+
+* **It is order-enforced.** The `set-node-peer-address` transaction is rejected unless the signer is an already-**bonded** validator (the handler requires `validator.Status == Bonded`, otherwise it returns `unauthorized: validator is not bonded`). Run it before `create-validator`, or while your validator is still unbonded or jailed, and it fails. Confirm `BOND_STATUS_BONDED` from the verify step above first.
+* **Bonding alone is not enough.** Your validator's `bifrost` also has to be **discoverable** so other validators' `bifrost` processes can connect and exchange Bitcoin blocks. A bonded but unregistered validator cannot attest BTC blocks and risks downtime jailing.
 
 1. **Set `external_ip` and restart bifrost.** Confirm `external_ip` in `~/.bifrost/config.json` is your node's public IP (see the [bifrost config](#configure-bifrost) tip), then:
 
