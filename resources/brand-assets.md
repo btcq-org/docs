@@ -13,10 +13,10 @@ QBTC's logo and wordmark are available in light and dark variants. Source SVGs a
 
 * `qbtc-logo-light.svg`, gold coin + wordmark for use on light backgrounds.
 * `qbtc-logo-dark.svg`, gold coin + wordmark for use on dark backgrounds.
-* `qbtc-coin.svg`, the gold coin mark (256px, the canonical quantum-coin design).
+* `qbtc-coin.svg`, the gold quantum-coin mark (true vector, scales to any size).
 * `favicon.png`, the coin mark sized for browser tabs.
 
-The coin artwork matches the mark used on [explorer.qbtc.net](https://explorer.qbtc.net). It is currently a high-resolution raster; a fully vector version will be added to the brand kit when available.
+The logo and coin mark are fully vector, so they stay sharp at any resolution. The favicon is a small raster rendered from the same vector for fast tab loading.
 
 A consolidated brand kit (with primary/secondary color values, typography rules, and usage examples) will be published here.
 
