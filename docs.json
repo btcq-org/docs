@@ -25,7 +25,7 @@
     "dark": "/logo/qbtc-logo-dark.svg",
     "href": "https://qbtc.net"
   },
-  "favicon": "/favicon.png",
+  "favicon": "/favicon.svg",
   "styling": {
     "codeblocks": "system"
   },
