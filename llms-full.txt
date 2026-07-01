@@ -1074,13 +1074,13 @@ curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.s
 To pin a specific version (recommended for reproducibility — check the [releases page](https://github.com/btcq-org/qbtc/releases) for the current testnet version):
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh | bash -s -- -v 1.0.21
+curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh | bash -s -- -v 1.0.22
 ```
 
 or via environment variable:
 
 ```bash
-QBTC_VERSION=1.0.21 bash -c "$(curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh)"
+QBTC_VERSION=1.0.22 bash -c "$(curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh)"
 ```
 
 **Note:** Piping a remote script straight into `bash` runs unreviewed code as your user. If you prefer to inspect it first:
@@ -1184,6 +1184,47 @@ For a throwaway local devnet, the repo includes a helper:
 ```bash
 ./scripts/start-node.sh
 ```
+
+## Keeping your node updated
+
+New `qbtcd` / `bifrost` releases are published on the [releases page](https://github.com/btcq-org/qbtc/releases). There are two kinds of update, and they are handled differently.
+
+**Note:** Stay current. When the team schedules an on-chain upgrade, a node still running the old binary can halt or fall out of consensus at the upgrade height. Running behind also means missing blocks and risking downtime jailing if you validate.
+
+### Minor / patch releases (no consensus break)
+
+For a routine version bump, you **replace the binaries directly** — no governance proposal. The `qbtcd` binary lives in two places, and both must be updated so it does not matter whether `systemd` launches the daemon directly or through Cosmovisor:
+
+1. `/usr/local/bin/qbtcd`
+2. `~/.qbtc/cosmovisor/current/bin/qbtcd`
+
+`bifrost` runs from `/usr/local/bin/bifrost`.
+
+```bash
+# stop services
+sudo systemctl stop qbtcd bifrost
+
+# download the release binaries (or build them), then replace both copies
+sudo install -m 755 qbtcd  /usr/local/bin/qbtcd
+sudo install -m 755 qbtcd  ~/.qbtc/cosmovisor/current/bin/qbtcd
+sudo install -m 755 bifrost /usr/local/bin/bifrost
+
+# restart
+sudo systemctl start qbtcd bifrost
+qbtcd version    # confirm the new version
+```
+
+### Major / consensus-breaking upgrades (governance)
+
+Consensus-breaking upgrades ship through an on-chain **software-upgrade proposal** and are applied by **Cosmovisor** at the scheduled block height. Because the installer sets `DAEMON_ALLOW_DOWNLOAD_BINARIES=false`, Cosmovisor will not fetch the binary for you — stage it ahead of the upgrade height:
+
+```bash
+# <upgrade-name> is the name in the passed proposal
+mkdir -p ~/.qbtc/cosmovisor/upgrades/<upgrade-name>/bin
+install -m 755 qbtcd ~/.qbtc/cosmovisor/upgrades/<upgrade-name>/bin/qbtcd
+```
+
+At the upgrade height Cosmovisor stops the old binary, switches the `current` symlink, and (with `DAEMON_RESTART_AFTER_UPGRADE=true`) restarts automatically. Follow the release notes for the exact upgrade name and height.
 
 ## Chain ID for transactions
 
@@ -1322,6 +1363,16 @@ This is a QBTC-specific step with no Cosmos equivalent, and it comes **after** y
    ```
 
    The custom `x/qbtc` queries are served by your own node, not the public REST gateway. If a subcommand differs on your build, check `qbtcd query qbtc --help`.
+
+### Placement and latency
+
+QBTC blocks are **large**, and this makes validator placement a real operational concern. ML-DSA consensus signatures are about 3.3 KB each (versus 64 bytes for Ed25519), and when a Bitcoin block is ingested it is shipped into a QBTC block that can be very large. A validator that is network-distant from the rest of the active set may not receive and precommit these large blocks within the consensus timeouts — so it **misses precommits and is jailed for downtime**, even while it keeps up fine on small blocks.
+
+This is not hypothetical. A validator roughly **225 ms RTT** from the majority of voting power consistently missed precommits on the large blocks and was jailed; its small-block participation was unaffected.
+
+* **Run close to the rest of the active set.** Minimize round-trip latency to the other validators. On the current testnet the majority of voting power runs in **Singapore** — place your validator in or near the region where the active set is concentrated (confirm the current location with the team) rather than across an ocean.
+* **Measure before you commit to a region.** A few hundred milliseconds of RTT to your peers is enough to miss large blocks. Check latency first.
+* **Do not change the consensus timeouts on your own.** `timeout_propose`, `timeout_commit`, and the related values in `config.toml` are effectively network-wide; the team may tune them for large post-quantum blocks, so follow the published values rather than diverging unilaterally.
 
 ### Running multiple validators
 
@@ -1997,9 +2048,9 @@ QBTC's logo and wordmark are available in light and dark variants. Source SVGs a
 * `qbtc-logo-light.svg`, gold coin + wordmark for use on light backgrounds.
 * `qbtc-logo-dark.svg`, gold coin + wordmark for use on dark backgrounds.
 * `qbtc-coin.svg`, the gold quantum-coin mark (true vector, scales to any size).
-* `favicon.png`, the coin mark sized for browser tabs.
+* `favicon.svg`, the coin mark for browser tabs (vector).
 
-The logo and coin mark are fully vector, so they stay sharp at any resolution. The favicon is a small raster rendered from the same vector for fast tab loading.
+Every logo asset is fully vector, so it stays sharp at any resolution and compresses well for the web (the coin mark is ~28&nbsp;KB over the wire).
 
 A consolidated brand kit (with primary/secondary color values, typography rules, and usage examples) will be published here.
 
