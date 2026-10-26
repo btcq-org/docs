@@ -10,11 +10,13 @@ This file concatenates all QBTC documentation pages in curated reading order for
 
 Source: https://docs.qbtc.net/index
 
-**If you own Bitcoin today, you'll be able to claim an equal amount of QBTC, a new coin built to survive quantum computers that could otherwise steal Bitcoin.**
+**If you control Bitcoin in an eligible output, you can claim an equal amount of QBTC. QBTC is a separate chain secured by post-quantum signatures.**
 
-Bitcoin's signatures will eventually fall to quantum computers. QBTC is the safe harbor: a new chain that runs on quantum-resistant cryptography from day one and already knows your Bitcoin balance. You move on your own schedule. Your Bitcoin stays on Bitcoin.
+A large quantum computer could break Bitcoin's signatures. QBTC is a separate chain whose validators sign with ML-DSA, a NIST post-quantum signature scheme. The chain tracks the Bitcoin UTXO set. Eligibility is live: whoever controls an eligible unspent output at the time of the claim can claim it. Your Bitcoin stays on Bitcoin.
 
-**Note:** **Pre-mainnet. Targeting Q3 2026.** The protocol is in active development. See the [Roadmap](/learn/roadmap).
+The self-claim supports P2PKH (`1…`) and P2WPKH (`bc1q…`) outputs today. A new output needs 144 Bitcoin confirmations (about one day) before it can claim.
+
+**Note:** **Pre-mainnet.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026, after the pre-launch security review closes. See the [Roadmap](/learn/roadmap).
 
 ## Choose your path
 
@@ -31,7 +33,7 @@ Bitcoin's signatures will eventually fall to quantum computers. QBTC is the safe
 
 Quantum computers will eventually break the math that protects Bitcoin addresses. Every Bitcoin address whose public key has ever been revealed (which includes every address that has ever spent) becomes vulnerable that day.
 
-QBTC is a separate chain built on quantum-resistant cryptography (a NIST-standardized scheme called ML-DSA). The chain keeps a continuous mirror of who owns what on Bitcoin. To move your balance over, you prove you own your Bitcoin address using a zero-knowledge proof, a cryptographic technique that confirms ownership without revealing your public key. The migration itself is therefore safe from quantum attack.
+QBTC is a separate chain whose validators sign with ML-DSA, a NIST-standardized post-quantum signature scheme (FIPS 204). The chain keeps a continuous mirror of the Bitcoin UTXO set. To claim, your wallet signs with your Bitcoin key, and a proving service turns that signature into a zero-knowledge proof of control. The claim does not publish your Bitcoin public key on chain.
 
 Nothing happens to your Bitcoin. No bridge, no peg, no locked coins, no custodian.
 
@@ -43,7 +45,7 @@ Nothing happens to your Bitcoin. No bridge, no peg, no locked coins, no custodia
 
 Source: https://docs.qbtc.net/learn/what-is-qbtc
 
-QBTC is a new blockchain that mirrors Bitcoin. Every Bitcoin holder will be able to claim an equal amount of QBTC by proving they own their Bitcoin address. The proof never reveals the public key, so the claim itself is safe from quantum-computer attack.
+QBTC is a new blockchain that mirrors Bitcoin. A Bitcoin holder claims an equal amount of QBTC by proving they control their Bitcoin address. The claim does not publish the public key on chain. The self-claim supports P2PKH (`1…`) and P2WPKH (`bc1q…`) addresses today.
 
 ## In plain English
 
@@ -52,26 +54,26 @@ A few terms you'll see repeatedly. Read these once and the rest of the docs beco
 * **UTXO** — short for "unspent transaction output." Think of a Bitcoin balance not as a single number but as a collection of separate coins (each one a UTXO). When you "have 0.5 BTC," you actually control one or more UTXOs that add up to 0.5 BTC. Bitcoin's entire ledger is a set of UTXOs.
 * **Public key** — a long number derived from your Bitcoin private key. Your Bitcoin address is a hash (a one-way summary) of your public key. Bitcoin uses your public key to verify that signatures came from you.
 * **Why public keys matter for quantum** — quantum computers can derive a private key from a public key. Once your public key is broadcast on Bitcoin (which happens every time you spend), a quantum-capable attacker could in principle reconstruct your private key and steal your coins.
-* **Zero-knowledge proof (ZK proof)** — a cryptographic technique that proves you know a secret without revealing the secret itself. QBTC uses a ZK proof to confirm you own your Bitcoin address without ever broadcasting the public key.
+* **Zero-knowledge proof (ZK proof)** — a cryptographic technique that proves you know a secret without revealing the secret itself. QBTC uses a ZK proof to confirm you own your Bitcoin address without publishing the public key on chain.
 
 ## What QBTC does
 
-QBTC is a standalone blockchain that keeps a continuous **mirror** of Bitcoin's UTXO set inside its own state. Every Bitcoin UTXO that exists right now has a corresponding 1:1 entitlement of QBTC waiting in that mirror.
+QBTC is a standalone blockchain that keeps a continuous **mirror** of Bitcoin's UTXO set inside its own state. Every Bitcoin UTXO has a 1:1 QBTC entitlement in that mirror. The zero-knowledge self-claim supports P2PKH (`1…`) and P2WPKH (`bc1q…`) outputs today. A new output needs 144 Bitcoin confirmations (about one day) before it can claim.
 
 To convert a claim into spendable QBTC:
 
-1. You open a quantum-safe wallet.
-2. The wallet generates a ZK proof that says, in effect, *"I control the private key for this Bitcoin address. I want my claim delivered to this QBTC address."*
-3. You submit the proof to QBTC.
+1. You open a wallet that supports QBTC claims.
+2. The wallet signs a digest with your Bitcoin key and sends the signature to a proving service.
+3. The service builds a ZK proof that says, in effect, *"The holder controls the private key for this Bitcoin address and wants the claim delivered to this QBTC address."* The service broadcasts the claim.
 4. The chain verifies the proof, marks the claim as exhausted, and credits the QBTC to your destination address.
 
-Your Bitcoin never moves. Your public key is never broadcast. Your private key never leaves your wallet.
+Your Bitcoin never moves. Your public key never goes on chain.
 
 ## The two design choices that make this work
 
 ### 1. The validator layer uses post-quantum signatures
 
-Every block on QBTC is signed using **ML-DSA**, a lattice-based signature scheme standardized by NIST as FIPS 204. Even an adversary with a large-scale quantum computer cannot forge a QBTC validator signature or rewrite QBTC's history.
+Every block on QBTC is signed using **ML-DSA**, a lattice-based signature scheme standardized by NIST as FIPS 204. ML-DSA is believed secure against known quantum attacks, so a quantum computer should not let an adversary forge a QBTC validator signature or rewrite QBTC's history.
 
 The chain is built on a fork of CometBFT that uses ML-DSA throughout the consensus pipeline.
 
@@ -85,10 +87,9 @@ The ZK proof reveals on-chain only:
 It keeps secret:
 
 * Your Bitcoin public key.
-* Your Bitcoin private key.
 * The signature you produced.
 
-Once a Bitcoin public key has been broadcast (during a normal Bitcoin spend), a quantum-capable attacker could derive the private key from it. The ZK proof lets QBTC verify ownership cryptographically without ever exposing the public key. The migration itself stays quantum-safe.
+Once a Bitcoin public key has been broadcast (during a normal Bitcoin spend), a quantum-capable attacker could derive the private key from it. The ZK proof lets QBTC verify ownership without publishing the public key on chain.
 
 ## What QBTC is, technically
 
@@ -100,13 +101,13 @@ Once a Bitcoin public key has been broadcast (during a normal Bitcoin spend), a 
 
 ## How a claim flows, end to end
 
-1. **At launch.** QBTC starts with a snapshot of the Bitcoin UTXO set. Every UTXO becomes an entitlement entry in QBTC's state.
+1. **At launch.** The chain loads a bootstrap seed of the Bitcoin UTXO set. Each UTXO becomes an entitlement entry in QBTC's state. Eligibility is live with no snapshot date: whoever controls an eligible unspent output at claim time can claim it.
 2. **Continuous updates.** As Bitcoin produces new blocks, QBTC's validators ingest them and update the mirror. New UTXOs become new entitlement entries; spent ones are reconciled; coinbase outputs add new entries. Whoever currently controls a Bitcoin UTXO controls the corresponding QBTC entitlement.
-3. **User claims.** A holder uses a quantum-safe wallet to sign a ZK proof for the UTXO they want to claim, then submits it. QBTC is partnering with an established wallet to deliver this; native support will be live at mainnet. A single transaction can claim up to 50 UTXOs from the same Bitcoin address.
+3. **User claims.** A holder's wallet signs a digest for the address they want to claim. A proving service builds the ZK proof and broadcasts the claim. A single transaction can claim up to 50 UTXOs from the same Bitcoin address. A new output needs 144 Bitcoin confirmations (about one day) before it can claim.
 4. **Verification.** Validators verify three things: the ZK proof is valid, the UTXO has an outstanding entitlement, and the destination QBTC address is well-formed.
 5. **Release.** The QBTC is minted into the destination address. The entitlement is exhausted to prevent double-claims. The original Bitcoin UTXO is untouched and remains on Bitcoin.
 
-Holders can claim immediately, wait years, or never claim at all. The only exception: **governance can reclaim dormant exposed-key BTC** (UTXOs older than 17 years whose public keys are visible on-chain) into the chain's Reserve Module on a roughly two-week voting cadence. See [Tokenomics](/research/tokenomics).
+Holders can claim immediately, wait years, or never claim at all. A claimed coin stays claimed after it moves on Bitcoin. The only exception: **governance votes can reclaim dormant exposed-key BTC** (outputs that have not moved for more than 17 years and whose public key is visible on chain). The cutoff is a Bitcoin block height written into each proposal. See [Tokenomics](/research/tokenomics).
 
 ## Read next
 
@@ -153,7 +154,7 @@ There are two distinct categories of risk. They materialize on different timelin
 
 A Bitcoin public key becomes visible on-chain in two situations:
 
-1. **P2PK outputs** (pay-to-public-key). The public key is literally the output. Most of these are Satoshi-era coinbase outputs that have never moved. Over 1 million BTC is estimated to sit here.
+1. **P2PK outputs** (pay-to-public-key). The public key is literally the output. Most of these are Satoshi-era coinbase outputs that have never moved. About 1.7 million BTC sits here.
 2. **Reused addresses.** Any time a Bitcoin address spends from itself, its public key is published as part of the transaction's input script. Once an address has spent even once, its public key is permanent and public forever.
 
 For both categories, the moment a quantum computer can run Shor's algorithm at the required scale, the funds can be stolen by deriving the private key from the exposed public key.
@@ -178,8 +179,7 @@ This is the "**short-range attack**" or "**live key attack**." It threatens ever
 Approximate measurements of permanently-exposed-key BTC, by category:
 
 * **~1.7 million BTC** in P2PK outputs (Satoshi-era, public key permanently on-chain).
-* **~3 million BTC** in reused-address outputs across P2PKH and P2WPKH (public key revealed by prior spending).
-* **~4.9 million BTC** conservative total (P2PK + reused P2PKH + reused P2WPKH).
+* **Several million BTC** in reused-address outputs across P2PKH and P2WPKH (public key revealed by prior spending).
 * **~7 million BTC** broad total including all reused P2SH and P2WSH addresses.
 
 Per-script-type breakdown and current numbers: **[indexer.qbtc.net](https://indexer.qbtc.net)**.
@@ -196,7 +196,7 @@ Coverage from the major business press anchored quickly to a 2029 timeline:
 * [CoinDesk, Mar 31 2026](https://www.coindesk.com/tech/2026/03/31/bitcoin-bulls-scramble-for-post-quantum-protection-as-google-drops-bombshell-paper) — "Bitcoin cracked in 9 minutes."
 * [The Block, Mar 31 2026](https://www.theblock.co/post/395814/google-quantum-computing-earlier) — "Google warns quantum computing may break bitcoin earlier than thought."
 
-Google itself, per the same paper, treats **2029** as the internal target for being post-quantum-ready across its own infrastructure. Google Cloud has shipped ML-DSA-65 in [Cloud KMS](https://cloud.google.com/blog/products/identity-security/announcing-quantum-safe-digital-signatures-in-cloud-kms) already. The US federal government has a [2035 transition target](https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/) (NSM-10), with NIST's [IR 8547](https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf) anchoring the schedule for federal systems.
+Press reports on the paper cite **2029** as Google's internal target for being post-quantum-ready across its own infrastructure. Google Cloud has shipped ML-DSA-65 in [Cloud KMS](https://cloud.google.com/blog/products/identity-security/announcing-quantum-safe-digital-signatures-in-cloud-kms) already. The US federal government has a [2035 transition target](https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/) (NSM-10), with NIST's [IR 8547](https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf) anchoring the schedule for federal systems.
 
 Independent expert surveys (the Mosca / Global Risk Institute annual survey, IBM and PsiQuantum public roadmaps) place median estimates in the early-to-mid 2030s, with substantial dispersion. The Google paper has pulled the lower bound forward materially.
 
@@ -216,18 +216,18 @@ For encryption, "harvest now, decrypt later" means an adversary records cipherte
 
 Bitcoin can in principle add post-quantum signatures via a soft fork. This is being explored. But:
 
-* **Post-quantum signatures are large.** ML-DSA-65 signatures are roughly 3.3 KB (3309 bytes per FIPS 204), vs. roughly 70 bytes for ECDSA. Even with aggregation, the load on Bitcoin's block space is significant.
+* **Post-quantum signatures are large.** ML-DSA signatures are 2,420 to 4,627 bytes (about 2.4 KB to 4.6 KB) per FIPS 204, depending on the parameter set, vs. roughly 70 bytes for ECDSA. Even with aggregation, the load on Bitcoin's block space is significant.
 * **Every user must migrate to new addresses.** Old addresses with exposed public keys remain vulnerable forever, including the Satoshi-era coins.
 * **A subset of the community will push for a hard fork instead.** Soft-fork PQ migration of Bitcoin is contentious. There is real risk of a chain split.
 * **The timeline is years.** BIP discussion, consensus, activation, and migration each take years individually. The total likely runs longer than the window before quantum capability arrives.
 
-QBTC fills this gap: a parallel quantum-safe ledger that every BTC holder can migrate to on their own schedule, without waiting for Bitcoin's consensus process to complete.
+QBTC fills this gap: a parallel ledger with post-quantum validator signatures. Holders can claim on their own schedule, without waiting for Bitcoin's consensus process to complete.
 
 ## Read next
 
 * [Why a Parallel Chain](/learn/why-parallel-chain), why QBTC chose this design over alternatives.
 * [Quantum Resistance (ML-DSA)](/build/quantum-resistance), how QBTC's cryptography works.
-* [Quantum Risk Assessment](/research/quantum-risk-assessment), the detailed expert-panel timeline.
+* [Quantum Risk Assessment](/research/quantum-risk-assessment), a summary of published timeline estimates.
 
 ---
 
@@ -239,22 +239,22 @@ Bitcoin faces an inevitable challenge: the arrival of quantum computers capable 
 
 ## The design space
 
-There are five ways to give Bitcoin holders access to quantum-safe storage:
+There are five ways to give Bitcoin holders access to post-quantum signatures:
 
 1. **Soft-fork Bitcoin** to add post-quantum signatures (e.g., a PQ-aware Taproot variant such as BIP-360).
 2. **Hard-fork Bitcoin** to require post-quantum signatures for all spends and re-mine dormant exposed-key UTXOs.
-3. **Bridge BTC** to a quantum-safe chain via a custodian or multisig.
-4. **Wrap BTC** as a token on a quantum-safe smart-contract platform.
-5. **Mirror Bitcoin's UTXO set** on a quantum-safe parallel chain, with claims gated by ZK proofs. **(QBTC's choice.)**
+3. **Bridge BTC** to another chain via a custodian or multisig.
+4. **Wrap BTC** as a token on a smart-contract platform with post-quantum signatures.
+5. **Mirror Bitcoin's UTXO set** on a parallel chain with post-quantum validator signatures, with claims gated by ZK proofs. **(QBTC's choice.)**
 
 ## Why not a soft fork
 
 A soft fork is the more likely path for the Bitcoin community, embedding post-quantum verification into Taproot scripts. The approach has severe problems:
 
-* **Bitcoin's block space was not sized for PQ signatures.** ML-DSA-65 signatures are about 3.3 KB versus 70 bytes for ECDSA. Adding them to Bitcoin means roughly a 47× expansion of signature data inside a block-space budget that has been politically immovable for a decade. QBTC, by contrast, was built for ML-DSA from genesis; the chain's bandwidth, storage, and fee market were sized for PQ signatures from day one rather than retrofitted into a constrained format.
-* **Activation takes years Bitcoin may not have.** BIP discussion, soft-fork signaling, miner activation, and user migration each compound. Realistic timelines run 5 to 10 years, on a clock set by a CRQC arrival window that published assessments place between 2029 and 2035. QBTC ships its post-quantum migration on its own schedule, ahead of CRQC, without needing Bitcoin's social consensus to move first.
-* **The largest pool of at-risk BTC is structurally unfixable by soft fork.** Satoshi-era P2PK balances (~1.7M BTC that has never moved) and reused-address coins with on-chain public keys cannot defend themselves under any soft-fork scheme: there is no signer to migrate them. They remain spendable by whoever runs Shor's algorithm first. QBTC's governance reclamation is the only mechanism in the design space that addresses this category, by removing that value from the quantum attacker's reach *on a separate ledger* rather than touching the coins on Bitcoin. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
-* **Consensus fractures.** A soft fork that quietly leaves dormant coins exposed will not satisfy the holders who want them protected; a soft fork that touches them will not pass. Either outcome fractures Bitcoin's social consensus. QBTC sidesteps the dilemma: Bitcoin's rules are unchanged, and the protection happens elsewhere for holders who opt in.
+* **Bitcoin's block space was not sized for PQ signatures.** ML-DSA-44 signatures are about 2.4 KB versus about 70 bytes for ECDSA. Adding them to Bitcoin means roughly a 34× expansion of signature data inside a block-space budget that has been politically immovable for a decade. QBTC uses ML-DSA from genesis. Large signatures and blocks still raise network latency requirements for validators.
+* **Activation takes years Bitcoin may not have.** BIP discussion, soft-fork signaling, miner activation, and user migration each compound. Realistic timelines run 5 to 10 years, on a clock set by a CRQC arrival window that published assessments place between 2029 and 2035. QBTC ships its post-quantum chain on its own schedule, without needing Bitcoin's social consensus to move first.
+* **The largest pool of at-risk BTC is structurally unfixable by soft fork.** Satoshi-era P2PK balances (~1.7M BTC that has never moved) and reused-address coins with on-chain public keys cannot defend themselves under any soft-fork scheme: there is no signer to migrate them. They remain spendable by whoever runs Shor's algorithm first. QBTC's governance reclamation addresses this category on a separate ledger: it sends the matching QBTC to the Reserve and the two funds. It does not protect the coins on Bitcoin, which stay where they are. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
+* **Consensus fractures.** A soft fork that quietly leaves dormant coins exposed will not satisfy the holders who want them protected; a soft fork that touches them will not pass. Either outcome fractures Bitcoin's social consensus. QBTC sidesteps the dilemma: Bitcoin's rules are unchanged, and holders who opt in claim on a separate chain.
 
 A soft fork buys safety for active users *eventually*, does nothing for the largest pool of at-risk coins, and may not arrive in time. The fact that an active BTC holder must also take an action to claim QBTC is not a comparable cost: a QBTC claim is opt-in and does not require Bitcoin's protocol to change. A soft fork migration is opt-in only in the trivial sense that you can choose to leave your coins behind on a chain that has become unsafe for them.
 
@@ -264,11 +264,11 @@ A Bitcoin hard fork that requires post-quantum signatures for all future spends,
 
 It will not happen on Bitcoin Legacy. The social consensus does not accept hard forks that change the rules in ways that affect existing holders' coins, even to protect them. Every prior attempt has failed or split off. A hard fork that re-allocates dormant Satoshi-era UTXOs would be the most contentious change in Bitcoin's history, and it would impose that change on every holder, including those who reject the migration.
 
-QBTC performs the hard-fork-equivalent migration **on a separate chain**, so Bitcoin's consensus is never touched and no holder is forced to participate. Holders who want quantum safety opt in. Holders who don't, don't. The reclamation of dormant exposed-key UTXOs happens only in QBTC's mirror; on Bitcoin, those coins remain exactly where they are, governed by exactly the rules they have today.
+QBTC performs the hard-fork-equivalent migration **on a separate chain**, so Bitcoin's consensus is never touched and no holder is forced to participate. Holders who want post-quantum signatures opt in. Holders who don't, don't. The reclamation of dormant exposed-key UTXOs happens only in QBTC's mirror; on Bitcoin, those coins remain exactly where they are, governed by exactly the rules they have today.
 
 ## Why not a bridge
 
-A bridge moves BTC into a quantum-safe chain by locking it under a custodian or multisig. This has been done many times (wBTC, sBTC, tBTC, and others).
+A bridge moves BTC to another chain by locking it under a custodian or multisig. This has been done many times (wBTC, tBTC, and others).
 
 Bridges fail for several reasons:
 
@@ -282,30 +282,28 @@ Wrapping BTC as a token on another chain (Ethereum, a Cosmos chain, etc.) inheri
 
 ## What QBTC does instead: mirror, then claim
 
-QBTC executes the **Hard Fork now**, before quantum computers reach scale, on a separate ledger. From day one, QBTC uses ML-DSA signatures at the consensus layer. Every Bitcoin UTXO has a 1:1 entitlement in QBTC's mirror, claimable by zero-knowledge proof.
+QBTC executes the **Hard Fork now**, on a separate ledger. From genesis, QBTC uses ML-DSA signatures at the consensus layer. Every Bitcoin UTXO has a 1:1 entitlement in QBTC's mirror. The zero-knowledge self-claim supports P2PKH (`1…`) and P2WPKH (`bc1q…`) outputs today. A new output needs 144 Bitcoin confirmations (about one day) before it can claim.
 
 * The mirror tracks Bitcoin's UTXO set continuously. Every live BTC UTXO has a corresponding QBTC entitlement of equal size.
 * The mirror updates with every new Bitcoin block. New UTXOs add new entitlements. Spent UTXOs are reconciled. Whoever currently controls a Bitcoin UTXO controls the corresponding QBTC entitlement.
-* A holder exercises an entitlement by submitting a **zero-knowledge proof** of ownership, which verifies they control the BTC private key without ever broadcasting the public key.
-* Governance, on a roughly two-week voting cadence, reclaims dormant exposed-key BTC UTXOs older than 17 years and redirects the corresponding QBTC into accounts that secure the migration.
+* A holder exercises an entitlement with a **zero-knowledge proof** of control. The wallet signs a digest with the Bitcoin key and sends the signature to a proving service. The service builds the proof and broadcasts the claim. The Bitcoin public key never goes on chain.
+* Governance votes can reclaim dormant exposed-key BTC UTXOs that have not moved for more than 17 years. The cutoff is a Bitcoin block height written into each proposal. The matching QBTC goes 90% to the Reserve, 5% to a development fund and 5% to a marketing fund.
 
 This design has properties the alternatives do not:
 
 | Property | **QBTC** | Soft fork | Hard fork | Bridge | Wrapped |
 |---|---|---|---|---|---|
 | Does not touch Bitcoin | **Yes** | Yes | No | Yes | Yes |
-| Allocates to every BTC UTXO | **Yes** | No | Yes | No | No |
-| Protects dormant exposed-key coins | **Yes (reclaim)** | No | Maybe | No | No |
-| Migration is itself quantum-safe | **Yes (ZK proof)** | Partial | Yes | No (ECDSA bridge keys) | No |
+| Allocates to every BTC UTXO | **Entitlement for every UTXO; self-claim for P2PKH and P2WPKH today** | No | Yes | No | No |
+| Handles dormant exposed-key coins | **Reclaims the QBTC entitlement only** | No | Maybe | No | No |
 | No custodian, no peg | **Yes** | Yes | Yes | No | No |
 | Holder controls timing | **Yes** | Yes | No | Yes | Yes |
-| Available before CRQC arrives | **Yes** | No (too slow) | No | Yes | Yes |
 
 ## The trade-off
 
 QBTC is a separate ledger with its own validator set, its own block history, its own social contract. A QBTC unit and a BTC unit are not the same asset.
 
-QBTC offers a credible safe harbor: a chain that already knows your balance, that you can move to on your schedule, that does not need Bitcoin to change, and that does not ask you to trust a custodian.
+QBTC offers a separate chain with post-quantum validator signatures. It mirrors your Bitcoin balance, lets you claim on your own schedule, does not need Bitcoin to change, and does not hold your BTC.
 
 ## Read next
 
@@ -319,47 +317,47 @@ QBTC offers a credible safe harbor: a chain that already knows your balance, tha
 
 Source: https://docs.qbtc.net/learn/for-btc-holders
 
-**Note:** **1 BTC held = 1 QBTC claimable.** No signup. No time limit. No fees to the project.
+**Note:** **1 BTC in an eligible output = 1 QBTC claimable.** Supported today: P2PKH (`1…`) and P2WPKH (`bc1q…`). No signup. No fees to the project.
 
-**Note:** **Pre-mainnet, targeting Q3 2026.** The claim flow described here goes live when QBTC mainnet ships. You do not need to take any action right now. Your BTC is yours. Your QBTC claim will be waiting.
+**Note:** **Pre-mainnet.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026. You do not need to take any action right now. Your BTC is yours.
 
 ## The short version
 
-If you hold Bitcoin, you have a claim on an equal amount of QBTC. When mainnet launches, you can convert your claim into spendable QBTC by submitting a zero-knowledge proof of ownership of your Bitcoin address. The proof never reveals your public key, so the migration is itself quantum-safe.
+If you control Bitcoin in an eligible output, you can claim an equal amount of QBTC. You claim with a zero-knowledge proof of control of your Bitcoin address. The claim does not publish your Bitcoin public key on chain.
 
-Holders can claim immediately at mainnet, wait years, or never claim. The only exception: **dormant exposed-key BTC** (UTXOs older than 17 years whose public keys are visible on-chain, overwhelmingly Satoshi-era P2PK outputs and ancient reused addresses) is subject to reclamation by on-chain governance. If your BTC is not in those categories, your claim is not affected.
+Eligibility is live, with no snapshot date: whoever controls an eligible unspent output at the time of the claim can claim it. A new output needs 144 Bitcoin confirmations (about one day) before it can claim. Holders can claim at mainnet, wait years, or never claim. The only exception: **dormant exposed-key BTC** (outputs that have not moved for more than 17 years and whose public keys are visible on chain, mostly Satoshi-era P2PK outputs) can be reclaimed by on-chain governance votes. The cutoff is a Bitcoin block height written into each proposal. If your BTC is not in those categories, your claim is not affected.
 
-**Claiming QBTC cannot cost you any Bitcoin.** Nothing about the process moves, spends, or locks your BTC. The ZK proof is generated locally from your Bitcoin private key and never sends a Bitcoin transaction.
+**Claiming QBTC cannot cost you any Bitcoin.** Nothing about the process moves, spends, or locks your BTC. The claim never sends a Bitcoin transaction.
 
 ## What you need to know
 
 * **You own the claim if you own the BTC.** The claim is computed from the Bitcoin UTXO set, not from a registration or signup. Whoever controls the private key for a Bitcoin address controls the corresponding QBTC claim.
-* **You will use a quantum-safe wallet.** An established multi-chain, seedless self-custody wallet partner is implementing native post-quantum signing (ML-DSA) and QBTC claim-proof generation, with rollout planned at mainnet. The partner will be named ahead of launch. Claiming will be a normal in-wallet action.
-* **The proof runs on the wallet side.** No Bitcoin transaction is sent. No public key is broadcast. Independent operators also run hosted "proof service" endpoints that wallets can use to offload computation if the device is constrained.
-* **The proof keeps your BTC public key hidden.** It reveals only the hash of the address being claimed and the destination QBTC address. The BTC public key, private key, and signature are all hidden cryptographic inputs.
+* **You claim from a wallet that supports QBTC claims.** The wallet signs a digest with your Bitcoin key and sends the signature to a proving service. The service builds the zero-knowledge proof and broadcasts the claim. No Bitcoin transaction is sent.
+* **Your BTC public key does not go on chain.** The claim transaction shows only the hash of the address being claimed and the destination QBTC address.
+* **Use an ML-DSA account for post-quantum protection.** QBTC accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
 * **You can batch claims.** A single transaction can claim up to 50 UTXOs from the same Bitcoin address.
 
 ## Where do I hold my BTC?
 
 The right action depends on how you currently custody your Bitcoin.
 
-### On a self-custody wallet (Ledger, Trezor, Sparrow, Electrum, etc.)
+### On a software self-custody wallet
 
-You control your private keys. You will be able to claim directly using a QBTC-compatible wallet once mainnet ships. No action required now.
+You control your private keys. You can claim with a wallet that supports QBTC claims, if your output is P2PKH or P2WPKH. No action required now.
 
-### On a hardware wallet
+### On a hardware wallet (Ledger, Trezor, etc.)
 
-Same as above. You hold the keys. Wallet partners will publish hardware-wallet integration paths before mainnet.
+You control your keys, so you control your claim. Claiming needs a wallet that supports QBTC claims. Check with your wallet provider for support.
 
 ### On a paper wallet or seed phrase you can still access
 
-Same. You hold the keys. As long as you can access the private key when mainnet ships, you can claim.
+You hold the keys. If you can access the private key and the output is a supported type, you can claim.
 
 ### On an exchange (Coinbase, Binance, Kraken, etc.)
 
 **The exchange controls the keys, which means the exchange controls the claim.** Whether they pass it on to you, sell it, or ignore it is up to them. This has been the pattern with prior airdrops: some exchanges credit users, others do not.
 
-If you want certainty about your claim, the cleanest path is to **withdraw to self-custody** before mainnet. Standard caveats apply: only do this if you're comfortable managing your own keys.
+Eligibility is live: whoever controls the output at the time of the claim can claim it. To claim yourself, you must control the keys when you claim. Standard caveats apply: only self-custody if you're comfortable managing your own keys.
 
 ### In a custodial product (Fidelity Wise Origin, BlackRock IBIT, etc.)
 
@@ -369,7 +367,7 @@ ETF and similar wrapped products do not pass through to the underlying holder. T
 
 Nothing is required. If you want to be prepared:
 
-1. **Make sure you control your BTC keys.** If you're on an exchange and want certainty about your claim, consider self-custody.
+1. **Make sure you control your BTC keys.** To claim yourself, you must control the keys when you claim.
 2. **Follow [@qbtc_net on X](https://x.com/qbtc_net)** for mainnet launch announcements and wallet support news, or join the [Discord](https://discord.gg/anMfAjtCPZ).
 3. **Read the [Quantum Threat](/learn/quantum-threat) page** so you understand why this matters even if you never plan to claim.
 
@@ -386,21 +384,21 @@ Nothing is required. If you want to be prepared:
 
 Source: https://docs.qbtc.net/learn/fair-launch
 
-QBTC launches on terms that mirror Bitcoin's own. No pre-sale. No investor allocation. No team premine. The entire claimable supply belongs to people who already hold Bitcoin. There is no genesis allocation to anyone.
+QBTC launches on terms that mirror Bitcoin's own. No sale. No investor allocation. No team premine. No vesting. The entire claimable supply belongs to people who already hold Bitcoin. Genesis has one mint: 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same.
 
 ## What "fair launch" means here
 
 A fair launch, in the sense QBTC uses the term, requires all of the following:
 
 1. **No ICO, IDO, or pre-sale.** The token cannot be purchased from the project before launch. There is no fundraising round in which capital is exchanged for tokens at a discount.
-2. **No investor allocation.** No venture capital, no strategic investors, no advisor allocation in token form.
-3. **No team premine.** The chain ships with zero QBTC in circulation. No tokens are minted to founders, contributors, or any privileged wallet at genesis.
+2. **No investor allocation.** No venture capital and no strategic investors in token form.
+3. **No team premine.** No tokens are minted to founders or contributors at genesis. The only genesis mint is 50 QBTC for the first validator, offset by the unclaimable block-9 coinbase output.
 4. **Entitlement is determined by an external, immutable signal.** For QBTC, that signal is the Bitcoin UTXO set. Whoever currently controls a Bitcoin UTXO controls the corresponding QBTC entitlement. The project cannot alter who gets what after the fact.
-5. **Anything beyond Path 1 user claims requires governance.** Every other path through which QBTC enters circulation is voted on by the validator set on-chain.
+5. **Anything beyond Path 1 user claims requires governance.** Apart from the 50 QBTC genesis mint, every other path through which QBTC enters circulation is voted on on-chain.
 
 ## Failure modes this avoids
 
-The standard token-launch pattern (VC-backed pre-sales, team allocations vesting over multi-year cliffs, "ecosystem funds" controlled by a foundation) produces three predictable outcomes:
+The standard token-launch pattern (VC-backed pre-sales, team allocations vesting over multi-year cliffs, "marketing funds" controlled by a foundation) produces three predictable outcomes:
 
 * **Concentrated supply.** Insiders control a large fraction of the float with information asymmetry over public holders.
 * **Misaligned incentives.** The team's payoff is dominated by token price, not protocol utility, biasing decisions toward marketing over engineering.
@@ -410,7 +408,7 @@ QBTC avoids all three. Entitlement at genesis is determined entirely by an exter
 
 ## How the supply works
 
-QBTC has a hard cap of **21 million QBTC**, mirroring Bitcoin. Tokens are created only when one of two events happens: a user claim, or a successful governance reclamation. The cap is enforced because no Bitcoin UTXO can be claimed twice.
+QBTC has a hard cap of **21 million QBTC**, mirroring Bitcoin. After the 50 QBTC genesis mint, tokens are created only when one of two events happens: a user claim, or a successful governance reclamation. The cap is enforced because no Bitcoin UTXO can be claimed twice.
 
 ### The claim mirror
 
@@ -418,11 +416,13 @@ The chain state contains a continuous mirror of Bitcoin's UTXO set. For every li
 
 The mirror is a ledger of entitlements. QBTC tokens are minted only when an entitlement is exercised.
 
-Whoever currently controls a Bitcoin UTXO controls the corresponding entitlement. If you spend your BTC on Bitcoin, the new outputs at the recipient addresses carry the entitlement instead.
+Whoever currently controls a Bitcoin UTXO controls the corresponding entitlement. If an unclaimed coin moves on Bitcoin, its claim moves with it to the new outputs. A claimed coin stays claimed after it moves. Eligibility is live with no snapshot date.
 
 ### Path 1: A Bitcoin holder claims
 
 A user submits a zero-knowledge proof of ownership of a Bitcoin address along with a list of UTXOs to claim and a destination QBTC address. The chain verifies the proof, marks the referenced UTXOs as claimed, and mints QBTC into the user's account. The minted amount equals the sum of the claimed UTXOs' BTC values.
+
+The zero-knowledge self-claim supports P2PKH (`1…`) and P2WPKH (`bc1q…`) outputs today. A new output needs 144 Bitcoin confirmations (about one day) before it can claim.
 
 A holder can claim today, in a decade, or never at all, with one exception described below.
 
@@ -430,55 +430,53 @@ A holder can claim today, in a decade, or never at all, with one exception descr
 
 Bitcoin holds roughly 1.7M BTC in Satoshi-era P2PK outputs (public key permanently on-chain) plus additional BTC in reused-address outputs where the public key has been revealed. On Bitcoin Legacy, these are the coins that will be stolen first by a quantum-capable attacker. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
 
-QBTC governance reclaims these UTXOs. Through standard `x/gov` proposals on a roughly two-week voting cadence, validators vote on which dormant exposed-key UTXOs to reclaim. When a proposal passes:
+QBTC governance can reclaim these UTXOs. Through standard `x/gov` proposals, validators vote on which dormant exposed-key UTXOs to reclaim. The target is outputs that have not moved for more than 17 years. The cutoff is a Bitcoin block height written into each proposal. Later votes can move it forward. When a proposal passes:
 
 1. The referenced UTXOs are marked as claimed in the mirror, with the same flag a user claim would set.
-2. QBTC equal to the reclaimed BTC value is minted on the chain and distributed across three on-chain accounts (described below).
+2. QBTC equal to the reclaimed BTC value is minted on the chain and split 90 / 5 / 5 (described below).
 3. The reclaimed UTXOs cannot be claimed by a user. Bitcoin spends out of these UTXOs propagate the claimed status to the resulting child outputs, so descendants are also ineligible to claim QBTC.
 
-Value that would otherwise be captured by a quantum attacker is instead distributed to addresses that secure the post-quantum migration.
+The reclaim does not protect the coins on Bitcoin. It sends the matching QBTC to the Reserve and the two project funds.
 
 ### How reclaimed QBTC is split
 
-Every governance reclamation distributes the minted QBTC across three on-chain accounts at a fixed ratio:
+Every governance reclamation splits the minted QBTC 90 / 5 / 5:
 
 | Destination | Share | What it funds |
 |---|---|---|
 | **Reserve Module** | 90% | Validator emission. The chain releases this to validators per-block. |
-| **Development Fund** | 5% | Continued protocol development. Spends from this fund require `x/gov` approval. |
-| **Ecosystem Fund** | 5% | Adoption, education, ecosystem growth. Spends require `x/gov` approval. |
+| **Development fund** | 5% | Continued protocol development. |
+| **Marketing fund** | 5% | Adoption and education. |
 
-The 5+5 share is the project's funding mechanism. It does not exist at genesis. It accrues only when a reclamation proposal passes a validator vote, and every spend from these funds is itself subject to a separate governance vote. The amounts, the split, and the existence of the funds can all be changed by future governance.
+The 5 + 5 share is the project's only share of QBTC. It does not exist at genesis. It accrues only when a reclamation proposal passes a validator vote.
 
 This is materially different from a team premine or a vesting cliff:
 
-* Nothing is allocated at genesis.
-* Funding is tied to real on-chain economic events (governance reclamations), not to time-based unlocks.
-* The funds are on-chain treasuries, not private wallets. Every disbursement is publicly recorded.
-* If validators decide the project no longer warrants funding, they can vote to stop.
+* The only genesis mint is 50 QBTC for the first validator. The two funds start empty.
+* Funding is tied to on-chain events (governance reclamations), not to time-based unlocks.
+* Every reclamation is a public on-chain vote.
 
-QBTC funds its own continued development out of value that would otherwise be lost to a quantum attacker, on terms set by the validator set. Bitcoin Core is funded by donations and corporate sponsorship; QBTC is funded by a transparent on-chain mechanism gated by governance.
+Bitcoin Core is funded by donations and corporate sponsorship. QBTC funds its development from a share of governance reclamations.
 
 ## What the project gets
 
-The project that built QBTC starts with zero QBTC. There is no founder wallet pre-loaded with tokens. Contributors who want QBTC can:
+The project starts with no QBTC. There is no founder wallet pre-loaded with tokens. Contributors who want QBTC can:
 
 * Hold Bitcoin and claim, like anyone else.
 * Operate validator nodes, providing the capital and infrastructure required.
-* Receive disbursements from the Development Fund through governance-approved spends, on terms transparent to the entire network.
+* Receive QBTC from the development fund.
 
-There is no special role, no special multiplier, no reserved seat in the validator set.
+There is no special multiplier.
 
 ## What this rules out
 
 * **Insider rounds at discounted prices.** No.
 * **Genesis team allocation that vests into circulation.** No.
 * **Pre-launch yield programs that allocate tokens to early participants on terms unavailable later.** No.
-* **Foundation control over a significant fraction of supply.** No. The Development and Ecosystem funds are governance-gated, not foundation-controlled.
 
 ## What it does not rule out
 
-Fair launch does not mean "no organization exists to maintain the protocol." A team and any associated foundation will exist, will fundraise in conventional ways (fiat, equity in operating entities), and will operate validator infrastructure on the same terms as anyone else. The team also accesses the Development Fund through governance-approved proposals.
+Fair launch does not mean "no organization exists to maintain the protocol." A team and any associated foundation will exist, and will fundraise in conventional ways (fiat, equity in operating entities). The team also receives the development fund share.
 
 It also does not mean QBTC will be evenly distributed at launch. The Bitcoin UTXO set is itself uneven; a small number of addresses hold a large fraction of supply. QBTC inherits Bitcoin's distribution, for better and worse. What it does not do is *worsen* that distribution by adding a layer of insider allocation on top.
 
@@ -494,31 +492,32 @@ It also does not mean QBTC will be evenly distributed at launch. The Bitcoin UTX
 
 Source: https://docs.qbtc.net/learn/roadmap
 
-QBTC is pre-mainnet. The protocol substrate (post-quantum consensus, ZK-gated claims, the UTXO mirror) is implemented and undergoing testing.
+QBTC is pre-mainnet. The protocol substrate (post-quantum consensus, ZK-gated claims, the UTXO mirror) runs on a public test network that started in March 2026. The test network may be reset.
 
-**Mainnet target: Q3 2026.**
+**Mainnet: a fresh genesis, planned for Q4 2026.** Mainnet follows after the pre-launch security review closes.
 
 ## Component status
 
 | Component | Status |
 |---|---|
-| Post-quantum consensus (ML-DSA / FIPS 204) | **Built**, in chain code |
+| Post-quantum consensus (ML-DSA-44 / FIPS 204) | **Built**, in chain code |
 | ZK PLONK claim verifier (on-chain) | **Built**, in chain code |
 | Bifrost sidecar + ebifrost block ingestion | **Built**, in chain code |
-| User claim mechanism (`MsgClaimWithProof`, batch up to 50 UTXOs) | **Built**, in chain code |
+| User claim mechanism (`MsgClaimWithProof`, batch up to 50 UTXOs; P2PKH and P2WPKH outputs) | **Built**, in chain code |
 | Reserve Module + validator emission formula | **Built**, in chain code |
 | Cosmos `x/gov` governance | **Built**, in chain code |
-| Genesis UTXO snapshot (`utxo-indexer`) | **Built**, in chain code |
-| Governance reclamation of dormant exposed-key BTC into Reserve | **Activated via governance** after mainnet |
+| Bootstrap seed of the Bitcoin UTXO set (`utxo-indexer`); eligibility is live, with no snapshot date | **Built**, in chain code |
+| Governance reclamation of dormant exposed-key BTC | **Built**; each reclaim is enacted by a governance vote |
+| Pre-launch security review | **In progress** |
 
 Terminology:
 
 * **Built** — present in the chain code, ships at mainnet.
-* **Activated via governance** — the mechanism is part of QBTC's tokenomics but is enacted through `x/gov` proposals after mainnet rather than enforced by automatic chain rules. The validator set sets the activation parameters (UTXO categories, cutoffs, dispute windows) through governance.
+* **Enacted by a governance vote** — the mechanism is in code, but each use needs an `x/gov` proposal to pass. Each proposal states which outputs it reclaims.
 
 ## Governance reclamation of dormant exposed-key BTC
 
-QBTC entitlements attached to quantum-vulnerable dormant Bitcoin UTXOs (P2PK outputs and reused-address outputs older than 17 years) are reclaimed from the claim mirror and credited to the Reserve Module on a roughly two-week voting cadence. This sustains validator emission and removes value from vulnerable circulation, redistributing it to a quantum-safe address.
+Governance votes can reclaim the QBTC entitlement of Bitcoin outputs that have not moved for more than 17 years and whose public key is visible on chain. The cutoff is a Bitcoin block height written into each proposal. Later votes can move it forward. Each reclaim splits 90 / 5 / 5: 90% to the Reserve, 5% to a development fund and 5% to a marketing fund. The Reserve pays validator and staker rewards. A reclaim does not touch the coins on Bitcoin.
 
 See [Tokenomics](/research/tokenomics) for the full design.
 
@@ -526,7 +525,7 @@ See [Tokenomics](/research/tokenomics) for the full design.
 
 * Alternative post-quantum signature schemes as the cryptography landscape evolves.
 * Optimizations to the ZK claim circuit (proof size, generation time).
-* Cross-chain interactions with other quantum-safe ecosystems.
+* Support for more Bitcoin address types in the self-claim.
 
 ## Out of scope
 
@@ -546,7 +545,7 @@ Common questions, answered briefly. For longer explanations, follow the links.
 
 ### What is QBTC?
 
-A quantum-resistant blockchain that mirrors Bitcoin's UTXO set. Every Bitcoin holder has a 1:1 claim of QBTC, exercisable by proving ownership of their Bitcoin address using a zero-knowledge proof. See [What is QBTC?](/learn/what-is-qbtc).
+A separate chain that mirrors Bitcoin's UTXO set. Its validators sign with ML-DSA, a NIST post-quantum signature scheme. Holders of P2PKH (`1…`) and P2WPKH (`bc1q…`) outputs can claim QBTC 1:1 with a zero-knowledge proof of control. See [What is QBTC?](/learn/what-is-qbtc).
 
 ### Is QBTC a Bitcoin fork?
 
@@ -562,21 +561,21 @@ No. QBTC is a native token on its own chain.
 
 ### Can claiming QBTC cost me any Bitcoin?
 
-No. Nothing about claiming moves, spends, or locks your BTC. The zero-knowledge proof is generated locally from your Bitcoin private key. No Bitcoin transaction is ever sent. Your BTC sits on Bitcoin throughout the process, untouched.
+No. Nothing about claiming moves, spends, or locks your BTC. Your wallet signs a digest with your Bitcoin key. A proving service turns that signature into a zero-knowledge proof and broadcasts the claim. No Bitcoin transaction is ever sent. Your BTC sits on Bitcoin throughout the process, untouched.
 
 ## Custody
 
 ### What if my BTC is on an exchange (Coinbase, Binance, Kraken, etc.)?
 
-The exchange controls the private keys, which means the exchange controls the claim. Whether they pass it on to you, sell it, or ignore it is up to them. Historical airdrop precedent is mixed: some exchanges credit users, others do not. If you want certainty about your claim, the safest path is to withdraw to self-custody before mainnet.
+The exchange controls the private keys, which means the exchange controls the claim. Whether they pass it on to you, sell it, or ignore it is up to them. Historical airdrop precedent is mixed: some exchanges credit users, others do not. Eligibility is live, with no snapshot date: whoever controls an eligible unspent output at the time of the claim can claim it. If you want to claim yourself, you must control the keys when you claim.
 
 ### What if my BTC is on a hardware wallet (Ledger, Trezor)?
 
-You control your keys, so you control your claim. Hardware-wallet integration paths will be published before mainnet through QBTC-compatible wallet partners.
+You control your keys, so you control your claim. Claiming needs a wallet that supports QBTC claims. Check with your wallet provider for support.
 
 ### What if my BTC is in a paper wallet or seed phrase I have stored offline?
 
-You control your keys. As long as you can access the private key when mainnet ships, you can claim.
+You control your keys. If you can access the private key and the output is a supported type (P2PKH or P2WPKH), you can claim.
 
 ### What if my BTC is in an ETF or other wrapped product (IBIT, GBTC, etc.)?
 
@@ -590,15 +589,15 @@ If you can't sign a proof of ownership, you can't claim. This is the same securi
 
 ### Do I need to do anything now?
 
-No, with one caveat. Most holders can claim whenever they want, or never. The exception is **dormant exposed-key BTC**: UTXOs older than 17 years whose public keys are already on-chain (Satoshi-era P2PK outputs and very old reused addresses). Those are subject to reclamation by QBTC governance. If your BTC is not in that category, your claim is not affected by waiting.
+No. Most holders can claim whenever they want, or never. The exception is **dormant exposed-key BTC**: outputs that have not moved for more than 17 years and whose public keys are already on chain (mostly Satoshi-era P2PK outputs). QBTC governance votes can reclaim those. The cutoff is a Bitcoin block height written into each proposal. If your BTC is not in that category, your claim is not affected by waiting.
 
 ### How do I claim?
 
-When mainnet is live, you'll use a quantum-safe wallet to generate a zero-knowledge proof of ownership of your Bitcoin address, then submit it to QBTC. An established multi-chain, seedless self-custody wallet partner is implementing native post-quantum signing (ML-DSA) and QBTC claim-proof generation for rollout at mainnet, and will be named ahead of launch. See [For BTC Holders](/learn/for-btc-holders).
+You use a wallet that supports QBTC claims. The wallet signs a digest with your Bitcoin key and sends the signature to a proving service. The service builds the zero-knowledge proof and broadcasts the claim. The self-claim supports P2PKH and P2WPKH outputs today. A new output needs 144 Bitcoin confirmations (about one day) before it can claim. See [For BTC Holders](/learn/for-btc-holders).
 
 ### What if I've already moved my BTC?
 
-The QBTC chain continuously mirrors Bitcoin's UTXO set, not a frozen snapshot. Whoever currently controls a BTC UTXO controls the corresponding QBTC claim. If you sent your BTC to a new address (your own or someone else's), the new address holds the new claim. The mirror tracks live state, so moves on Bitcoin propagate to QBTC.
+The QBTC chain continuously mirrors Bitcoin's UTXO set, not a frozen snapshot. Whoever currently controls a BTC UTXO controls the corresponding QBTC claim. If you sent your BTC to a new address (your own or someone else's), the new address holds the new claim. The mirror tracks live state, so moves on Bitcoin propagate to QBTC. A claimed coin stays claimed after it moves.
 
 ### Can I claim multiple addresses at once?
 
@@ -606,11 +605,11 @@ Yes. A single transaction can claim up to 50 UTXOs from the same Bitcoin address
 
 ### Does claiming reveal my Bitcoin public key?
 
-No. The ZK proof keeps your public key, private key, and signature entirely hidden. Only the hash of the address and the destination QBTC address are revealed on-chain. The migration itself stays quantum-safe.
+Not on chain. The proof keeps your public key and signature out of the transaction. Only the hash of the address and the destination QBTC address go on chain. The proving service receives your signed digest to build the proof.
 
 ### Will QBTC be tradeable at launch?
 
-At mainnet, the chain ships with IBC enabled, so QBTC can move to other Cosmos chains that choose to support it. Centralized exchange listings depend on third parties.
+No exchange lists QBTC today. Exchange listings depend on third parties.
 
 ## Quantum threat
 
@@ -630,7 +629,7 @@ It can in principle, via a soft fork. But: (1) post-quantum signatures are much 
 
 ### Will QBTC become redundant if Bitcoin ships a post-quantum upgrade?
 
-No. QBTC and a Bitcoin soft fork (such as BIP-360) solve different problems and can coexist indefinitely. The soft fork, if and when Bitcoin Core ships it, gives holders a new post-quantum output type they can voluntarily migrate to. QBTC is a live post-quantum chain available today, with a zero-knowledge migration path that never broadcasts your public key, and a governance mechanism for the dormant-coin problem that no soft fork can address (the holders aren't there to migrate). The two paths do not become redundant when the soft fork ships — claim QBTC now, hold BTC on Bitcoin, migrate through the soft fork later. Both options stay open.
+No. QBTC and a Bitcoin soft fork (such as BIP-360) solve different problems and can coexist indefinitely. The soft fork, if and when Bitcoin Core ships it, gives holders a new post-quantum output type they can voluntarily migrate to. QBTC is a separate chain with post-quantum signatures at consensus, a zero-knowledge claim that keeps your public key off chain, and a governance mechanism for the dormant-coin problem that no soft fork can address (the holders aren't there to migrate). The two paths can coexist: claim QBTC at mainnet, hold BTC on Bitcoin, and migrate through a soft fork later. Both options stay open.
 
 ### What about a Bitcoin hard fork?
 
@@ -644,11 +643,11 @@ Bitcoin's social consensus does not accept hard forks that change rules affectin
 
 ### Is there a team allocation?
 
-No pre-sale, no investor allocation, no advisor allocation. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Ongoing development and ecosystem work is funded by a 5% Development Fund + 5% Ecosystem Fund — these are on-chain accounts that receive QBTC only when governance proposals to reclaim dormant exposed-key BTC pass, and every spend from them requires a separate `x/gov` vote. Nothing is allocated at genesis. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
+No sale, no premine, no investor allocation, no vesting. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Each governance reclaim of dormant exposed-key BTC splits 90 / 5 / 5: 90% to the Reserve, 5% to a development fund and 5% to a marketing fund. The two funds are the only project share. One mint at genesis: 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
 
 ### Where do validator rewards come from?
 
-From the **Reserve Module**, a module account on the chain. The Reserve is funded only when governance passes proposals to reclaim dormant exposed-key Bitcoin UTXOs (P2PK outputs and reused-address outputs older than 17 years). Each successful proposal mints QBTC into the Reserve equal to the reclaimed BTC value. Each block, a fraction of the Reserve's balance is released to validators via standard Cosmos `x/distribution`. See [Tokenomics](/research/tokenomics).
+From the **Reserve Module**, a module account on the chain. The Reserve starts empty and is funded only when governance passes proposals to reclaim dormant exposed-key Bitcoin outputs (not moved for more than 17 years, public key visible on chain). Each successful proposal sends 90% of the reclaimed value to the Reserve. Each block, a fraction of the Reserve's balance is released to validators via standard Cosmos `x/distribution`. See [Tokenomics](/research/tokenomics).
 
 ### Was there an ICO?
 
@@ -658,11 +657,11 @@ No. No public sale, no presale, no investor rounds. There is no way to buy QBTC 
 
 ### What's QBTC built on?
 
-The Cosmos SDK, with consensus on a forked CometBFT that uses ML-DSA (Dilithium / FIPS 204) signatures instead of Ed25519.
+The Cosmos SDK, with consensus on a forked CometBFT that uses ML-DSA-44 (Dilithium / FIPS 204) signatures instead of Ed25519.
 
 ### Does QBTC use ECDSA anywhere?
 
-No. ML-DSA throughout the consensus path. ECDSA is only the *thing being claimed against* (because Bitcoin uses it), and the ZK proof verifies ECDSA ownership without exposing the public key.
+Yes, at the account level. Validators sign consensus messages with ML-DSA. Accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys. The claim also checks a Bitcoin ECDSA signature inside the zero-knowledge proof.
 
 ### Where can I read the code?
 
@@ -672,23 +671,23 @@ No. ML-DSA throughout the consensus path. ECDSA is only the *thing being claimed
 
 The QBTC block explorer is at [explorer.qbtc.net](https://explorer.qbtc.net). For aggregate stats on Bitcoin's quantum-vulnerable UTXO surface (per-script-type breakdowns of P2PK, reused P2PKH/P2WPKH, etc.) see the risk indexer at [indexer.qbtc.net](https://indexer.qbtc.net).
 
-### Are there audits?
+### Is there a security review?
 
-The most security-critical components (the ML-DSA integration, the PLONK verifier, the chain code) will receive multiple independent audits before mainnet. Reports will be linked from the [Security Model](/research/security-model) page when they complete.
+A pre-launch security review is in progress. Mainnet follows after it closes.
 
 ## Status
 
 ### Is QBTC live?
 
-No. QBTC is pre-mainnet. The protocol is in active development. See [Roadmap](/learn/roadmap).
+A test network has run since March 2026. It is public and may be reset. Mainnet is not live yet. See [Roadmap](/learn/roadmap).
 
 ### When does mainnet ship?
 
-**Targeting Q3 2026.** Specific date and launch sequencing will be announced as the audit and testnet milestones close. Follow [@qbtc_net on X](https://x.com/qbtc_net) or join the [Discord](https://discord.gg/anMfAjtCPZ).
+**Planned for Q4 2026.** Mainnet is a fresh genesis. It follows after the pre-launch security review closes. Follow [@qbtc_net on X](https://x.com/qbtc_net) or join the [Discord](https://discord.gg/anMfAjtCPZ).
 
 ### What's actually in the code today vs. just specified?
 
-See the [Roadmap](/learn/roadmap) status table. Short version: the post-quantum consensus, the ZK claim verifier, the Bitcoin block ingestion, the user claim mechanism, the Reserve Module, and Cosmos `x/gov` are all in code. Governance reclamation of dormant exposed-key BTC is activated via on-chain governance after mainnet.
+See the [Roadmap](/learn/roadmap) status table. Short version: the post-quantum consensus, the ZK claim verifier, the Bitcoin block ingestion, the user claim mechanism, the Reserve Module, and Cosmos `x/gov` are all in code and run on the test network.
 
 ---
 
@@ -707,11 +706,11 @@ Documentation for developers, integrators, and node operators. If you want to un
 
 ## Run a node
 
-* [Running a Node](/build/running-a-node), hardware, install, configuration. *Coming soon as testnet stabilizes.*
+* [Running a Node](/build/running-a-node), hardware, install, configuration.
 
 ## Integrate
 
-* [API Reference](/build/api-reference), HTTP and RPC surfaces. *Coming soon.*
+* [API Reference](/build/api-reference), HTTP and RPC surfaces.
 
 ## Source
 
@@ -765,7 +764,7 @@ QBTC depends on a fork of CometBFT that introduces a new `crypto/mldsa` package 
 
 Every validator's consensus key is an ML-DSA key, every vote is signed with ML-DSA, every block-commit signature is ML-DSA. No wrapper or sidecar layer. The fork is maintained at `github.com/btcq-org/cometbft`.
 
-ML-DSA-65 signatures are larger than Ed25519 (3309 bytes vs. 64 bytes per FIPS 204), which affects block size and bandwidth. The trade-off is intentional: a chain that exists to be quantum-safe cannot have any ECDSA or Ed25519 dependency in its consensus path.
+QBTC uses the ML-DSA-44 parameter set. ML-DSA-44 signatures are larger than Ed25519 (2420 bytes vs. 64 bytes per FIPS 204), which affects block size and bandwidth. The trade-off is intentional: the consensus path has no ECDSA or Ed25519 dependency. Accounts are a separate layer: they accept ML-DSA, secp256k1, ed25519 and multisig keys.
 
 See [Quantum Resistance (ML-DSA)](/build/quantum-resistance) for details.
 
@@ -797,9 +796,7 @@ QBTC's view of Bitcoin is itself produced by a Byzantine-fault-tolerant consensu
 
 ### 5. The proof service (`proof-service`)
 
-ZK proof generation runs client-side. Wallets handle it natively. On constrained devices, the `proof-service` is a standalone HTTP service that takes user-constructed proof inputs and computes the cryptographic output.
-
-Anyone can host a `proof-service` instance. Multiple independent operators will run them. Users (or their wallet) pick by trust, latency, or convenience. The proof service does not see private key material in a form that lets it forge claims; the witness is constructed locally on the user's side.
+The `proof-service` is a standalone HTTP service. The wallet signs a digest with the Bitcoin key and sends the signature to a proving service. The service builds the zero-knowledge proof and broadcasts the claim. The Bitcoin public key never goes on chain. The private key stays in the wallet.
 
 A CLI version (`zkprover`) is available for users who want to generate proofs locally.
 
@@ -811,18 +808,18 @@ A CLI version (`zkprover`) is available for users who want to generate proofs lo
 | `bifrost` | BTC block watcher and gossiper (every validator runs one) |
 | `proof-service` | Remote PLONK prover (optional infrastructure, anyone can host) |
 | `zkprover` | CLI for local proof generation |
-| `utxo-indexer` | Builds the genesis UTXO snapshot from a Bitcoin node |
+| `utxo-indexer` | Builds the bootstrap UTXO seed from a Bitcoin node |
 
 ## The data flow for a single claim
 
 1. User decides to claim their BTC at address `1A1z...` to a QBTC address `qbtc1...`.
-2. User opens a quantum-safe wallet, which constructs the proof inputs locally: the BTC private key, the destination QBTC address, and the UTXO reference.
-3. The wallet either generates the ZK proof locally (`zkprover`) or sends the proof inputs to a `proof-service` instance.
-4. The completed proof is submitted to QBTC as a `MsgClaimWithProof` transaction. A single transaction can claim up to 50 UTXOs at once.
+2. The user's wallet signs a digest with the Bitcoin key. The digest binds the destination QBTC address.
+3. The wallet sends the signature to a proving service. The service builds the ZK proof.
+4. The service submits the proof to QBTC as a `MsgClaimWithProof` transaction. A single transaction can claim up to 50 UTXOs at once.
 5. A QBTC validator picks up the transaction, runs the on-chain PLONK verifier, checks each referenced UTXO has an outstanding claim, and checks the destination address is valid.
 6. The transaction lands in a block. The claim is released to the destination QBTC address and the corresponding entry is marked as exhausted, preventing double-claims.
 
-The user's BTC is never moved. The user's BTC public key is never broadcast.
+The user's BTC is never moved. The user's BTC public key never goes on chain.
 
 ## How Bitcoin's state stays mirrored
 
@@ -846,7 +843,7 @@ The user's BTC is never moved. The user's BTC public key is never broadcast.
 
 Source: https://docs.qbtc.net/build/quantum-resistance
 
-QBTC achieves quantum resistance through two independent mechanisms operating on different layers of the chain.
+QBTC uses post-quantum and zero-knowledge techniques on two layers of the chain.
 
 ## At the consensus layer: ML-DSA
 
@@ -856,14 +853,14 @@ Every validator's consensus key is an ML-DSA key. Every consensus vote, every bl
 
 Implemented via a fork of CometBFT at `github.com/btcq-org/cometbft`, which adds a `crypto/mldsa` package and routes signing through it.
 
-If validators signed with Ed25519, a quantum-capable adversary could forge a validator signature and rewrite chain history. ML-DSA is lattice-based and is believed secure against both classical and quantum attacks at NIST security level 3 (ML-DSA-65).
+If validators signed with Ed25519, a quantum-capable adversary could forge a validator signature and rewrite chain history. ML-DSA is lattice-based and is believed secure against known classical and quantum attacks. QBTC uses the ML-DSA-44 parameter set (NIST security category 2).
 
 ### Size and bandwidth
 
 ML-DSA signatures are larger than Ed25519:
 
-* ML-DSA-65 signature: ~3.3 KB.
-* ML-DSA-65 public key: ~2.0 KB.
+* ML-DSA-44 signature: 2420 bytes (~2.4 KB).
+* ML-DSA-44 public key: 1312 bytes (~1.3 KB).
 * Ed25519 signature: 64 bytes.
 * Ed25519 public key: 32 bytes.
 
@@ -871,11 +868,11 @@ Block size and bandwidth costs are higher accordingly. The chain absorbs the cos
 
 ## At the claim layer: ZK proofs
 
-A user claiming QBTC submits a zero-knowledge proof that they control the private key for a Bitcoin address, **without** broadcasting the public key. Once a Bitcoin public key is broadcast (during a normal spend, for example), it becomes a target for Shor's algorithm.
+A claim carries a zero-knowledge proof of control of a Bitcoin address. The Bitcoin public key does not go on chain. Once a Bitcoin public key is broadcast (during a normal spend, for example), it becomes a target for Shor's algorithm.
 
 The proof system is **PLONK**, a SNARK-style construction. The circuit verifies:
 
-* Knowledge of a Bitcoin private key.
+* A valid ECDSA signature by a Bitcoin key.
 * That the corresponding public key hashes (via Hash160) to a specific Bitcoin address.
 * Binding to a specific destination QBTC address (so a proof can't be replayed against a different destination).
 
@@ -884,25 +881,20 @@ Public inputs (revealed on-chain):
 * Hash160 of the Bitcoin address.
 * Destination QBTC address.
 
-Hidden inputs (kept secret):
+Hidden inputs (not published on chain):
 
 * Bitcoin public key.
-* Bitcoin private key.
 * ECDSA signature.
 
-### Verification cost and proof generation
+### Proof generation
 
-The on-chain verifier is fast (~2–5 ms verification per proof, proof size ~1 KB). Verification cost is what matters for chain throughput.
-
-Proof generation happens client-side. Wallets handle it natively. Independent operators also run hosted "proof service" endpoints that wallets can use to offload computation on constrained devices. The local CLI prover (`zkprover`) is available for users who want to generate proofs themselves.
-
-The trusted setup for the PLONK circuit reuses the Hermez/Polygon Powers of Tau 2²¹ ceremony, an existing public ceremony with multiple participants.
+The wallet signs a digest with the Bitcoin key and sends the signature to a proving service. The service builds the zero-knowledge proof and broadcasts the claim. The Bitcoin public key never goes on chain. See [Claim Mechanism](/build/claim-mechanism) for the supported address types.
 
 ## Why both layers
 
-Either alone is insufficient. If only consensus were ML-DSA, the act of broadcasting your BTC public key during a claim would expose it to a quantum attacker who could race you for the BTC on Bitcoin Legacy before your QBTC claim settles. If only claims used ZK, validators could be quantum-attacked and the chain could be rewritten.
+Each layer covers a different risk. If only consensus used ML-DSA, a claim that published your BTC public key would expose that key to a quantum attacker. If only claims used ZK, a quantum attacker could forge validator signatures and rewrite the chain.
 
-Together, the chain is post-quantum end to end.
+Accounts on QBTC can also use secp256k1, ed25519 or multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
 
 ## References
 
@@ -929,9 +921,9 @@ Validators bond QBTC via the standard Cosmos `x/staking` module (see [Becoming a
 
 * **Bonding**: standard `x/staking` semantics (self-bond from the validator's own account; no inflation, so rewards come from fees and Reserve emission).
 * **Slashing**: standard `x/slashing` — double-sign and downtime.
-* **Unbonding period**: 21 days on the current testnet (a genesis parameter; subject to change at mainnet relaunch).
+* **Unbonding period**: 21 days on the current test network (a genesis parameter; subject to change at mainnet).
 * **Validator consensus key**: ML-DSA (`/cosmos.crypto.mldsa.PubKey`).
-* **Validator operator (account) key**: also ML-DSA — QBTC's forked Cosmos SDK uses post-quantum account keys, not secp256k1.
+* **Account keys** (including the validator operator account): accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
 
 ## Validator responsibilities
 
@@ -964,7 +956,7 @@ The claim mechanism is how a Bitcoin holder converts their QBTC entitlement into
 
 ## What's in QBTC's state
 
-At genesis, the chain ingests a snapshot of the Bitcoin UTXO set. For every UTXO at the reference height, QBTC stores a claim entry that includes:
+The chain loads a bootstrap seed of the Bitcoin UTXO set (`genesis-954355.bin`). Eligibility is live with no snapshot date: whoever controls an eligible unspent output at claim time can claim it. For every tracked UTXO, QBTC stores a claim entry that includes:
 
 * The Bitcoin Hash160 (the 20-byte address hash).
 * The UTXO's BTC amount, scaled 1:1 to QBTC.
@@ -975,6 +967,11 @@ As new Bitcoin blocks are ingested via `ebifrost` (see [Architecture](/build/arc
 * New UTXOs add new claim entries.
 * Spent UTXOs are reconciled.
 * Coinbase outputs add new claim entries; Bitcoin miners receive a corresponding QBTC claim.
+
+## Supported today
+
+* **Address types:** P2PKH (`1…`) and P2WPKH (`bc1q…`). Other address types cannot self-claim today.
+* **Confirmations:** a new output needs 144 Bitcoin confirmations (about one day) before it can claim.
 
 ## The proof
 
@@ -989,13 +986,12 @@ The proof's public inputs (revealed on-chain):
 * Hash160 of the Bitcoin address being claimed.
 * The destination QBTC address.
 
-The proof's hidden inputs (kept secret):
+The proof's hidden inputs (not published on chain):
 
 * The Bitcoin public key.
-* The Bitcoin private key.
 * An ECDSA signature.
 
-The chain verifies ownership without the public key ever being broadcast. This is what keeps the claim itself quantum-safe.
+The chain verifies control of the address. The Bitcoin public key does not go on chain.
 
 ## Validator handling
 
@@ -1014,25 +1010,17 @@ A claimed UTXO has `EntitledAmount == 0`. Any subsequent attempt to claim it fai
 
 The claimed status also propagates through Bitcoin spends. When the `ebifrost` module ingests a new Bitcoin block, any transaction whose inputs include claimed UTXOs carries the claimed status to its outputs in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed. A child of a partially-claimed set of parents inherits a proportionally-reduced `EntitledAmount`.
 
-Propagation makes governance reclamation (see [Tokenomics](/research/tokenomics)) permanent: once a UTXO is reclaimed into the Reserve Module, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO to a new address.
+Propagation makes governance reclamation (see [Tokenomics](/research/tokenomics)) permanent: once governance reclaims a UTXO, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO to a new address.
 
 ## What claims do not do
 
 * Claims do not move BTC. Your Bitcoin remains on the Bitcoin chain after claiming.
-* Claims do not expire. An unclaimed entry sits in QBTC's state indefinitely.
+* Claims have no expiry date. Governance can reclaim long-dormant outputs whose public key is already visible on Bitcoin (see [Tokenomics](/research/tokenomics)).
 * Claims do not require any prior registration.
 
 ## Proof generation
 
-Proofs are generated client-side. Two paths exist:
-
-* **Native wallet flow.** An established multi-chain MPC wallet partner is implementing native ML-DSA signing and ZK claim-proof generation, with rollout planned at mainnet. Users see claiming as a normal in-wallet action. The partner will be named ahead of launch.
-* **Hosted proof service.** Independent operators run `proof-service` HTTP endpoints that wallets can use to offload computation on constrained devices. Multiple operators run these so users can choose.
-* **Local CLI prover.** `zkprover` lets advanced users generate proofs themselves.
-
-Proof inputs (including private key material) are constructed locally. The proof service computes only the cryptographic output and cannot forge claims against UTXOs whose keys it has not seen.
-
-On the chain side, verification takes ~2–5 ms per proof (proof size ~1 KB), so claims clear quickly.
+The wallet signs a digest with the Bitcoin key and sends the signature to a proving service. The service builds the zero-knowledge proof and broadcasts the claim. The Bitcoin public key never goes on chain. The private key stays in the wallet.
 
 ## References
 
@@ -1047,7 +1035,7 @@ On the chain side, verification takes ~2–5 ms per proof (proof size ~1 KB), so
 
 Source: https://docs.qbtc.net/build/running-a-node
 
-**Note:** **Testnet.** QBTC is pre-mainnet (targeting Q3 2026). The instructions below stand up a node against the current public **testnet**. Endpoints, the chain ID, and the pinned version change as the testnet progresses — always cross-check the [chain repository](https://github.com/btcq-org/qbtc) for the latest values.
+**Note:** **Test network.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026. The instructions below stand up a node against the current public **test network**. Endpoints, the chain ID, and the pinned version can change before mainnet — always cross-check the [chain repository](https://github.com/btcq-org/qbtc) for the latest values.
 
 A QBTC node runs two processes side by side:
 
@@ -1071,7 +1059,7 @@ The chain repo ships an install script that downloads the `qbtcd` and `bifrost` 
 curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh | bash
 ```
 
-To pin a specific version (recommended for reproducibility — check the [releases page](https://github.com/btcq-org/qbtc/releases) for the current testnet version):
+To pin a specific version (recommended for reproducibility — check the [releases page](https://github.com/btcq-org/qbtc/releases) for the current version):
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh | bash -s -- -v 1.0.22
@@ -1162,6 +1150,54 @@ sudo systemctl enable qbtcd bifrost
 
 Open `26656` and `30006` to peers so your node can sync and gossip Bitcoin blocks. Keep `26657`, `9090`, and the Bitcoin RPC port firewalled to localhost or trusted hosts.
 
+## State sync (fast bootstrap)
+
+Syncing a QBTC node from genesis can take a long time — blocks contain ML-DSA signatures and Bitcoin block data, so the chain grows quickly. CometBFT **state sync** lets a new node download a recent state snapshot from peers and skip replaying history, reducing bootstrap time from hours to minutes.
+
+### Configure state sync
+
+1. **Get the current trust height and trust hash.** The [QBTC explorer statesync page](https://explorer.qbtc.net/qbtc/statesync) always shows fresh values. Copy them from there — they change as the chain advances and the values below will be stale by the time you read this.
+
+2. **Edit `~/.qbtc/config/config.toml`** — find the `[state-sync]` section and fill in the values from the explorer:
+
+   ```toml
+   [state-sync]
+   enable = true
+   rpc_servers = "https://api.vultisig.com/qbtc-node"
+   trust_height = 187000
+   trust_hash = "7015658B389218B808D6DCCED74CDFED78A4E2D8686575723F1B6CCFB92D2741"
+   trust_period = "168h"
+   ```
+
+   The height and hash above are illustrative — always use the current values from the explorer.
+
+3. **Enable snapshots in `~/.qbtc/config/app.toml`** so your node can also serve state sync to others:
+
+   ```toml
+   # snapshot-interval must be a multiple of pruning-keep-every
+   snapshot-interval = 1000
+   # each snapshot is ~500 MiB; 2 is enough for most operators
+   snapshot-keep-recent = 2
+   ```
+
+4. **Reset chain data** if the node has already started syncing from genesis:
+
+   ```bash
+   qbtcd unsafe-reset-all
+   # or, if that subcommand is not found on your build:
+   qbtcd tendermint unsafe-reset-all
+   ```
+
+5. **Start the node** and watch for state sync to kick in:
+
+   ```bash
+   sudo systemctl start qbtcd
+   sudo journalctl -u qbtcd -f
+   # look for: "Discovered new snapshot" and "Restored state sync snapshot"
+   ```
+
+**Note:** State sync skips verifying the full block history — you are trusting that the snapshot is correct. Always use a trust height and hash from the official explorer or a validator you know personally. Do not copy values from anonymous posts.
+
 ## Building from source
 
 If you would rather build the binaries yourself:
@@ -1172,7 +1208,7 @@ cd qbtc
 make build
 ```
 
-`make build` produces all of the chain binaries into `./build/`: `qbtcd`, `bifrost`, `zkprover` (the local ZK proof CLI — see [Claim Mechanism](/build/claim-mechanism)), `proof-service` (the optional hosted PLONK prover), and `utxo-indexer` (builds the genesis UTXO snapshot). Run the test suite with:
+`make build` produces all of the chain binaries into `./build/`: `qbtcd`, `bifrost`, `zkprover` (the local ZK proof CLI — see [Architecture](/build/architecture)), `proof-service` (the optional hosted PLONK prover), and `utxo-indexer` (builds the bootstrap UTXO seed). Run the test suite with:
 
 ```bash
 make test
@@ -1228,7 +1264,7 @@ At the upgrade height Cosmovisor stops the old binary, switches the `current` sy
 
 ## Chain ID for transactions
 
-The live testnet reports its chain ID as **`qbtc`** (confirmed from `…/cosmos/base/tendermint/v1beta1/blocks/latest`). The installer's client config currently sets a different value, so if you sign and broadcast transactions, pass the chain ID explicitly to avoid a signature-mismatch error:
+The live test network reports its chain ID as **`qbtc`** (confirmed from `…/cosmos/base/tendermint/v1beta1/blocks/latest`). The installer's client config currently sets a different value, so if you sign and broadcast transactions, pass the chain ID explicitly to avoid a signature-mismatch error:
 
 ```bash
 qbtcd tx ... --chain-id qbtc
@@ -1238,19 +1274,19 @@ Always confirm the current chain ID from a live block before broadcasting — it
 
 ## Querying without your own node
 
-To read chain state without running a full node, use the public Cosmos REST gateway documented in the [API Reference](/build/api-reference#qbtc-chain-access). Note it proxies only standard `/cosmos/...` module queries — CometBFT RPC and custom `x/qbtc` routes are not exposed.
+To read chain state without running a full node, use the public Cosmos REST gateway documented in the [API Reference](/build/api-reference#qbtc-chain-access). It proxies the standard `/cosmos/...` module queries and the `x/qbtc` params route. CometBFT RPC is not exposed.
 
 ## Becoming a validator
 
 Validator creation is the **standard Cosmos SDK `x/staking` flow** (`qbtcd tx staking create-validator`), with three QBTC-specific differences:
 
 1. **Consensus keys are ML-DSA, not Ed25519.** The validator pubkey you submit has `@type` `/cosmos.crypto.mldsa.PubKey`. You get it from `qbtcd comet show-validator` exactly as on any Cosmos chain — the key material is just post-quantum.
-2. **Account keys are also ML-DSA, not secp256k1.** `qbtcd keys add` generates a post-quantum account key. This is unusual (most Cosmos chains use secp256k1 accounts) and means generic secp256k1 tooling and hardware wallets will not sign QBTC transactions.
+2. **Account keys can be ML-DSA or classical.** Validators sign consensus messages with ML-DSA. Accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
 3. **A validator must also run `bifrost` and register it on-chain.** Block production depends on validators attesting Bitcoin blocks (see [Architecture](/build/architecture)). Beyond running the sidecar, you publish its peer address with a custom `x/qbtc` transaction so other validators can reach it — see [Register your bifrost peer address](#register-your-bifrost-peer-address). Skipping this leaves your validator unable to attest.
 
-**Note:** **You do not send tokens to anyone to create a validator.** `create-validator` bonds QBTC **from your own validator account** — it moves your own balance from liquid to bonded (self-delegation). There is no deposit address to pay into. To fund your account on the current private testnet (which has no public faucet), generate your validator account first and ask the team for testnet QBTC to **your** `qbtc1…` address (via [Discord](https://discord.gg/anMfAjtCPZ)).
+**Note:** **You do not send tokens to anyone to create a validator.** `create-validator` bonds QBTC **from your own validator account** — it moves your own balance from liquid to bonded (self-delegation). There is no deposit address to pay into. To fund your account on the current test network (which has no public faucet), generate your validator account first and ask the team for test-network QBTC to **your** `qbtc1…` address (via [Discord](https://discord.gg/anMfAjtCPZ)).
 
-### Network parameters (current testnet)
+### Network parameters (current test network)
 
 Verified live; all change at mainnet relaunch.
 
@@ -1260,7 +1296,7 @@ Verified live; all change at mainnet relaunch.
 | Unbonding period | 21 days (`1814400s`) |
 | Max validators | 100 |
 | Minimum self-delegation | operator-set, can be as low as `1` base unit |
-| Inflation | none (no mint module) — rewards come from fees and Reserve emission; on testnet, with the Reserve empty, rewards are negligible |
+| Inflation | none (no mint module) — rewards come from fees and Reserve emission |
 | Downtime slashing | 1% + jail if you sign < 50% of the last 100 blocks; 10-minute jail |
 | Double-sign slashing | 5% + permanent tombstone |
 
@@ -1277,7 +1313,9 @@ Verified live; all change at mainnet relaunch.
    # note the qbtc1... address it prints
    ```
 
-3. **Fund the account.** On testnet, send your `qbtc1…` address to the team and they fund it. Confirm the balance:
+   **Note:** The HD derivation path for QBTC accounts is `m/44'/118/0'/0/0`. You need this if you are importing keys into a wallet or building wallet integration — `qbtcd keys add` handles it automatically.
+
+3. **Fund the account.** On the test network, send your `qbtc1…` address to the team and they fund it. Confirm the balance:
 
    ```bash
    qbtcd query bank balances "$(qbtcd keys show my-validator -a)"
@@ -1366,13 +1404,19 @@ This is a QBTC-specific step with no Cosmos equivalent, and it comes **after** y
 
 ### Placement and latency
 
-QBTC blocks are **large**, and this makes validator placement a real operational concern. ML-DSA consensus signatures are about 3.3 KB each (versus 64 bytes for Ed25519), and when a Bitcoin block is ingested it is shipped into a QBTC block that can be very large. A validator that is network-distant from the rest of the active set may not receive and precommit these large blocks within the consensus timeouts — so it **misses precommits and is jailed for downtime**, even while it keeps up fine on small blocks.
+QBTC blocks are **large**, and this makes network latency a real operational consideration. ML-DSA-44 consensus signatures are about 2.4 KB each (versus 64 bytes for Ed25519), and when a Bitcoin block is ingested it is shipped into a QBTC block that can be very large. A validator that is network-distant from the rest of the active set may not receive and precommit these large blocks within the consensus timeouts — so it **misses precommits and is jailed for downtime**, even while it keeps up fine on small blocks.
 
-This is not hypothetical. A validator roughly **225 ms RTT** from the majority of voting power consistently missed precommits on the large blocks and was jailed; its small-block participation was unaffected.
+This has been observed in practice: a validator with roughly **225 ms RTT** to the majority of voting power consistently missed precommits on large blocks and was jailed, while its small-block participation was unaffected. ML-DSA block sizes magnify latency problems that would be invisible on a standard Cosmos chain.
 
-* **Run close to the rest of the active set.** Minimize round-trip latency to the other validators. On the current testnet the majority of voting power runs in **Singapore** — place your validator in or near the region where the active set is concentrated (confirm the current location with the team) rather than across an ocean.
-* **Measure before you commit to a region.** A few hundred milliseconds of RTT to your peers is enough to miss large blocks. Check latency first.
-* **Do not change the consensus timeouts on your own.** `timeout_propose`, `timeout_commit`, and the related values in `config.toml` are effectively network-wide; the team may tune them for large post-quantum blocks, so follow the published values rather than diverging unilaterally.
+When choosing where to run your validator, the factors to weigh are:
+
+* **RTT to the current active set.** Query `qbtcd query staking validators` (or the [chain gateway](/build/api-reference#qbtc-chain-access)) to see which validators are active, find where they are hosted, and measure round-trip latency from your intended machine before committing to a region. A few hundred milliseconds is enough to miss large blocks during Bitcoin ingestion events.
+* **Active set distribution changes over time.** As more validators join, the geographic concentration of voting power may shift. A region that gives low latency today might become higher-latency relative to a future set.
+* **Network decentralisation.** A geographically distributed active set is more resilient — geographic diversity has value for the network as a whole, even if it means some individual validators accept higher latency variance.
+
+There is no single right answer here. What matters is that you understand your latency to the peers that hold the majority of voting power before you go live, and that you monitor it as the validator set evolves.
+
+* **Do not change the consensus timeouts on your own.** `timeout_propose`, `timeout_commit`, and related values in `config.toml` are effectively network-wide; the team may tune them to accommodate large post-quantum blocks, so follow the published values rather than diverging unilaterally.
 
 ### Running multiple validators
 
@@ -1395,9 +1439,9 @@ Source: https://docs.qbtc.net/build/api-reference
 QBTC exposes two HTTP surfaces a developer will use:
 
 * **The Bitcoin risk indexer** (`https://api.qbtc.net`) — indexes the **real Bitcoin UTXO set** (the claimable universe). Its data is valid for mainnet planning today.
-* **The QBTC chain** — standard Cosmos SDK REST/gRPC. The hosted gateway below points at the **current public testnet** and will change when mainnet relaunches.
+* **The QBTC chain** — standard Cosmos SDK REST/gRPC. The hosted gateway below points at the **current public test network** and will change at mainnet.
 
-**Note:** **Testnet vs. mainnet.** The Bitcoin indexer reflects real Bitcoin and is stable. The **chain** endpoints are a private testnet (chain ID `qbtc`, started 2026-03-14): the host, chain ID, and on-chain state (currently ~150 QBTC supply, empty Reserve) all change at mainnet relaunch. Treat chain endpoints as illustrative, not durable.
+**Note:** **Test network vs. mainnet.** The Bitcoin indexer reflects real Bitcoin and is stable. The **chain** endpoints serve a public test network (chain ID `qbtc`) that has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026. The host, chain ID, and on-chain state can all change at mainnet. Treat chain endpoints as illustrative, not durable.
 
 ## Bitcoin risk indexer — `https://api.qbtc.net`
 
@@ -1464,25 +1508,25 @@ curl -s "https://api.qbtc.net/latest/utxos?limit=1" | jq '.results[0]'
 
 For production integrations, **run your own node** and query its local Cosmos SDK REST (`:1317`) and gRPC (`:9090`) — see [Running a Node](/build/running-a-node). Your node's chain ID is whatever the genesis declares (currently `qbtc`).
 
-For quick reads against the current public testnet without standing up a node, a hosted Cosmos REST gateway is available:
+For quick reads against the current public test network without standing up a node, a hosted Cosmos REST gateway is available:
 
 ```
 https://api.vultisig.com/qbtc-rpc
 ```
 
-### Routing quirk: only standard Cosmos REST is proxied
+### Routing: which paths the gateway proxies
 
-The gateway forwards **standard Cosmos SDK module queries under `/cosmos/...`** and nothing else:
+The gateway forwards **standard Cosmos SDK module queries under `/cosmos/...`** and the `x/qbtc` params route:
 
 | Request | Result |
 |---|---|
 | `…/qbtc-rpc/cosmos/base/tendermint/v1beta1/blocks/latest` | ✅ works |
 | `…/qbtc-rpc/cosmos/bank/v1beta1/supply` | ✅ works |
 | `…/qbtc-rpc/status`, `/block`, `/abci_info` (CometBFT RPC) | ❌ `Not Implemented` |
-| `…/qbtc-rpc/qbtc/qbtc/v1/params` (custom `x/qbtc` routes) | ❌ `Not Implemented` |
+| `…/qbtc-rpc/qbtc/v1/params` (custom `x/qbtc` params) | ✅ works |
 | `…/qbtc-node/cosmos/...` | ❌ `404` |
 
-CometBFT RPC methods and the custom `x/qbtc` module routes are **not** exposed through this gateway. To read them, query your own node directly, or read the constants from source (next section).
+CometBFT RPC methods are **not** exposed through this gateway. To read them, query your own node directly.
 
 ### Example: chain tip and supply
 
@@ -1490,16 +1534,22 @@ CometBFT RPC methods and the custom `x/qbtc` module routes are **not** exposed t
 # Latest block (height, time, chain_id)
 curl -s "https://api.vultisig.com/qbtc-rpc/cosmos/base/tendermint/v1beta1/blocks/latest" \
   | jq '.block.header | {height, time, chain_id}'
-# → {"height":"61602","time":"2026-06-23T10:58:37Z","chain_id":"qbtc"}
+# → {"height":"…","time":"…","chain_id":"qbtc"}
 
 # Total supply (base units; 1 QBTC = 100,000,000)
 curl -s "https://api.vultisig.com/qbtc-rpc/cosmos/bank/v1beta1/supply" | jq '.supply'
-# → [{"denom":"qbtc","amount":"15000104396"}]   (~150 QBTC; Reserve still empty)
+# → [{"denom":"qbtc","amount":"…"}]
 ```
 
-### Chain parameters (read from source)
+### Chain parameters
 
-The custom `x/qbtc` parameters are not served by the public gateway. The canonical values live in [`constants/constants.go`](https://github.com/btcq-org/qbtc/blob/main/constants/constants.go):
+Read the live `x/qbtc` parameters from the gateway:
+
+```bash
+curl -s "https://api.vultisig.com/qbtc-rpc/qbtc/v1/params" | jq '.params'
+```
+
+The defaults live in [`constants/constants.go`](https://github.com/btcq-org/qbtc/blob/main/constants/constants.go). Values on the current test network:
 
 | Constant | Value | Meaning |
 |---|---|---|
@@ -1529,7 +1579,7 @@ Formal specification and analysis material for cryptographers, researchers, inst
 
 ## Threat model & security
 
-* [Quantum Risk Assessment](/research/quantum-risk-assessment), an expert-panel review of the cryptographically-relevant quantum computer (CRQC) timeline.
+* [Quantum Risk Assessment](/research/quantum-risk-assessment), a summary of published estimates for the cryptographically-relevant quantum computer (CRQC) timeline.
 * [Security Model](/research/security-model), QBTC's threat model, trust assumptions, and defenses.
 
 ## Economics
@@ -1546,7 +1596,7 @@ Formal specification and analysis material for cryptographers, researchers, inst
 
 Source: https://docs.qbtc.net/research/protocol-spec
 
-Canonical specification of the QBTC chain code. Source of truth for implementers, auditors, and researchers.
+Specification of the QBTC chain code for implementers and researchers. If this page and the code differ, the code is correct.
 
 Citations refer to the QBTC source code at `github.com/btcq-org/qbtc`.
 
@@ -1556,16 +1606,17 @@ QBTC consensus is **CometBFT, forked** to replace Ed25519 with ML-DSA (CRYSTALS-
 
 * Source: `github.com/btcq-org/cometbft`.
 * Replaces `crypto/ed25519` with `crypto/mldsa` for validator consensus keys, vote signing, and block-commit signatures.
-* ML-DSA-65 parameter set (NIST security level 3).
-* Signature size: 3309 bytes (~3.3 KB). Public key size: 1952 bytes (~2.0 KB). Per FIPS 204.
+* ML-DSA-44 parameter set (NIST security category 2).
+* Signature size: 2420 bytes (~2.4 KB). Public key size: 1312 bytes (~1.3 KB). Per FIPS 204.
 
-There is no ECDSA or Ed25519 dependency in the consensus path. The chain is post-quantum from genesis.
+The consensus path has no ECDSA or Ed25519 dependency. Validators sign with ML-DSA from genesis.
 
 ### 1.1 Validator set
 
 * Standard Cosmos `x/staking` for bonding and validator selection.
-* Validator consensus key: ML-DSA. Operator key: standard Cosmos signing curve.
-* Maximum validator set size and unbonding period: parameters at genesis (TBD before mainnet).
+* Validator consensus key: ML-DSA.
+* Account keys, including the validator operator key: ML-DSA, secp256k1, ed25519 or multisig. Post-quantum protection applies only to ML-DSA accounts.
+* Maximum validator set size and unbonding period: genesis parameters. The test network uses 100 validators and 21 days. Mainnet sets its own values at genesis.
 
 ## 2. The custom module: `x/qbtc`
 
@@ -1583,7 +1634,7 @@ Single custom module covering everything QBTC-specific:
 
 The chain state contains a mirror of the Bitcoin UTXO set:
 
-* **Initial state**: built from a snapshot generated by the `utxo-indexer` binary, run against a Bitcoin full node at a reference height.
+* **Initial state**: the chain loads a bootstrap seed of the Bitcoin UTXO set (`genesis-954355.bin`), built by the `utxo-indexer` binary. The seed is not a snapshot for eligibility. Eligibility is live with no snapshot date: whoever controls an eligible unspent output at claim time can claim it.
 * **Continuous updates**: each new Bitcoin block is ingested via `ebifrost` after validator attestation, and the mirror is updated (new outputs added, spent outputs reconciled).
 * **Per-UTXO claim entry**: each UTXO has an `EntitledAmount` field representing its outstanding QBTC claim. Set at ingestion, decremented to 0 upon successful claim.
 
@@ -1609,7 +1660,10 @@ A holder claims QBTC by submitting a `MsgClaimWithProof` transaction. Per `proto
   1. The UTXO exists in QBTC's state.
   2. Its `EntitledAmount > 0` (not previously claimed).
   3. Its address matches the one proven.
+  4. It has at least `MinUtxoConfirmationBlocks` Bitcoin confirmations (144, about one day).
 * If all checks pass, the cumulative `EntitledAmount` is transferred to the destination QBTC address, and each UTXO's entry is set to 0.
+
+The zero-knowledge self-claim supports P2PKH (`1…`) and P2WPKH (`bc1q…`) addresses today.
 
 Per `x/qbtc/keeper/handle_msg_claim_with_proof.go`:
 
@@ -1624,10 +1678,9 @@ Public inputs to the ZK circuit reveal:
 Hidden inputs to the ZK circuit:
 
 * BTC public key.
-* BTC private key.
 * ECDSA signature.
 
-The BTC public key is never broadcast, making the migration itself quantum-safe.
+In the current clients, the wallet signs a digest with the Bitcoin key and sends the signature to a proving service. The service builds the zero-knowledge proof and broadcasts the claim. The Bitcoin public key never goes on chain.
 
 ### 2.4 Double-claim prevention and taint propagation
 
@@ -1639,20 +1692,24 @@ Propagation makes governance reclamation (§2.5) permanent: once a UTXO is recla
 
 ### 2.5 Minting paths, the Reserve Module, and validator emission
 
-There are two minting paths, and only two.
+There is one mint at genesis and two minting paths after it.
+
+**Genesis mint.** Genesis mints 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same.
 
 **Path 1: User claim.** A successful `MsgClaimWithProof` mints QBTC into the claimer's account, equal to the sum of the referenced UTXOs' BTC values.
 
-**Path 2: Governance reclamation.** Through standard `x/gov` proposals, validators vote on which dormant exposed-key UTXOs (older than 17 years, with on-chain public keys) to reclaim. The voting period is the standard Cosmos parameter (default ~2 weeks, set by governance). When a proposal passes:
+**Path 2: Governance reclamation.** Through standard `x/gov` proposals, validators vote on which dormant exposed-key UTXOs to reclaim. The design target is outputs that have not moved for more than 17 years and whose public key is visible on chain. The 17-year rule is a governance commitment: each proposal writes the cutoff as a Bitcoin block height, lists the outputs it reclaims, and needs a passing vote. Later votes can move the cutoff forward. The voting period is a governance parameter. When a proposal passes:
 
 1. Each referenced UTXO is marked as claimed in the mirror (`EntitledAmount → 0`), identically to a user claim.
-2. QBTC equal to the reclaimed BTC value is minted on the chain and split across three on-chain accounts at a fixed ratio:
+2. QBTC equal to the reclaimed BTC value is minted on the chain and split 90 / 5 / 5:
     * **90% → Reserve Module** (funds validator emission)
-    * **5% → Development Fund** (governance-gated spend)
-    * **5% → Ecosystem Fund** (governance-gated spend)
+    * **5% → development fund**
+    * **5% → marketing fund**
+
+    The 5% shares are fixed in code. The two fund addresses are governance parameters (`DevFundAddress`, `MarketingFundAddress`). If a fund address is not set, its 5% goes to the Reserve.
 3. Descendant UTXOs inherit the claimed status via the propagation described in §2.4.
 
-The Reserve Module is the only direct source of per-block validator emission. The Development and Ecosystem funds are on-chain accounts spent via separate `x/gov` proposals.
+The Reserve Module is the only direct source of per-block validator emission. The two funds are the only project share of QBTC.
 
 #### Validator emission, from the Reserve Module
 
@@ -1665,10 +1722,7 @@ Per `x/qbtc/keeper/network_manager.go:24–47`:
   ```
 * The released amount is transferred from `ReserveModuleName` to the standard Cosmos fee collector, which then distributes to validators and delegators via `x/distribution`.
 
-Constants (per `constants/constants.go`):
-
-* `EmissionCurve = 5`
-* `BlocksPerYear = 5,256,000` (10 × 60 × 24 × 365, i.e. 10 blocks per minute)
+`EmissionCurve` and `BlocksPerYear` are on-chain parameters. A governance vote can change them. Mainnet sets their values at genesis.
 
 The Reserve Module's balance evolves as a function of governance activity: it grows when reclamation proposals pass and decreases as validators are paid.
 
@@ -1677,11 +1731,11 @@ The Reserve Module's balance evolves as a function of governance activity: it gr
 At any time:
 
 ```
-total_QBTC_minted = sum(user claims) + sum(governance reclamations)
+total_QBTC_minted = genesis mint (50) + sum(user claims) + sum(governance reclamations)
                   ≤ 21,000,000 QBTC
 ```
 
-The cap holds because no Bitcoin UTXO can be claimed twice (the `claimed_flag` propagates per §2.4), each claim mints exactly the BTC amount of that UTXO, and Bitcoin's total supply is capped at 21M.
+The cap holds because no Bitcoin UTXO can be claimed twice (the `claimed_flag` propagates per §2.4), each claim mints exactly the BTC amount of that UTXO, the block-9 coinbase output cannot be claimed, and Bitcoin's total supply is capped at 21M.
 
 No inflationary minting exists anywhere in the chain code.
 
@@ -1691,15 +1745,15 @@ See [Tokenomics](/research/tokenomics) for the economic framing.
 
 QBTC uses **standard Cosmos `x/gov`**. Proposals follow the standard voting period, deposit requirements, and threshold rules.
 
-Dormant-UTXO reclamation proposals (§2.5 Path 2) are enacted through `x/gov` rather than as automatic chain rules. The validator set sets the activation parameters (UTXO categories, cutoffs, dispute windows) through governance.
+Dormant-UTXO reclamation proposals (§2.5 Path 2) are enacted through `x/gov` rather than as automatic chain rules. Each proposal lists the outputs it reclaims and its cutoff block height.
 
 ## 3. Tokenomics summary
 
 * **Total supply cap**: 21 million QBTC.
-* **Initial claim mirror**: sized to match the Bitcoin UTXO set at the mirror's reference height.
+* **Claim mirror**: tracks the live Bitcoin UTXO set. It starts from a bootstrap seed.
 * **Reserve Module**: a module account that holds QBTC reclaimed by governance, drawn down per block to validators via the emission formula above.
-* **Development Fund** (5%) and **Ecosystem Fund** (5%) from each governance reclamation. Both governance-gated.
-* No genesis allocation to any party.
+* **Development fund** (5%) and **marketing fund** (5%) from each governance reclamation.
+* One mint at genesis: 50 QBTC for the first validator. No sale, no premine, no investor allocation, no vesting.
 
 See [Tokenomics](/research/tokenomics) for the full breakdown.
 
@@ -1738,7 +1792,7 @@ Standard SDK semantics apply for all of these.
 | `bifrost` | Bitcoin block watcher sidecar |
 | `proof-service` | PLONK prover (HTTP service) |
 | `zkprover` | PLONK prover (CLI) |
-| `utxo-indexer` | Genesis UTXO snapshot builder |
+| `utxo-indexer` | Builds the bootstrap seed of the UTXO mirror |
 
 ## References
 
@@ -1753,10 +1807,10 @@ Standard SDK semantics apply for all of these.
 
 Source: https://docs.qbtc.net/research/tokenomics
 
-QBTC's economic design rests on three invariants:
+QBTC's economic design rests on three invariants. There is no sale, no premine, no investor allocation, no vesting and no inflation.
 
 1. **Cap matches Bitcoin.** Total supply is hard-capped at 21,000,000 QBTC.
-2. **Nothing is pre-minted.** No QBTC exists at genesis. Tokens come into existence only when a Bitcoin UTXO is claimed, by either a user or by governance.
+2. **One mint at genesis, then claims only.** Genesis mints 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same. After genesis, tokens come into existence only when a Bitcoin UTXO is claimed, by either a user or by governance.
 3. **The claim mirror is a ledger of entitlements**, not a pool of tokens. Tokens are minted only when an entitlement is exercised.
 
 ## The claim mirror
@@ -1776,6 +1830,8 @@ The mirror updates with every new Bitcoin block:
 
 Propagation makes governance reclamation permanent: once reclaimed, value cannot re-enter the claimable pool by being spent through Bitcoin.
 
+Eligibility is live with no snapshot date. Whoever controls an eligible unspent output at claim time can claim it. A new output needs 144 Bitcoin confirmations (about one day) before it can claim.
+
 ## Two minting paths
 
 ### Path 1: User claim
@@ -1793,35 +1849,37 @@ Before this step, the entitlement is a record in the mirror. After this step, th
 
 Bitcoin holds a large pool of value in UTXOs that satisfy both:
 
-* Older than 17 years.
+* Not moved for more than 17 years.
 * Public key is on-chain (P2PK outputs or reused-address outputs).
+
+The 17-year rule is a governance commitment. Each proposal writes the cutoff as a Bitcoin block height, lists the outputs it reclaims, and needs a passing vote. Later votes can move the cutoff forward as more outputs pass 17 years.
 
 These UTXOs are structurally indefensible against a quantum-capable attacker: a CRQC operator can derive the private key from the exposed public key faster than the owner (if any) can move the coin.
 
 On Bitcoin Legacy, this value will be captured by the first viable quantum attacker. It is economically lost.
 
-On QBTC, governance reclaims it productively. Through standard `x/gov` proposals (default Cosmos voting period is ~2 weeks; the period is itself a governance parameter):
+On QBTC, governance reclaims it productively. Through standard `x/gov` proposals (the voting period is a governance parameter):
 
 1. A proposal identifies one or more UTXOs meeting the dormant exposed-key criteria.
 2. Validators vote.
 3. If the proposal passes, each referenced UTXO is marked as claimed (same `claimed_flag` as a user claim), and **QBTC equal to the reclaimed BTC value is minted on the QBTC chain**.
 4. The reclaimed UTXOs and any descendants are permanently ineligible for user claim.
 
-Value that would otherwise be captured by a quantum attacker is minted into a quantum-safe address structure, which funds the network securing the post-quantum migration.
+The reclaim does not protect the coins on Bitcoin. It sends the matching QBTC to the Reserve and the two funds, which fund the network.
 
 ### How reclaimed QBTC is distributed
 
-Each successful reclamation proposal mints QBTC and splits it across three on-chain accounts at a fixed ratio:
+Each successful reclamation proposal mints QBTC and splits it 90 / 5 / 5:
 
 | Destination | Share | Purpose |
 |---|---|---|
 | **Reserve Module** | 90% | Funds validator emission (the main use of QBTC reclaimed by governance). |
-| **Development Fund** | 5% | Funds continued protocol development. Spends require governance approval. |
-| **Ecosystem Fund** | 5% | Funds adoption, education, and ecosystem growth. Spends require governance approval. |
+| **Development fund** | 5% | Funds continued protocol development. |
+| **Marketing fund** | 5% | Funds adoption and education. |
 
-The Development and Ecosystem funds are on-chain accounts. They are not controlled by any private wallet. Every disbursement passes through `x/gov` and is publicly recorded. Validators set the split parameters and can modify them through governance.
+The two funds are the only project share of QBTC.
 
-Each governance reclamation is a public, recorded event: the proposal identifies the UTXOs, validators vote, the chain executes the split. There is no off-chain step, no privileged team unlock, no vesting cliff.
+Each governance reclamation is a public, recorded event: the proposal identifies the UTXOs, validators vote, the chain executes the split.
 
 ## The Reserve Module
 
@@ -1839,10 +1897,7 @@ The Reserve Module is a module account on the chain. It holds QBTC that has been
 release_per_block = reserve_balance / (EmissionCurve × BlocksPerYear)
 ```
 
-Constants (per `constants/constants.go`):
-
-* `EmissionCurve = 5`
-* `BlocksPerYear = 5,256,000` (10 × 60 × 24 × 365, i.e. 10 blocks per minute)
+`EmissionCurve` and `BlocksPerYear` are on-chain parameters. A governance vote can change them. Mainnet sets their values at genesis. Payouts fall as the Reserve shrinks, and new reclaims top it up.
 
 The released amount is transferred from the Reserve Module to the standard Cosmos fee collector, which distributes to validators and delegators via `x/distribution`.
 
@@ -1852,18 +1907,18 @@ Typical proof-of-stake chains fund validator emission via inflationary minting. 
 
 QBTC funds validator emission by reclaiming value that Bitcoin would otherwise lose to quantum attackers, converting a one-time loss event (Q-day theft of dormant exposed-key coins) into a sustainable validator subsidy.
 
-The dormant exposed-key pool is several million BTC across Satoshi-era P2PK (~1.7M) and aged reused addresses (multi-million), so the reclamation runway is long. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net). Transaction fees grow as a share of validator revenue with adoption, complementing the emission stream.
+Each proposal sets its own cutoff block height, so a later first vote reclaims more outputs. A vote in November 2026 would reclaim about 983,000 BTC (4.7% of the 21M cap). The exact list is built at launch. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net). Transaction fees grow as a share of validator revenue with adoption, complementing the emission stream.
 
 ## Cap enforcement
 
 At any time:
 
 ```
-total_QBTC_minted = sum(user claims) + sum(governance reclamations)
+total_QBTC_minted = genesis mint (50) + sum(user claims) + sum(governance reclamations)
                   ≤ 21,000,000 QBTC
 ```
 
-The cap holds because no Bitcoin UTXO can be claimed twice. The `claimed_flag` propagates through Bitcoin spends, so a reclaimed UTXO and its descendants are permanently ineligible. Each claim mints exactly the BTC amount of that UTXO. Bitcoin's total supply is capped at 21M, so QBTC's total minted supply is bounded by the same number.
+The cap holds because no Bitcoin UTXO can be claimed twice. The `claimed_flag` propagates through Bitcoin spends, so a reclaimed UTXO and its descendants are permanently ineligible. Each claim mints exactly the BTC amount of that UTXO. The block-9 coinbase output, which offsets the genesis mint, cannot be claimed. Bitcoin's total supply is capped at 21M, so QBTC's total minted supply is bounded by the same number.
 
 No inflationary minting exists anywhere in the chain code.
 
@@ -1884,10 +1939,10 @@ No custom QBTC mechanism is layered on top of `x/distribution`.
 | Supply cap | 21M BTC | 21M QBTC |
 | Block reward source | Newly minted (halving schedule) | Reserve Module (funded by governance reclamation) |
 | Inflation | Decreasing, asymptotic to 0 | Strictly zero |
-| Genesis premint | None | None |
-| Privileged founder allocation | None | None |
+| Genesis mint | None | 50 QBTC for the first validator (offset by the unclaimable block-9 coinbase output) |
+| Sale or investor allocation | None | None |
 | Recovery mechanism for quantum-lost coins | None | Governance reclamation into Reserve Module |
-| Funding for ongoing development | None on-chain (Bitcoin Core funded by donations/firms) | 5% of governance reclamations (on-chain Development Fund, gov-controlled) |
+| Funding for ongoing development | None on-chain (Bitcoin Core funded by donations/firms) | 5% of governance reclamations (development fund) |
 
 ## See also
 
@@ -1904,13 +1959,13 @@ QBTC's security rests on three independent foundations. A compromise in any one 
 
 ## 1. Post-quantum consensus
 
-Every validator vote, every block-commit signature, every consensus message is signed with ML-DSA (FIPS 204). A quantum-capable adversary cannot forge validator signatures or rewrite chain history. See [Quantum Resistance (ML-DSA)](/build/quantum-resistance).
+Every validator vote, every block-commit signature, every consensus message is signed with ML-DSA (FIPS 204). ML-DSA is designed to resist signature forgery by a quantum-capable adversary. See [Quantum Resistance (ML-DSA)](/build/quantum-resistance).
 
-**Trust assumption:** ML-DSA is secure against both classical and quantum adversaries at NIST security level 3. This rests on the hardness of lattice problems, which has been the standard post-quantum assumption for over a decade and survived NIST's multi-year PQC standardization process.
+**Trust assumption:** ML-DSA-44 (NIST security category 2) is believed secure against both classical and quantum adversaries. This rests on the hardness of lattice problems, which has been the standard post-quantum assumption for over a decade and survived NIST's multi-year PQC standardization process.
 
 ## 2. ZK-gated claims
 
-A claim is only accepted if the submitted PLONK proof verifies. The proof attests that the claimant controls a Bitcoin private key whose public-key Hash160 matches the claimed UTXO, without revealing the public key.
+A claim is only accepted if the submitted PLONK proof verifies. The proof attests that the claimant controls a Bitcoin private key whose public-key Hash160 matches the claimed UTXO. The public key does not go on chain.
 
 **Trust assumption:** PLONK's soundness rests on the discrete log assumption over a pairing-friendly elliptic curve, a pre-quantum assumption. For the lifetime of the migration window, a quantum attacker who can break the ZK proof can also derive the Bitcoin private key directly, so ZK soundness is not the bottleneck. Migration to a fully post-quantum SNARK is on the long-term research agenda.
 
@@ -1927,21 +1982,24 @@ Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` 
 | Validator double-spends | `x/slashing` for double-signing. Standard Cosmos. |
 | Validator collusion (>1/3) | Acceptable byzantine fraction is bounded by stake distribution. Slashing makes collusion economically expensive. |
 | Quantum forgery of validator signatures | ML-DSA. |
-| Quantum forgery of Bitcoin signatures during a claim | The ZK proof never broadcasts the BTC public key. Public key remains hidden inputs. |
+| Quantum forgery of Bitcoin signatures during a claim | The BTC public key is a hidden input to the proof. It never goes on chain. |
 | Double-claim of the same UTXO | `EntitledAmount` set to 0 after claim. Subsequent attempts fail. |
 | Replay of a valid proof against a different destination | Destination address is a public input bound into the proof. A different destination produces a different proof. |
-| Malicious proof-service operator | The proof service does not have power to forge claims (proof inputs are user-constructed). Multiple independent operators run proof services; users select from a decentralized provider set, plus local proving is always available. |
+| Proving-service operator | The wallet signs a digest with the Bitcoin key and sends the signature to a proving service. The service builds the proof and broadcasts the claim. The service receives the signature, not the private key. |
+| Quantum forgery of account signatures | Only ML-DSA accounts have post-quantum protection. Accounts can also use secp256k1, ed25519 or multisig keys. |
 | Stolen or compromised user wallet | Same as Bitcoin: control of the BTC private key equals control of the claim. |
 | Front-running of a claim transaction | Standard Cosmos mempool. Claims are not high-MEV (the same UTXO can only be claimed by the holder of the matching key). |
 
 ## Known weaknesses
 
 * **PLONK is not post-quantum.** Bounded by Bitcoin's own pre-quantum nature. Migration to a fully post-quantum SNARK is a research direction.
-* **The bifrost design assumes honest majority for Bitcoin block ingestion.** A coordinated attack by more than 1/3 of bonded validator power could feed a false Bitcoin block. Slashing applies, but only after detection.
+* **Claims use a proving service today.** The holder relies on the service to build the proof and broadcast the claim.
+* **Account keys are not all post-quantum.** Accounts that use secp256k1, ed25519 or multisig keys do not have post-quantum protection.
+* **The bifrost design assumes honest majority for Bitcoin block ingestion.** Ingestion needs attestations from more than 2/3 of bonded validator power. Validators above that threshold acting together could feed a false Bitcoin block. Slashing applies, but only after detection.
 
-## Audits
+## Security review
 
-Audit reports will be linked here as they complete. The most security-critical components (the ML-DSA integration, the PLONK verifier, the `x/qbtc` module, and the ZK circuit) will receive multiple independent audits before mainnet.
+A pre-launch security review is in progress. Mainnet follows after it closes.
 
 ## See also
 
@@ -1954,11 +2012,9 @@ Audit reports will be linked here as they complete. The most security-critical c
 
 Source: https://docs.qbtc.net/research/quantum-risk-assessment
 
-**Note:** **Coming soon.** A published expert-panel assessment will be hosted here.
-
 ## Summary of published findings
 
-Current published assessments converge on a window of roughly **2029 to 2035** for the arrival of cryptographically-relevant quantum computers (CRQCs), defined as quantum computers capable of breaking 256-bit elliptic-curve cryptography in practical time. This is the cryptography behind Bitcoin's ECDSA signatures.
+Published estimates and public targets point to a window of roughly **2029 to 2035** for the arrival of cryptographically-relevant quantum computers (CRQCs), defined as quantum computers capable of breaking 256-bit elliptic-curve cryptography in practical time. This is the cryptography behind Bitcoin's ECDSA signatures.
 
 Methodologies vary across published assessments:
 
@@ -1966,11 +2022,11 @@ Methodologies vary across published assessments:
 * Some weight observed scaling trends in physical-qubit counts.
 * Some weight institutional milestones (NIST PQC standardization, federal infrastructure migration mandates).
 
-The convergence across methodologies is the signal.
+See [The Quantum Threat to Bitcoin](/learn/quantum-threat) for the cited sources.
 
 ## Implications
 
-* **Dormant exposed-key UTXOs are at risk first.** ~1.7M BTC sit in Satoshi-era P2PK outputs whose public keys are permanently on-chain; ~3M+ additional BTC sit in reused P2PKH / P2WPKH addresses where the public key has been revealed by prior spending. These become spendable by whoever runs Shor's algorithm first. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
+* **Dormant exposed-key UTXOs are at risk first.** ~1.7M BTC sit in Satoshi-era P2PK outputs whose public keys are permanently on-chain. More BTC sits in reused P2PKH / P2WPKH addresses where the public key has been revealed by prior spending. These become spendable by whoever runs Shor's algorithm first. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
 * **Live spending is at risk via the mempool window.** Any Bitcoin spend reveals the public key. A CRQC operator could race the spender to a competing transaction.
 * **The migration window is now.** Migrations of large-scale infrastructure take years. NIST has standardized post-quantum signatures (FIPS 204 / ML-DSA) on the assumption that public infrastructure should be substantially migrated well before CRQC arrival.
 
@@ -1995,24 +2051,24 @@ Terms used throughout the QBTC documentation.
 * **CRQC** — Cryptographically-Relevant Quantum Computer. A quantum computer capable of breaking 256-bit elliptic-curve cryptography in practical time.
 * **ebifrost** — The "enshrined bifrost." The in-chain module that aggregates validator attestations on Bitcoin blocks and ingests them into QBTC state.
 * **ECDSA** — Elliptic Curve Digital Signature Algorithm. Bitcoin's signature scheme. Quantum-vulnerable.
-* **EmissionCurve** — A constant in `constants/constants.go` controlling how fast the Reserve Module is drawn down per block to validators. Set to 5.
+* **EmissionCurve** — An on-chain parameter that controls how fast the Reserve Module is drawn down per block to validators. A governance vote can change it.
 * **EntitledAmount** — The remaining QBTC claim amount for a given UTXO. Set at ingestion. Decremented to 0 after claim.
 * **FIPS 204** — The NIST standard for ML-DSA, published 2024.
 * **Explorer** — The canonical QBTC block explorer at [explorer.qbtc.net](https://explorer.qbtc.net). Lookup for transactions, blocks, addresses, and claim activity on QBTC.
 * **Hash160** — The 20-byte hash (RIPEMD-160 of SHA-256) of a Bitcoin public key. Encodes a Bitcoin address.
 * **Indexer** — The QBTC risk indexer at [indexer.qbtc.net](https://indexer.qbtc.net). Aggregate stats on Bitcoin's quantum-vulnerable UTXO surface, broken down by script type (P2PK, reused P2PKH/P2WPKH, P2SH/P2WSH, etc.).
-* **ML-DSA** — Module-Lattice-Based Digital Signature Algorithm. NIST-standardized lattice signature scheme. Formerly CRYSTALS-Dilithium. QBTC's consensus signature scheme.
+* **ML-DSA** — Module-Lattice-Based Digital Signature Algorithm. NIST-standardized lattice signature scheme. Formerly CRYSTALS-Dilithium. QBTC's consensus signature scheme, at the ML-DSA-44 parameter set.
 * **P2PK** — Pay-to-Public-Key. An early Bitcoin output format that places the public key directly on-chain. Quantum-vulnerable.
-* **P2PKH / P2WPKH** — Pay-to-Public-Key-Hash. Modern Bitcoin output formats that store only the hash of the public key. Quantum-resistant until spent.
+* **P2PKH / P2WPKH** — Pay-to-Public-Key-Hash. Bitcoin output formats that store only the hash of the public key. The public key stays hidden until the first spend. These are the address types the QBTC self-claim supports today.
 * **PLONK** — A zero-knowledge SNARK proof system. QBTC's claim circuit is a PLONK circuit.
-* **proof-service** — A standalone HTTP service that generates ZK claim proofs on behalf of users.
+* **proof-service** — A standalone HTTP service that builds ZK claim proofs on behalf of users. The wallet sends it a signature over a claim digest. The service builds the proof and broadcasts the claim.
 * **Q-day** — The day on which a CRQC capable of breaking Bitcoin's ECDSA becomes operational.
-* **Quantum-safe wallet** — A wallet that can construct a QBTC claim proof and sign QBTC transactions with ML-DSA keys.
+* **ML-DSA wallet** — A wallet that signs QBTC transactions with ML-DSA keys. Only ML-DSA accounts have post-quantum protection.
 * **Reserve Module** — A module account on the QBTC chain that funds validator emission. Has one inflow (governance reclamation of dormant exposed-key BTC UTXOs mints QBTC into the Reserve) and one outflow (per-block release to validators via `x/distribution`).
 * **Seedless wallet** — A self-custody wallet that does not require the user to back up a 12- or 24-word seed phrase. Typically built on threshold-signature (MPC) schemes that split a key across multiple devices or co-signers, so no single device holds a recoverable seed.
 * **Shor's algorithm** — A quantum algorithm that solves the discrete logarithm problem efficiently. Breaks Bitcoin's ECDSA signatures (given a CRQC).
 * **UTXO** — Unspent Transaction Output. The unit of Bitcoin balance. QBTC mirrors Bitcoin's UTXO set.
-* **utxo-indexer** — A CLI tool that crawls a Bitcoin node and produces the genesis UTXO snapshot file.
+* **utxo-indexer** — A CLI tool that crawls a Bitcoin node and produces the bootstrap seed of the UTXO mirror. The seed is not an eligibility snapshot: eligibility is live.
 * **zkprover** — A CLI tool for generating QBTC claim proofs locally.
 * **ZK proof** — Zero-knowledge proof. A cryptographic proof that reveals only the validity of a stated claim, not the supporting data.
 

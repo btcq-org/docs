@@ -35,7 +35,7 @@ There are two distinct categories of risk. They materialize on different timelin
 
 A Bitcoin public key becomes visible on-chain in two situations:
 
-1. **P2PK outputs** (pay-to-public-key). The public key is literally the output. Most of these are Satoshi-era coinbase outputs that have never moved. Over 1 million BTC is estimated to sit here.
+1. **P2PK outputs** (pay-to-public-key). The public key is literally the output. Most of these are Satoshi-era coinbase outputs that have never moved. About 1.7 million BTC sits here.
 2. **Reused addresses.** Any time a Bitcoin address spends from itself, its public key is published as part of the transaction's input script. Once an address has spent even once, its public key is permanent and public forever.
 
 For both categories, the moment a quantum computer can run Shor's algorithm at the required scale, the funds can be stolen by deriving the private key from the exposed public key.
@@ -60,8 +60,7 @@ This is the "**short-range attack**" or "**live key attack**." It threatens ever
 Approximate measurements of permanently-exposed-key BTC, by category:
 
 * **~1.7 million BTC** in P2PK outputs (Satoshi-era, public key permanently on-chain).
-* **~3 million BTC** in reused-address outputs across P2PKH and P2WPKH (public key revealed by prior spending).
-* **~4.9 million BTC** conservative total (P2PK + reused P2PKH + reused P2WPKH).
+* **Several million BTC** in reused-address outputs across P2PKH and P2WPKH (public key revealed by prior spending).
 * **~7 million BTC** broad total including all reused P2SH and P2WSH addresses.
 
 Per-script-type breakdown and current numbers: **[indexer.qbtc.net](https://indexer.qbtc.net)**.
@@ -78,7 +77,7 @@ Coverage from the major business press anchored quickly to a 2029 timeline:
 * [CoinDesk, Mar 31 2026](https://www.coindesk.com/tech/2026/03/31/bitcoin-bulls-scramble-for-post-quantum-protection-as-google-drops-bombshell-paper) — "Bitcoin cracked in 9 minutes."
 * [The Block, Mar 31 2026](https://www.theblock.co/post/395814/google-quantum-computing-earlier) — "Google warns quantum computing may break bitcoin earlier than thought."
 
-Google itself, per the same paper, treats **2029** as the internal target for being post-quantum-ready across its own infrastructure. Google Cloud has shipped ML-DSA-65 in [Cloud KMS](https://cloud.google.com/blog/products/identity-security/announcing-quantum-safe-digital-signatures-in-cloud-kms) already. The US federal government has a [2035 transition target](https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/) (NSM-10), with NIST's [IR 8547](https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf) anchoring the schedule for federal systems.
+Press reports on the paper cite **2029** as Google's internal target for being post-quantum-ready across its own infrastructure. Google Cloud has shipped ML-DSA-65 in [Cloud KMS](https://cloud.google.com/blog/products/identity-security/announcing-quantum-safe-digital-signatures-in-cloud-kms) already. The US federal government has a [2035 transition target](https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/) (NSM-10), with NIST's [IR 8547](https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf) anchoring the schedule for federal systems.
 
 Independent expert surveys (the Mosca / Global Risk Institute annual survey, IBM and PsiQuantum public roadmaps) place median estimates in the early-to-mid 2030s, with substantial dispersion. The Google paper has pulled the lower bound forward materially.
 
@@ -98,15 +97,15 @@ For encryption, "harvest now, decrypt later" means an adversary records cipherte
 
 Bitcoin can in principle add post-quantum signatures via a soft fork. This is being explored. But:
 
-* **Post-quantum signatures are large.** ML-DSA-65 signatures are roughly 3.3 KB (3309 bytes per FIPS 204), vs. roughly 70 bytes for ECDSA. Even with aggregation, the load on Bitcoin's block space is significant.
+* **Post-quantum signatures are large.** ML-DSA signatures are 2,420 to 4,627 bytes (about 2.4 KB to 4.6 KB) per FIPS 204, depending on the parameter set, vs. roughly 70 bytes for ECDSA. Even with aggregation, the load on Bitcoin's block space is significant.
 * **Every user must migrate to new addresses.** Old addresses with exposed public keys remain vulnerable forever, including the Satoshi-era coins.
 * **A subset of the community will push for a hard fork instead.** Soft-fork PQ migration of Bitcoin is contentious. There is real risk of a chain split.
 * **The timeline is years.** BIP discussion, consensus, activation, and migration each take years individually. The total likely runs longer than the window before quantum capability arrives.
 
-QBTC fills this gap: a parallel quantum-safe ledger that every BTC holder can migrate to on their own schedule, without waiting for Bitcoin's consensus process to complete.
+QBTC fills this gap: a parallel ledger with post-quantum validator signatures. Holders can claim on their own schedule, without waiting for Bitcoin's consensus process to complete.
 
 ## Read next
 
 * [Why a Parallel Chain](/learn/why-parallel-chain), why QBTC chose this design over alternatives.
 * [Quantum Resistance (ML-DSA)](/build/quantum-resistance), how QBTC's cryptography works.
-* [Quantum Risk Assessment](/research/quantum-risk-assessment), the detailed expert-panel timeline.
+* [Quantum Risk Assessment](/research/quantum-risk-assessment), a summary of published timeline estimates.

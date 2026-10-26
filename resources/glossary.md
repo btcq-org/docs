@@ -13,23 +13,23 @@ Terms used throughout the QBTC documentation.
 * **CRQC** — Cryptographically-Relevant Quantum Computer. A quantum computer capable of breaking 256-bit elliptic-curve cryptography in practical time.
 * **ebifrost** — The "enshrined bifrost." The in-chain module that aggregates validator attestations on Bitcoin blocks and ingests them into QBTC state.
 * **ECDSA** — Elliptic Curve Digital Signature Algorithm. Bitcoin's signature scheme. Quantum-vulnerable.
-* **EmissionCurve** — A constant in `constants/constants.go` controlling how fast the Reserve Module is drawn down per block to validators. Set to 5.
+* **EmissionCurve** — An on-chain parameter that controls how fast the Reserve Module is drawn down per block to validators. A governance vote can change it.
 * **EntitledAmount** — The remaining QBTC claim amount for a given UTXO. Set at ingestion. Decremented to 0 after claim.
 * **FIPS 204** — The NIST standard for ML-DSA, published 2024.
 * **Explorer** — The canonical QBTC block explorer at [explorer.qbtc.net](https://explorer.qbtc.net). Lookup for transactions, blocks, addresses, and claim activity on QBTC.
 * **Hash160** — The 20-byte hash (RIPEMD-160 of SHA-256) of a Bitcoin public key. Encodes a Bitcoin address.
 * **Indexer** — The QBTC risk indexer at [indexer.qbtc.net](https://indexer.qbtc.net). Aggregate stats on Bitcoin's quantum-vulnerable UTXO surface, broken down by script type (P2PK, reused P2PKH/P2WPKH, P2SH/P2WSH, etc.).
-* **ML-DSA** — Module-Lattice-Based Digital Signature Algorithm. NIST-standardized lattice signature scheme. Formerly CRYSTALS-Dilithium. QBTC's consensus signature scheme.
+* **ML-DSA** — Module-Lattice-Based Digital Signature Algorithm. NIST-standardized lattice signature scheme. Formerly CRYSTALS-Dilithium. QBTC's consensus signature scheme, at the ML-DSA-44 parameter set.
 * **P2PK** — Pay-to-Public-Key. An early Bitcoin output format that places the public key directly on-chain. Quantum-vulnerable.
-* **P2PKH / P2WPKH** — Pay-to-Public-Key-Hash. Modern Bitcoin output formats that store only the hash of the public key. Quantum-resistant until spent.
+* **P2PKH / P2WPKH** — Pay-to-Public-Key-Hash. Bitcoin output formats that store only the hash of the public key. The public key stays hidden until the first spend. These are the address types the QBTC self-claim supports today.
 * **PLONK** — A zero-knowledge SNARK proof system. QBTC's claim circuit is a PLONK circuit.
-* **proof-service** — A standalone HTTP service that generates ZK claim proofs on behalf of users.
+* **proof-service** — A standalone HTTP service that builds ZK claim proofs on behalf of users. The wallet sends it a signature over a claim digest. The service builds the proof and broadcasts the claim.
 * **Q-day** — The day on which a CRQC capable of breaking Bitcoin's ECDSA becomes operational.
-* **Quantum-safe wallet** — A wallet that can construct a QBTC claim proof and sign QBTC transactions with ML-DSA keys.
+* **ML-DSA wallet** — A wallet that signs QBTC transactions with ML-DSA keys. Only ML-DSA accounts have post-quantum protection.
 * **Reserve Module** — A module account on the QBTC chain that funds validator emission. Has one inflow (governance reclamation of dormant exposed-key BTC UTXOs mints QBTC into the Reserve) and one outflow (per-block release to validators via `x/distribution`).
 * **Seedless wallet** — A self-custody wallet that does not require the user to back up a 12- or 24-word seed phrase. Typically built on threshold-signature (MPC) schemes that split a key across multiple devices or co-signers, so no single device holds a recoverable seed.
 * **Shor's algorithm** — A quantum algorithm that solves the discrete logarithm problem efficiently. Breaks Bitcoin's ECDSA signatures (given a CRQC).
 * **UTXO** — Unspent Transaction Output. The unit of Bitcoin balance. QBTC mirrors Bitcoin's UTXO set.
-* **utxo-indexer** — A CLI tool that crawls a Bitcoin node and produces the genesis UTXO snapshot file.
+* **utxo-indexer** — A CLI tool that crawls a Bitcoin node and produces the bootstrap seed of the UTXO mirror. The seed is not an eligibility snapshot: eligibility is live.
 * **zkprover** — A CLI tool for generating QBTC claim proofs locally.
 * **ZK proof** — Zero-knowledge proof. A cryptographic proof that reveals only the validity of a stated claim, not the supporting data.

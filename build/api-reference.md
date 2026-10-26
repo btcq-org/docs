@@ -1,15 +1,15 @@
 ---
 title: "API Reference"
-description: "QBTC developer APIs: the Bitcoin risk indexer (api.qbtc.net, indexes real Bitcoin) and the QBTC chain REST gateway (current public testnet)."
+description: "QBTC developer APIs: the Bitcoin risk indexer (api.qbtc.net, indexes real Bitcoin) and the QBTC chain REST gateway (current public test network)."
 ---
 
 QBTC exposes two HTTP surfaces a developer will use:
 
 * **The Bitcoin risk indexer** (`https://api.qbtc.net`) — indexes the **real Bitcoin UTXO set** (the claimable universe). Its data is valid for mainnet planning today.
-* **The QBTC chain** — standard Cosmos SDK REST/gRPC. The hosted gateway below points at the **current public testnet** and will change when mainnet relaunches.
+* **The QBTC chain** — standard Cosmos SDK REST/gRPC. The hosted gateway below points at the **current public test network** and will change at mainnet.
 
 <Info>
-**Testnet vs. mainnet.** The Bitcoin indexer reflects real Bitcoin and is stable. The **chain** endpoints are a private testnet (chain ID `qbtc`, started 2026-03-14): the host, chain ID, and on-chain state (currently ~150 QBTC supply, empty Reserve) all change at mainnet relaunch. Treat chain endpoints as illustrative, not durable.
+**Test network vs. mainnet.** The Bitcoin indexer reflects real Bitcoin and is stable. The **chain** endpoints serve a public test network (chain ID `qbtc`) that has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026. The host, chain ID, and on-chain state can all change at mainnet. Treat chain endpoints as illustrative, not durable.
 </Info>
 
 ## Bitcoin risk indexer — `https://api.qbtc.net`
@@ -77,25 +77,25 @@ curl -s "https://api.qbtc.net/latest/utxos?limit=1" | jq '.results[0]'
 
 For production integrations, **run your own node** and query its local Cosmos SDK REST (`:1317`) and gRPC (`:9090`) — see [Running a Node](/build/running-a-node). Your node's chain ID is whatever the genesis declares (currently `qbtc`).
 
-For quick reads against the current public testnet without standing up a node, a hosted Cosmos REST gateway is available:
+For quick reads against the current public test network without standing up a node, a hosted Cosmos REST gateway is available:
 
 ```
 https://api.vultisig.com/qbtc-rpc
 ```
 
-### Routing quirk: only standard Cosmos REST is proxied
+### Routing: which paths the gateway proxies
 
-The gateway forwards **standard Cosmos SDK module queries under `/cosmos/...`** and nothing else:
+The gateway forwards **standard Cosmos SDK module queries under `/cosmos/...`** and the `x/qbtc` params route:
 
 | Request | Result |
 |---|---|
 | `…/qbtc-rpc/cosmos/base/tendermint/v1beta1/blocks/latest` | ✅ works |
 | `…/qbtc-rpc/cosmos/bank/v1beta1/supply` | ✅ works |
 | `…/qbtc-rpc/status`, `/block`, `/abci_info` (CometBFT RPC) | ❌ `Not Implemented` |
-| `…/qbtc-rpc/qbtc/qbtc/v1/params` (custom `x/qbtc` routes) | ❌ `Not Implemented` |
+| `…/qbtc-rpc/qbtc/v1/params` (custom `x/qbtc` params) | ✅ works |
 | `…/qbtc-node/cosmos/...` | ❌ `404` |
 
-CometBFT RPC methods and the custom `x/qbtc` module routes are **not** exposed through this gateway. To read them, query your own node directly, or read the constants from source (next section).
+CometBFT RPC methods are **not** exposed through this gateway. To read them, query your own node directly.
 
 ### Example: chain tip and supply
 
@@ -103,16 +103,22 @@ CometBFT RPC methods and the custom `x/qbtc` module routes are **not** exposed t
 # Latest block (height, time, chain_id)
 curl -s "https://api.vultisig.com/qbtc-rpc/cosmos/base/tendermint/v1beta1/blocks/latest" \
   | jq '.block.header | {height, time, chain_id}'
-# → {"height":"61602","time":"2026-06-23T10:58:37Z","chain_id":"qbtc"}
+# → {"height":"…","time":"…","chain_id":"qbtc"}
 
 # Total supply (base units; 1 QBTC = 100,000,000)
 curl -s "https://api.vultisig.com/qbtc-rpc/cosmos/bank/v1beta1/supply" | jq '.supply'
-# → [{"denom":"qbtc","amount":"15000104396"}]   (~150 QBTC; Reserve still empty)
+# → [{"denom":"qbtc","amount":"…"}]
 ```
 
-### Chain parameters (read from source)
+### Chain parameters
 
-The custom `x/qbtc` parameters are not served by the public gateway. The canonical values live in [`constants/constants.go`](https://github.com/btcq-org/qbtc/blob/main/constants/constants.go):
+Read the live `x/qbtc` parameters from the gateway:
+
+```bash
+curl -s "https://api.vultisig.com/qbtc-rpc/qbtc/v1/params" | jq '.params'
+```
+
+The defaults live in [`constants/constants.go`](https://github.com/btcq-org/qbtc/blob/main/constants/constants.go). Values on the current test network:
 
 | Constant | Value | Meaning |
 |---|---|---|

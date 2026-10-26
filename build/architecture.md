@@ -44,7 +44,7 @@ QBTC depends on a fork of CometBFT that introduces a new `crypto/mldsa` package 
 
 Every validator's consensus key is an ML-DSA key, every vote is signed with ML-DSA, every block-commit signature is ML-DSA. No wrapper or sidecar layer. The fork is maintained at `github.com/btcq-org/cometbft`.
 
-ML-DSA-65 signatures are larger than Ed25519 (3309 bytes vs. 64 bytes per FIPS 204), which affects block size and bandwidth. The trade-off is intentional: a chain that exists to be quantum-safe cannot have any ECDSA or Ed25519 dependency in its consensus path.
+QBTC uses the ML-DSA-44 parameter set. ML-DSA-44 signatures are larger than Ed25519 (2420 bytes vs. 64 bytes per FIPS 204), which affects block size and bandwidth. The trade-off is intentional: the consensus path has no ECDSA or Ed25519 dependency. Accounts are a separate layer: they accept ML-DSA, secp256k1, ed25519 and multisig keys.
 
 See [Quantum Resistance (ML-DSA)](/build/quantum-resistance) for details.
 
@@ -76,9 +76,7 @@ QBTC's view of Bitcoin is itself produced by a Byzantine-fault-tolerant consensu
 
 ### 5. The proof service (`proof-service`)
 
-ZK proof generation runs client-side. Wallets handle it natively. On constrained devices, the `proof-service` is a standalone HTTP service that takes user-constructed proof inputs and computes the cryptographic output.
-
-Anyone can host a `proof-service` instance. Multiple independent operators will run them. Users (or their wallet) pick by trust, latency, or convenience. The proof service does not see private key material in a form that lets it forge claims; the witness is constructed locally on the user's side.
+The `proof-service` is a standalone HTTP service. The wallet signs a digest with the Bitcoin key and sends the signature to a proving service. The service builds the zero-knowledge proof and broadcasts the claim. The Bitcoin public key never goes on chain. The private key stays in the wallet.
 
 A CLI version (`zkprover`) is available for users who want to generate proofs locally.
 
@@ -90,18 +88,18 @@ A CLI version (`zkprover`) is available for users who want to generate proofs lo
 | `bifrost` | BTC block watcher and gossiper (every validator runs one) |
 | `proof-service` | Remote PLONK prover (optional infrastructure, anyone can host) |
 | `zkprover` | CLI for local proof generation |
-| `utxo-indexer` | Builds the genesis UTXO snapshot from a Bitcoin node |
+| `utxo-indexer` | Builds the bootstrap UTXO seed from a Bitcoin node |
 
 ## The data flow for a single claim
 
 1. User decides to claim their BTC at address `1A1z...` to a QBTC address `qbtc1...`.
-2. User opens a quantum-safe wallet, which constructs the proof inputs locally: the BTC private key, the destination QBTC address, and the UTXO reference.
-3. The wallet either generates the ZK proof locally (`zkprover`) or sends the proof inputs to a `proof-service` instance.
-4. The completed proof is submitted to QBTC as a `MsgClaimWithProof` transaction. A single transaction can claim up to 50 UTXOs at once.
+2. The user's wallet signs a digest with the Bitcoin key. The digest binds the destination QBTC address.
+3. The wallet sends the signature to a proving service. The service builds the ZK proof.
+4. The service submits the proof to QBTC as a `MsgClaimWithProof` transaction. A single transaction can claim up to 50 UTXOs at once.
 5. A QBTC validator picks up the transaction, runs the on-chain PLONK verifier, checks each referenced UTXO has an outstanding claim, and checks the destination address is valid.
 6. The transaction lands in a block. The claim is released to the destination QBTC address and the corresponding entry is marked as exhausted, preventing double-claims.
 
-The user's BTC is never moved. The user's BTC public key is never broadcast.
+The user's BTC is never moved. The user's BTC public key never goes on chain.
 
 ## How Bitcoin's state stays mirrored
 

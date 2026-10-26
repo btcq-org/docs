@@ -1,15 +1,17 @@
 ---
 title: "Welcome to QBTC"
-description: "Quantum-safe Bitcoin. Claimable by every BTC holder, secured against the coming quantum threat."
+description: "A separate chain for Bitcoin holders, secured by NIST post-quantum signatures (ML-DSA). Holders of eligible Bitcoin outputs claim QBTC 1:1 with a zero-knowledge proof."
 mode: "wide"
 ---
 
-**If you own Bitcoin today, you'll be able to claim an equal amount of QBTC, a new coin built to survive quantum computers that could otherwise steal Bitcoin.**
+**If you control Bitcoin in an eligible output, you can claim an equal amount of QBTC. QBTC is a separate chain secured by post-quantum signatures.**
 
-Bitcoin's signatures will eventually fall to quantum computers. QBTC is the safe harbor: a new chain that runs on quantum-resistant cryptography from day one and already knows your Bitcoin balance. You move on your own schedule. Your Bitcoin stays on Bitcoin.
+A large quantum computer could break Bitcoin's signatures. QBTC is a separate chain whose validators sign with ML-DSA, a NIST post-quantum signature scheme. The chain tracks the Bitcoin UTXO set. Eligibility is live: whoever controls an eligible unspent output at the time of the claim can claim it. Your Bitcoin stays on Bitcoin.
+
+The self-claim supports P2PKH (`1…`) and P2WPKH (`bc1q…`) outputs today. A new output needs 144 Bitcoin confirmations (about one day) before it can claim.
 
 <Warning>
-**Pre-mainnet. Targeting Q3 2026.** The protocol is in active development. See the [Roadmap](/learn/roadmap).
+**Pre-mainnet.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026, after the pre-launch security review closes. See the [Roadmap](/learn/roadmap).
 </Warning>
 
 ## Choose your path
@@ -30,7 +32,7 @@ Bitcoin's signatures will eventually fall to quantum computers. QBTC is the safe
 
 Quantum computers will eventually break the math that protects Bitcoin addresses. Every Bitcoin address whose public key has ever been revealed (which includes every address that has ever spent) becomes vulnerable that day.
 
-QBTC is a separate chain built on quantum-resistant cryptography (a NIST-standardized scheme called ML-DSA). The chain keeps a continuous mirror of who owns what on Bitcoin. To move your balance over, you prove you own your Bitcoin address using a zero-knowledge proof, a cryptographic technique that confirms ownership without revealing your public key. The migration itself is therefore safe from quantum attack.
+QBTC is a separate chain whose validators sign with ML-DSA, a NIST-standardized post-quantum signature scheme (FIPS 204). The chain keeps a continuous mirror of the Bitcoin UTXO set. To claim, your wallet signs with your Bitcoin key, and a proving service turns that signature into a zero-knowledge proof of control. The claim does not publish your Bitcoin public key on chain.
 
 Nothing happens to your Bitcoin. No bridge, no peg, no locked coins, no custodian.
 

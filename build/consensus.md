@@ -15,9 +15,9 @@ Validators bond QBTC via the standard Cosmos `x/staking` module (see [Becoming a
 
 * **Bonding**: standard `x/staking` semantics (self-bond from the validator's own account; no inflation, so rewards come from fees and Reserve emission).
 * **Slashing**: standard `x/slashing` — double-sign and downtime.
-* **Unbonding period**: 21 days on the current testnet (a genesis parameter; subject to change at mainnet relaunch).
+* **Unbonding period**: 21 days on the current test network (a genesis parameter; subject to change at mainnet).
 * **Validator consensus key**: ML-DSA (`/cosmos.crypto.mldsa.PubKey`).
-* **Validator operator (account) key**: also ML-DSA — QBTC's forked Cosmos SDK uses post-quantum account keys, not secp256k1.
+* **Account keys** (including the validator operator account): accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
 
 ## Validator responsibilities
 

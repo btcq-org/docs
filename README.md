@@ -2,7 +2,7 @@
 
 Source for [docs.qbtc.net](https://docs.qbtc.net) — the QBTC project documentation.
 
-QBTC is the first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by ZK proof. The chain runs on ML-DSA (NIST FIPS 204) at consensus. Pre-mainnet, targeting Q3 2026.
+QBTC is a separate chain for Bitcoin holders. Holders of P2PKH and P2WPKH outputs claim QBTC 1:1 with a zero-knowledge proof. Validators sign with ML-DSA (NIST FIPS 204). A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026.
 
 ## Stack
 

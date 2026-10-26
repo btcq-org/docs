@@ -7,7 +7,7 @@ The claim mechanism is how a Bitcoin holder converts their QBTC entitlement into
 
 ## What's in QBTC's state
 
-At genesis, the chain ingests a snapshot of the Bitcoin UTXO set. For every UTXO at the reference height, QBTC stores a claim entry that includes:
+The chain loads a bootstrap seed of the Bitcoin UTXO set (`genesis-954355.bin`). Eligibility is live with no snapshot date: whoever controls an eligible unspent output at claim time can claim it. For every tracked UTXO, QBTC stores a claim entry that includes:
 
 * The Bitcoin Hash160 (the 20-byte address hash).
 * The UTXO's BTC amount, scaled 1:1 to QBTC.
@@ -18,6 +18,11 @@ As new Bitcoin blocks are ingested via `ebifrost` (see [Architecture](/build/arc
 * New UTXOs add new claim entries.
 * Spent UTXOs are reconciled.
 * Coinbase outputs add new claim entries; Bitcoin miners receive a corresponding QBTC claim.
+
+## Supported today
+
+* **Address types:** P2PKH (`1…`) and P2WPKH (`bc1q…`). Other address types cannot self-claim today.
+* **Confirmations:** a new output needs 144 Bitcoin confirmations (about one day) before it can claim.
 
 ## The proof
 
@@ -32,13 +37,12 @@ The proof's public inputs (revealed on-chain):
 * Hash160 of the Bitcoin address being claimed.
 * The destination QBTC address.
 
-The proof's hidden inputs (kept secret):
+The proof's hidden inputs (not published on chain):
 
 * The Bitcoin public key.
-* The Bitcoin private key.
 * An ECDSA signature.
 
-The chain verifies ownership without the public key ever being broadcast. This is what keeps the claim itself quantum-safe.
+The chain verifies control of the address. The Bitcoin public key does not go on chain.
 
 ## Validator handling
 
@@ -57,25 +61,17 @@ A claimed UTXO has `EntitledAmount == 0`. Any subsequent attempt to claim it fai
 
 The claimed status also propagates through Bitcoin spends. When the `ebifrost` module ingests a new Bitcoin block, any transaction whose inputs include claimed UTXOs carries the claimed status to its outputs in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed. A child of a partially-claimed set of parents inherits a proportionally-reduced `EntitledAmount`.
 
-Propagation makes governance reclamation (see [Tokenomics](/research/tokenomics)) permanent: once a UTXO is reclaimed into the Reserve Module, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO to a new address.
+Propagation makes governance reclamation (see [Tokenomics](/research/tokenomics)) permanent: once governance reclaims a UTXO, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO to a new address.
 
 ## What claims do not do
 
 * Claims do not move BTC. Your Bitcoin remains on the Bitcoin chain after claiming.
-* Claims do not expire. An unclaimed entry sits in QBTC's state indefinitely.
+* Claims have no expiry date. Governance can reclaim long-dormant outputs whose public key is already visible on Bitcoin (see [Tokenomics](/research/tokenomics)).
 * Claims do not require any prior registration.
 
 ## Proof generation
 
-Proofs are generated client-side. Two paths exist:
-
-* **Native wallet flow.** An established multi-chain MPC wallet partner is implementing native ML-DSA signing and ZK claim-proof generation, with rollout planned at mainnet. Users see claiming as a normal in-wallet action. The partner will be named ahead of launch.
-* **Hosted proof service.** Independent operators run `proof-service` HTTP endpoints that wallets can use to offload computation on constrained devices. Multiple operators run these so users can choose.
-* **Local CLI prover.** `zkprover` lets advanced users generate proofs themselves.
-
-Proof inputs (including private key material) are constructed locally. The proof service computes only the cryptographic output and cannot forge claims against UTXOs whose keys it has not seen.
-
-On the chain side, verification takes ~2–5 ms per proof (proof size ~1 KB), so claims clear quickly.
+The wallet signs a digest with the Bitcoin key and sends the signature to a proving service. The service builds the zero-knowledge proof and broadcasts the claim. The Bitcoin public key never goes on chain. The private key stays in the wallet.
 
 ## References
 

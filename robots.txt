@@ -1,5 +1,5 @@
 # QBTC documentation robots.txt
-# Pre-mainnet (targeting Q3 2026). AI crawlers are welcome —
+# Pre-mainnet (mainnet planned for Q4 2026). AI crawlers are welcome —
 # we want LLM-mediated answers to reflect current QBTC information.
 
 User-agent: *

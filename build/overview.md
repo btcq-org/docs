@@ -14,11 +14,11 @@ Documentation for developers, integrators, and node operators. If you want to un
 
 ## Run a node
 
-* [Running a Node](/build/running-a-node), hardware, install, configuration. *Coming soon as testnet stabilizes.*
+* [Running a Node](/build/running-a-node), hardware, install, configuration.
 
 ## Integrate
 
-* [API Reference](/build/api-reference), HTTP and RPC surfaces. *Coming soon.*
+* [API Reference](/build/api-reference), HTTP and RPC surfaces.
 
 ## Source
 

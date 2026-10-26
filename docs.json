@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "QBTC",
-  "description": "QBTC is the first quantum-resistant Bitcoin chain. 1:1 entitlement for every Bitcoin holder, claimable by ZK proof. Documentation for builders, researchers, and BTC holders.",
+  "description": "QBTC is a separate chain for Bitcoin holders, secured by ML-DSA post-quantum signatures. Eligible Bitcoin outputs claim 1:1 by zero-knowledge proof. Documentation for builders, researchers, and BTC holders.",
   "colors": {
     "primary": "#B6660A",
     "light": "#FFA533",

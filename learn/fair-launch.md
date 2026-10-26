@@ -1,23 +1,23 @@
 ---
 title: "Fair Launch Principles"
-description: "QBTC has no pre-sale, no investor allocation, no advisor allocation. Every QBTC entitlement belongs to people who already hold Bitcoin."
+description: "QBTC has no sale, no premine, no investor allocation and no vesting. Every QBTC entitlement belongs to people who already hold Bitcoin."
 ---
 
-QBTC launches on terms that mirror Bitcoin's own. No pre-sale. No investor allocation. No team premine. The entire claimable supply belongs to people who already hold Bitcoin. There is no genesis allocation to anyone.
+QBTC launches on terms that mirror Bitcoin's own. No sale. No investor allocation. No team premine. No vesting. The entire claimable supply belongs to people who already hold Bitcoin. Genesis has one mint: 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same.
 
 ## What "fair launch" means here
 
 A fair launch, in the sense QBTC uses the term, requires all of the following:
 
 1. **No ICO, IDO, or pre-sale.** The token cannot be purchased from the project before launch. There is no fundraising round in which capital is exchanged for tokens at a discount.
-2. **No investor allocation.** No venture capital, no strategic investors, no advisor allocation in token form.
-3. **No team premine.** The chain ships with zero QBTC in circulation. No tokens are minted to founders, contributors, or any privileged wallet at genesis.
+2. **No investor allocation.** No venture capital and no strategic investors in token form.
+3. **No team premine.** No tokens are minted to founders or contributors at genesis. The only genesis mint is 50 QBTC for the first validator, offset by the unclaimable block-9 coinbase output.
 4. **Entitlement is determined by an external, immutable signal.** For QBTC, that signal is the Bitcoin UTXO set. Whoever currently controls a Bitcoin UTXO controls the corresponding QBTC entitlement. The project cannot alter who gets what after the fact.
-5. **Anything beyond Path 1 user claims requires governance.** Every other path through which QBTC enters circulation is voted on by the validator set on-chain.
+5. **Anything beyond Path 1 user claims requires governance.** Apart from the 50 QBTC genesis mint, every other path through which QBTC enters circulation is voted on on-chain.
 
 ## Failure modes this avoids
 
-The standard token-launch pattern (VC-backed pre-sales, team allocations vesting over multi-year cliffs, "ecosystem funds" controlled by a foundation) produces three predictable outcomes:
+The standard token-launch pattern (VC-backed pre-sales, team allocations vesting over multi-year cliffs, "marketing funds" controlled by a foundation) produces three predictable outcomes:
 
 * **Concentrated supply.** Insiders control a large fraction of the float with information asymmetry over public holders.
 * **Misaligned incentives.** The team's payoff is dominated by token price, not protocol utility, biasing decisions toward marketing over engineering.
@@ -27,7 +27,7 @@ QBTC avoids all three. Entitlement at genesis is determined entirely by an exter
 
 ## How the supply works
 
-QBTC has a hard cap of **21 million QBTC**, mirroring Bitcoin. Tokens are created only when one of two events happens: a user claim, or a successful governance reclamation. The cap is enforced because no Bitcoin UTXO can be claimed twice.
+QBTC has a hard cap of **21 million QBTC**, mirroring Bitcoin. After the 50 QBTC genesis mint, tokens are created only when one of two events happens: a user claim, or a successful governance reclamation. The cap is enforced because no Bitcoin UTXO can be claimed twice.
 
 ### The claim mirror
 
@@ -35,11 +35,13 @@ The chain state contains a continuous mirror of Bitcoin's UTXO set. For every li
 
 The mirror is a ledger of entitlements. QBTC tokens are minted only when an entitlement is exercised.
 
-Whoever currently controls a Bitcoin UTXO controls the corresponding entitlement. If you spend your BTC on Bitcoin, the new outputs at the recipient addresses carry the entitlement instead.
+Whoever currently controls a Bitcoin UTXO controls the corresponding entitlement. If an unclaimed coin moves on Bitcoin, its claim moves with it to the new outputs. A claimed coin stays claimed after it moves. Eligibility is live with no snapshot date.
 
 ### Path 1: A Bitcoin holder claims
 
 A user submits a zero-knowledge proof of ownership of a Bitcoin address along with a list of UTXOs to claim and a destination QBTC address. The chain verifies the proof, marks the referenced UTXOs as claimed, and mints QBTC into the user's account. The minted amount equals the sum of the claimed UTXOs' BTC values.
+
+The zero-knowledge self-claim supports P2PKH (`1…`) and P2WPKH (`bc1q…`) outputs today. A new output needs 144 Bitcoin confirmations (about one day) before it can claim.
 
 A holder can claim today, in a decade, or never at all, with one exception described below.
 
@@ -47,55 +49,53 @@ A holder can claim today, in a decade, or never at all, with one exception descr
 
 Bitcoin holds roughly 1.7M BTC in Satoshi-era P2PK outputs (public key permanently on-chain) plus additional BTC in reused-address outputs where the public key has been revealed. On Bitcoin Legacy, these are the coins that will be stolen first by a quantum-capable attacker. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
 
-QBTC governance reclaims these UTXOs. Through standard `x/gov` proposals on a roughly two-week voting cadence, validators vote on which dormant exposed-key UTXOs to reclaim. When a proposal passes:
+QBTC governance can reclaim these UTXOs. Through standard `x/gov` proposals, validators vote on which dormant exposed-key UTXOs to reclaim. The target is outputs that have not moved for more than 17 years. The cutoff is a Bitcoin block height written into each proposal. Later votes can move it forward. When a proposal passes:
 
 1. The referenced UTXOs are marked as claimed in the mirror, with the same flag a user claim would set.
-2. QBTC equal to the reclaimed BTC value is minted on the chain and distributed across three on-chain accounts (described below).
+2. QBTC equal to the reclaimed BTC value is minted on the chain and split 90 / 5 / 5 (described below).
 3. The reclaimed UTXOs cannot be claimed by a user. Bitcoin spends out of these UTXOs propagate the claimed status to the resulting child outputs, so descendants are also ineligible to claim QBTC.
 
-Value that would otherwise be captured by a quantum attacker is instead distributed to addresses that secure the post-quantum migration.
+The reclaim does not protect the coins on Bitcoin. It sends the matching QBTC to the Reserve and the two project funds.
 
 ### How reclaimed QBTC is split
 
-Every governance reclamation distributes the minted QBTC across three on-chain accounts at a fixed ratio:
+Every governance reclamation splits the minted QBTC 90 / 5 / 5:
 
 | Destination | Share | What it funds |
 |---|---|---|
 | **Reserve Module** | 90% | Validator emission. The chain releases this to validators per-block. |
-| **Development Fund** | 5% | Continued protocol development. Spends from this fund require `x/gov` approval. |
-| **Ecosystem Fund** | 5% | Adoption, education, ecosystem growth. Spends require `x/gov` approval. |
+| **Development fund** | 5% | Continued protocol development. |
+| **Marketing fund** | 5% | Adoption and education. |
 
-The 5+5 share is the project's funding mechanism. It does not exist at genesis. It accrues only when a reclamation proposal passes a validator vote, and every spend from these funds is itself subject to a separate governance vote. The amounts, the split, and the existence of the funds can all be changed by future governance.
+The 5 + 5 share is the project's only share of QBTC. It does not exist at genesis. It accrues only when a reclamation proposal passes a validator vote.
 
 This is materially different from a team premine or a vesting cliff:
 
-* Nothing is allocated at genesis.
-* Funding is tied to real on-chain economic events (governance reclamations), not to time-based unlocks.
-* The funds are on-chain treasuries, not private wallets. Every disbursement is publicly recorded.
-* If validators decide the project no longer warrants funding, they can vote to stop.
+* The only genesis mint is 50 QBTC for the first validator. The two funds start empty.
+* Funding is tied to on-chain events (governance reclamations), not to time-based unlocks.
+* Every reclamation is a public on-chain vote.
 
-QBTC funds its own continued development out of value that would otherwise be lost to a quantum attacker, on terms set by the validator set. Bitcoin Core is funded by donations and corporate sponsorship; QBTC is funded by a transparent on-chain mechanism gated by governance.
+Bitcoin Core is funded by donations and corporate sponsorship. QBTC funds its development from a share of governance reclamations.
 
 ## What the project gets
 
-The project that built QBTC starts with zero QBTC. There is no founder wallet pre-loaded with tokens. Contributors who want QBTC can:
+The project starts with no QBTC. There is no founder wallet pre-loaded with tokens. Contributors who want QBTC can:
 
 * Hold Bitcoin and claim, like anyone else.
 * Operate validator nodes, providing the capital and infrastructure required.
-* Receive disbursements from the Development Fund through governance-approved spends, on terms transparent to the entire network.
+* Receive QBTC from the development fund.
 
-There is no special role, no special multiplier, no reserved seat in the validator set.
+There is no special multiplier.
 
 ## What this rules out
 
 * **Insider rounds at discounted prices.** No.
 * **Genesis team allocation that vests into circulation.** No.
 * **Pre-launch yield programs that allocate tokens to early participants on terms unavailable later.** No.
-* **Foundation control over a significant fraction of supply.** No. The Development and Ecosystem funds are governance-gated, not foundation-controlled.
 
 ## What it does not rule out
 
-Fair launch does not mean "no organization exists to maintain the protocol." A team and any associated foundation will exist, will fundraise in conventional ways (fiat, equity in operating entities), and will operate validator infrastructure on the same terms as anyone else. The team also accesses the Development Fund through governance-approved proposals.
+Fair launch does not mean "no organization exists to maintain the protocol." A team and any associated foundation will exist, and will fundraise in conventional ways (fiat, equity in operating entities). The team also receives the development fund share.
 
 It also does not mean QBTC will be evenly distributed at launch. The Bitcoin UTXO set is itself uneven; a small number of addresses hold a large fraction of supply. QBTC inherits Bitcoin's distribution, for better and worse. What it does not do is *worsen* that distribution by adding a layer of insider allocation on top.
 

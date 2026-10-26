@@ -1,10 +1,10 @@
 ---
 title: "Running a Node"
-description: "Run a QBTC node and create a validator: install qbtcd + bifrost, the create-validator flow (ML-DSA keys, self-bond, bifrost peering), upgrading (minor swap vs Cosmovisor), and validator placement for large ML-DSA blocks. Testnet."
+description: "Run a QBTC node and create a validator: install qbtcd + bifrost, the create-validator flow (ML-DSA keys, self-bond, bifrost peering), upgrading (minor swap vs Cosmovisor), and validator placement for large ML-DSA blocks. Test network."
 ---
 
 <Info>
-**Testnet.** QBTC is pre-mainnet (targeting Q3 2026). The instructions below stand up a node against the current public **testnet**. Endpoints, the chain ID, and the pinned version change as the testnet progresses — always cross-check the [chain repository](https://github.com/btcq-org/qbtc) for the latest values.
+**Test network.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026. The instructions below stand up a node against the current public **test network**. Endpoints, the chain ID, and the pinned version can change before mainnet — always cross-check the [chain repository](https://github.com/btcq-org/qbtc) for the latest values.
 </Info>
 
 A QBTC node runs two processes side by side:
@@ -29,7 +29,7 @@ The chain repo ships an install script that downloads the `qbtcd` and `bifrost` 
 curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh | bash
 ```
 
-To pin a specific version (recommended for reproducibility — check the [releases page](https://github.com/btcq-org/qbtc/releases) for the current testnet version):
+To pin a specific version (recommended for reproducibility — check the [releases page](https://github.com/btcq-org/qbtc/releases) for the current version):
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh | bash -s -- -v 1.0.22
@@ -124,6 +124,56 @@ sudo systemctl enable qbtcd bifrost
 
 Open `26656` and `30006` to peers so your node can sync and gossip Bitcoin blocks. Keep `26657`, `9090`, and the Bitcoin RPC port firewalled to localhost or trusted hosts.
 
+## State sync (fast bootstrap)
+
+Syncing a QBTC node from genesis can take a long time — blocks contain ML-DSA signatures and Bitcoin block data, so the chain grows quickly. CometBFT **state sync** lets a new node download a recent state snapshot from peers and skip replaying history, reducing bootstrap time from hours to minutes.
+
+### Configure state sync
+
+1. **Get the current trust height and trust hash.** The [QBTC explorer statesync page](https://explorer.qbtc.net/qbtc/statesync) always shows fresh values. Copy them from there — they change as the chain advances and the values below will be stale by the time you read this.
+
+2. **Edit `~/.qbtc/config/config.toml`** — find the `[state-sync]` section and fill in the values from the explorer:
+
+   ```toml
+   [state-sync]
+   enable = true
+   rpc_servers = "https://api.vultisig.com/qbtc-node"
+   trust_height = 187000
+   trust_hash = "7015658B389218B808D6DCCED74CDFED78A4E2D8686575723F1B6CCFB92D2741"
+   trust_period = "168h"
+   ```
+
+   The height and hash above are illustrative — always use the current values from the explorer.
+
+3. **Enable snapshots in `~/.qbtc/config/app.toml`** so your node can also serve state sync to others:
+
+   ```toml
+   # snapshot-interval must be a multiple of pruning-keep-every
+   snapshot-interval = 1000
+   # each snapshot is ~500 MiB; 2 is enough for most operators
+   snapshot-keep-recent = 2
+   ```
+
+4. **Reset chain data** if the node has already started syncing from genesis:
+
+   ```bash
+   qbtcd unsafe-reset-all
+   # or, if that subcommand is not found on your build:
+   qbtcd tendermint unsafe-reset-all
+   ```
+
+5. **Start the node** and watch for state sync to kick in:
+
+   ```bash
+   sudo systemctl start qbtcd
+   sudo journalctl -u qbtcd -f
+   # look for: "Discovered new snapshot" and "Restored state sync snapshot"
+   ```
+
+<Warning>
+State sync skips verifying the full block history — you are trusting that the snapshot is correct. Always use a trust height and hash from the official explorer or a validator you know personally. Do not copy values from anonymous posts.
+</Warning>
+
 ## Building from source
 
 If you would rather build the binaries yourself:
@@ -134,7 +184,7 @@ cd qbtc
 make build
 ```
 
-`make build` produces all of the chain binaries into `./build/`: `qbtcd`, `bifrost`, `zkprover` (the local ZK proof CLI — see [Claim Mechanism](/build/claim-mechanism)), `proof-service` (the optional hosted PLONK prover), and `utxo-indexer` (builds the genesis UTXO snapshot). Run the test suite with:
+`make build` produces all of the chain binaries into `./build/`: `qbtcd`, `bifrost`, `zkprover` (the local ZK proof CLI — see [Architecture](/build/architecture)), `proof-service` (the optional hosted PLONK prover), and `utxo-indexer` (builds the bootstrap UTXO seed). Run the test suite with:
 
 ```bash
 make test
@@ -192,7 +242,7 @@ At the upgrade height Cosmovisor stops the old binary, switches the `current` sy
 
 ## Chain ID for transactions
 
-The live testnet reports its chain ID as **`qbtc`** (confirmed from `…/cosmos/base/tendermint/v1beta1/blocks/latest`). The installer's client config currently sets a different value, so if you sign and broadcast transactions, pass the chain ID explicitly to avoid a signature-mismatch error:
+The live test network reports its chain ID as **`qbtc`** (confirmed from `…/cosmos/base/tendermint/v1beta1/blocks/latest`). The installer's client config currently sets a different value, so if you sign and broadcast transactions, pass the chain ID explicitly to avoid a signature-mismatch error:
 
 ```bash
 qbtcd tx ... --chain-id qbtc
@@ -202,21 +252,21 @@ Always confirm the current chain ID from a live block before broadcasting — it
 
 ## Querying without your own node
 
-To read chain state without running a full node, use the public Cosmos REST gateway documented in the [API Reference](/build/api-reference#qbtc-chain-access). Note it proxies only standard `/cosmos/...` module queries — CometBFT RPC and custom `x/qbtc` routes are not exposed.
+To read chain state without running a full node, use the public Cosmos REST gateway documented in the [API Reference](/build/api-reference#qbtc-chain-access). It proxies the standard `/cosmos/...` module queries and the `x/qbtc` params route. CometBFT RPC is not exposed.
 
 ## Becoming a validator
 
 Validator creation is the **standard Cosmos SDK `x/staking` flow** (`qbtcd tx staking create-validator`), with three QBTC-specific differences:
 
 1. **Consensus keys are ML-DSA, not Ed25519.** The validator pubkey you submit has `@type` `/cosmos.crypto.mldsa.PubKey`. You get it from `qbtcd comet show-validator` exactly as on any Cosmos chain — the key material is just post-quantum.
-2. **Account keys are also ML-DSA, not secp256k1.** `qbtcd keys add` generates a post-quantum account key. This is unusual (most Cosmos chains use secp256k1 accounts) and means generic secp256k1 tooling and hardware wallets will not sign QBTC transactions.
+2. **Account keys can be ML-DSA or classical.** Validators sign consensus messages with ML-DSA. Accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
 3. **A validator must also run `bifrost` and register it on-chain.** Block production depends on validators attesting Bitcoin blocks (see [Architecture](/build/architecture)). Beyond running the sidecar, you publish its peer address with a custom `x/qbtc` transaction so other validators can reach it — see [Register your bifrost peer address](#register-your-bifrost-peer-address). Skipping this leaves your validator unable to attest.
 
 <Warning>
-**You do not send tokens to anyone to create a validator.** `create-validator` bonds QBTC **from your own validator account** — it moves your own balance from liquid to bonded (self-delegation). There is no deposit address to pay into. To fund your account on the current private testnet (which has no public faucet), generate your validator account first and ask the team for testnet QBTC to **your** `qbtc1…` address (via [Discord](https://discord.gg/anMfAjtCPZ)).
+**You do not send tokens to anyone to create a validator.** `create-validator` bonds QBTC **from your own validator account** — it moves your own balance from liquid to bonded (self-delegation). There is no deposit address to pay into. To fund your account on the current test network (which has no public faucet), generate your validator account first and ask the team for test-network QBTC to **your** `qbtc1…` address (via [Discord](https://discord.gg/anMfAjtCPZ)).
 </Warning>
 
-### Network parameters (current testnet)
+### Network parameters (current test network)
 
 Verified live; all change at mainnet relaunch.
 
@@ -226,7 +276,7 @@ Verified live; all change at mainnet relaunch.
 | Unbonding period | 21 days (`1814400s`) |
 | Max validators | 100 |
 | Minimum self-delegation | operator-set, can be as low as `1` base unit |
-| Inflation | none (no mint module) — rewards come from fees and Reserve emission; on testnet, with the Reserve empty, rewards are negligible |
+| Inflation | none (no mint module) — rewards come from fees and Reserve emission |
 | Downtime slashing | 1% + jail if you sign < 50% of the last 100 blocks; 10-minute jail |
 | Double-sign slashing | 5% + permanent tombstone |
 
@@ -245,7 +295,11 @@ Verified live; all change at mainnet relaunch.
    # note the qbtc1... address it prints
    ```
 
-3. **Fund the account.** On testnet, send your `qbtc1…` address to the team and they fund it. Confirm the balance:
+   <Tip>
+   The HD derivation path for QBTC accounts is `m/44'/118/0'/0/0`. You need this if you are importing keys into a wallet or building wallet integration — `qbtcd keys add` handles it automatically.
+   </Tip>
+
+3. **Fund the account.** On the test network, send your `qbtc1…` address to the team and they fund it. Confirm the balance:
 
    ```bash
    qbtcd query bank balances "$(qbtcd keys show my-validator -a)"
@@ -334,13 +388,19 @@ This is a QBTC-specific step with no Cosmos equivalent, and it comes **after** y
 
 ### Placement and latency
 
-QBTC blocks are **large**, and this makes validator placement a real operational concern. ML-DSA consensus signatures are about 3.3 KB each (versus 64 bytes for Ed25519), and when a Bitcoin block is ingested it is shipped into a QBTC block that can be very large. A validator that is network-distant from the rest of the active set may not receive and precommit these large blocks within the consensus timeouts — so it **misses precommits and is jailed for downtime**, even while it keeps up fine on small blocks.
+QBTC blocks are **large**, and this makes network latency a real operational consideration. ML-DSA-44 consensus signatures are about 2.4 KB each (versus 64 bytes for Ed25519), and when a Bitcoin block is ingested it is shipped into a QBTC block that can be very large. A validator that is network-distant from the rest of the active set may not receive and precommit these large blocks within the consensus timeouts — so it **misses precommits and is jailed for downtime**, even while it keeps up fine on small blocks.
 
-This is not hypothetical. A validator roughly **225 ms RTT** from the majority of voting power consistently missed precommits on the large blocks and was jailed; its small-block participation was unaffected.
+This has been observed in practice: a validator with roughly **225 ms RTT** to the majority of voting power consistently missed precommits on large blocks and was jailed, while its small-block participation was unaffected. ML-DSA block sizes magnify latency problems that would be invisible on a standard Cosmos chain.
 
-* **Run close to the rest of the active set.** Minimize round-trip latency to the other validators. On the current testnet the majority of voting power runs in **Singapore** — place your validator in or near the region where the active set is concentrated (confirm the current location with the team) rather than across an ocean.
-* **Measure before you commit to a region.** A few hundred milliseconds of RTT to your peers is enough to miss large blocks. Check latency first.
-* **Do not change the consensus timeouts on your own.** `timeout_propose`, `timeout_commit`, and the related values in `config.toml` are effectively network-wide; the team may tune them for large post-quantum blocks, so follow the published values rather than diverging unilaterally.
+When choosing where to run your validator, the factors to weigh are:
+
+* **RTT to the current active set.** Query `qbtcd query staking validators` (or the [chain gateway](/build/api-reference#qbtc-chain-access)) to see which validators are active, find where they are hosted, and measure round-trip latency from your intended machine before committing to a region. A few hundred milliseconds is enough to miss large blocks during Bitcoin ingestion events.
+* **Active set distribution changes over time.** As more validators join, the geographic concentration of voting power may shift. A region that gives low latency today might become higher-latency relative to a future set.
+* **Network decentralisation.** A geographically distributed active set is more resilient — geographic diversity has value for the network as a whole, even if it means some individual validators accept higher latency variance.
+
+There is no single right answer here. What matters is that you understand your latency to the peers that hold the majority of voting power before you go live, and that you monitor it as the validator set evolves.
+
+* **Do not change the consensus timeouts on your own.** `timeout_propose`, `timeout_commit`, and related values in `config.toml` are effectively network-wide; the team may tune them to accommodate large post-quantum blocks, so follow the published values rather than diverging unilaterally.
 
 ### Running multiple validators
 

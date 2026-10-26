@@ -11,7 +11,7 @@ Formal specification and analysis material for cryptographers, researchers, inst
 
 ## Threat model & security
 
-* [Quantum Risk Assessment](/research/quantum-risk-assessment), an expert-panel review of the cryptographically-relevant quantum computer (CRQC) timeline.
+* [Quantum Risk Assessment](/research/quantum-risk-assessment), a summary of published estimates for the cryptographically-relevant quantum computer (CRQC) timeline.
 * [Security Model](/research/security-model), QBTC's threat model, trust assumptions, and defenses.
 
 ## Economics
