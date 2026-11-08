@@ -21,7 +21,7 @@ ORDER = [
     ("learn/quantum-threat.md",            "The Quantum Threat to Bitcoin"),
     ("learn/why-parallel-chain.md",        "Why a Parallel Chain"),
     ("learn/for-btc-holders.md",           "For BTC Holders"),
-    ("learn/fair-launch.md",               "Fair Launch Principles"),
+    ("learn/fair-launch.mdx",               "Fair Launch Principles"),
     ("learn/roadmap.md",                   "Roadmap"),
     ("learn/faq.md",                       "FAQ"),
     ("build/overview.md",                  "Build Overview"),
@@ -33,7 +33,7 @@ ORDER = [
     ("build/api-reference.md",             "API Reference"),
     ("research/overview.md",               "Research Overview"),
     ("research/protocol-spec.md",          "Protocol Specification"),
-    ("research/tokenomics.md",             "Tokenomics"),
+    ("research/tokenomics.mdx",             "Tokenomics"),
     ("research/security-model.md",         "Security Model"),
     ("research/quantum-risk-assessment.md","Quantum Risk Assessment"),
     ("resources/glossary.md",              "Glossary"),
@@ -43,7 +43,7 @@ ORDER = [
 
 PREAMBLE = """# QBTC — Full Documentation
 
-> The first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by zero-knowledge proof. Consensus signed by NIST FIPS 204 (ML-DSA). Pre-mainnet, targeting Q3 2026.
+> The first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by zero-knowledge proof. Consensus signed by NIST FIPS 204 (ML-DSA). Pre-mainnet, mainnet planned for Q4 2026.
 
 This file concatenates all QBTC documentation pages in curated reading order for LLM ingestion. Sources are at https://docs.qbtc.net and https://github.com/btcq-org/docs.
 
@@ -80,6 +80,11 @@ def flatten_mdx(text: str) -> str:
         prefix = f"**[{title}]({href})**" if href else f"**{title}**"
         return f"{prefix} — {body}\n"
     text = re.sub(r'<Card\s+([^>]*)>(.*?)</Card>', card_repl, text, flags=re.DOTALL)
+    # ESM import lines for snippets
+    text = re.sub(r'^import\s+\{[^}]*\}\s+from\s+"[^"]+";\s*\n', "", text, flags=re.MULTILINE)
+    # Chart components: replace with a text pointer. Captions and data stay in the prose and tables.
+    text = re.sub(r'<SegmentedBar\s+label="([^"]+)"[^>]*/>', r"[Chart: \1.]", text)
+    text = re.sub(r'<ReserveCurve[^>]*/>', "[Chart: illustrative Reserve balance over time. See the text below.]", text)
     # Mintlify frontmatter directives like `mode: "wide"` already stripped
     return text
 

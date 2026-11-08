@@ -53,7 +53,7 @@ When a validator receives a `MsgClaimWithProof`, the handler (`x/qbtc/keeper/han
    * Verify the UTXO exists in QBTC's state.
    * Verify its `EntitledAmount > 0` (not previously claimed).
    * Verify the UTXO's stored Hash160 matches the proven address.
-3. **Atomic disbursement.** If any check fails, the entire batch reverts (cache-context semantics). If all pass, the cumulative `EntitledAmount` is transferred to the destination, and each claimed UTXO's `EntitledAmount` is set to 0.
+3. **Atomic disbursement.** If any check fails, the entire batch reverts (cache-context semantics). If all pass, QBTC equal to the cumulative `EntitledAmount` is minted to the destination, and each claimed UTXO's `EntitledAmount` is set to 0.
 
 ## Double-claim prevention and taint propagation
 

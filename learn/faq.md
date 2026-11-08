@@ -107,7 +107,7 @@ Bitcoin's social consensus does not accept hard forks that change rules affectin
 
 ### Is there a team allocation?
 
-No sale, no premine, no investor allocation, no vesting. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Each governance reclaim of dormant exposed-key BTC splits 90 / 5 / 5: 90% to the Reserve, 5% to a development fund and 5% to a marketing fund. The two funds are the only project share. One mint at genesis: 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
+No sale, no premine, no investor allocation, no vesting. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Each governance reclaim of dormant exposed-key BTC splits 90 / 5 / 5: 90% to the Reserve, 5% to a development fund and 5% to a marketing fund. The two funds are the only project share. One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
 
 ### Where do validator rewards come from?
 

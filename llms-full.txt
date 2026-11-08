@@ -1,6 +1,6 @@
 # QBTC — Full Documentation
 
-> The first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by zero-knowledge proof. Consensus signed by NIST FIPS 204 (ML-DSA). Pre-mainnet, targeting Q3 2026.
+> The first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by zero-knowledge proof. Consensus signed by NIST FIPS 204 (ML-DSA). Pre-mainnet, mainnet planned for Q4 2026.
 
 This file concatenates all QBTC documentation pages in curated reading order for LLM ingestion. Sources are at https://docs.qbtc.net and https://github.com/btcq-org/docs.
 
@@ -384,7 +384,7 @@ Nothing is required. If you want to be prepared:
 
 Source: https://docs.qbtc.net/learn/fair-launch
 
-QBTC launches on terms that mirror Bitcoin's own. No sale. No investor allocation. No team premine. No vesting. The entire claimable supply belongs to people who already hold Bitcoin. Genesis has one mint: 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same.
+QBTC launches on terms that mirror Bitcoin's own. No sale. No investor allocation. No team premine. No vesting. The entire claimable supply belongs to people who already hold Bitcoin. Genesis has one mint: 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million.
 
 ## What "fair launch" means here
 
@@ -392,23 +392,25 @@ A fair launch, in the sense QBTC uses the term, requires all of the following:
 
 1. **No ICO, IDO, or pre-sale.** The token cannot be purchased from the project before launch. There is no fundraising round in which capital is exchanged for tokens at a discount.
 2. **No investor allocation.** No venture capital and no strategic investors in token form.
-3. **No team premine.** No tokens are minted to founders or contributors at genesis. The only genesis mint is 50 QBTC for the first validator, offset by the unclaimable block-9 coinbase output.
+3. **No team premine.** The only genesis mint is 50 QBTC. They are committed to securing the chain during the genesis period. The 50 BTC coinbase output of Bitcoin's genesis block (block 0), which no one can claim, offsets them.
 4. **Entitlement is determined by an external, immutable signal.** For QBTC, that signal is the Bitcoin UTXO set. Whoever currently controls a Bitcoin UTXO controls the corresponding QBTC entitlement. The project cannot alter who gets what after the fact.
 5. **Anything beyond Path 1 user claims requires governance.** Apart from the 50 QBTC genesis mint, every other path through which QBTC enters circulation is voted on on-chain.
 
-## Failure modes this avoids
+## Why entitlement comes from Bitcoin
 
-The standard token-launch pattern (VC-backed pre-sales, team allocations vesting over multi-year cliffs, "marketing funds" controlled by a foundation) produces three predictable outcomes:
+QBTC takes its starting distribution from an existing, public record: the Bitcoin UTXO set. This has three results:
 
-* **Concentrated supply.** Insiders control a large fraction of the float with information asymmetry over public holders.
-* **Misaligned incentives.** The team's payoff is dominated by token price, not protocol utility, biasing decisions toward marketing over engineering.
-* **Fragile launches.** Known vesting overhangs suppress price discovery and produce predictable sell pressure.
-
-QBTC avoids all three. Entitlement at genesis is determined entirely by an external population of Bitcoin holders.
+* **Holders start on equal terms.** Every claim is 1:1 against BTC that the holder already controls. No group buys tokens at a lower price.
+* **Supply enters as people claim.** No unlock calendar exists, so no scheduled release of tokens reaches the market.
+* **Anyone can check the starting point.** The entitlement records come from Bitcoin data that anyone can verify.
 
 ## How the supply works
 
 QBTC has a hard cap of **21 million QBTC**, mirroring Bitcoin. After the 50 QBTC genesis mint, tokens are created only when one of two events happens: a user claim, or a successful governance reclamation. The cap is enforced because no Bitcoin UTXO can be claimed twice.
+
+[Chart: Bitcoin's 21M cap, which is also the QBTC ceiling.]
+
+The middle block shows dormant exposed-key outputs (not moved for more than 17 years) that governance may vote to reclaim. The block widths are approximate. For current figures, see [indexer.qbtc.net](https://indexer.qbtc.net). For the full flow of QBTC from claim to validator payout, see [Tokenomics](/research/tokenomics).
 
 ### The claim mirror
 
@@ -428,7 +430,7 @@ A holder can claim today, in a decade, or never at all, with one exception descr
 
 ### Path 2: Governance reclaims dormant exposed-key BTC
 
-Bitcoin holds roughly 1.7M BTC in Satoshi-era P2PK outputs (public key permanently on-chain) plus additional BTC in reused-address outputs where the public key has been revealed. On Bitcoin Legacy, these are the coins that will be stolen first by a quantum-capable attacker. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
+Bitcoin holds a large amount of BTC in Satoshi-era P2PK outputs (public key permanently on-chain), plus more in reused-address outputs where the public key has been revealed. On Bitcoin Legacy, these are the coins that will be stolen first by a quantum-capable attacker. For current figures by category, see [indexer.qbtc.net](https://indexer.qbtc.net).
 
 QBTC governance can reclaim these UTXOs. Through standard `x/gov` proposals, validators vote on which dormant exposed-key UTXOs to reclaim. The target is outputs that have not moved for more than 17 years. The cutoff is a Bitcoin block height written into each proposal. Later votes can move it forward. When a proposal passes:
 
@@ -448,37 +450,34 @@ Every governance reclamation splits the minted QBTC 90 / 5 / 5:
 | **Development fund** | 5% | Continued protocol development. |
 | **Marketing fund** | 5% | Adoption and education. |
 
+[Chart: Split of each governance reclamation.]
+
 The 5 + 5 share is the project's only share of QBTC. It does not exist at genesis. It accrues only when a reclamation proposal passes a validator vote.
 
-This is materially different from a team premine or a vesting cliff:
+### When the funds receive QBTC
 
-* The only genesis mint is 50 QBTC for the first validator. The two funds start empty.
-* Funding is tied to on-chain events (governance reclamations), not to time-based unlocks.
-* Every reclamation is a public on-chain vote.
+* **At genesis, both funds are empty.** The only genesis mint is 50 QBTC, committed to securing the chain during the genesis period.
+* **The funds grow only when a reclamation passes.** Each proposal lists its outputs, validators vote on chain, and the chain applies the 90 / 5 / 5 split.
+* **No time-based unlocks exist.** The funds receive QBTC on the vote, not on a calendar.
 
-Bitcoin Core is funded by donations and corporate sponsorship. QBTC funds its development from a share of governance reclamations.
+Bitcoin Core is funded by donations and corporate sponsorship. QBTC funds its development from a 5% share of each governance reclamation.
 
-## What the project gets
+## How contributors get QBTC
 
-The project starts with no QBTC. There is no founder wallet pre-loaded with tokens. Contributors who want QBTC can:
+Contributors get QBTC in the same ways as everyone else:
 
-* Hold Bitcoin and claim, like anyone else.
-* Operate validator nodes, providing the capital and infrastructure required.
-* Receive QBTC from the development fund.
+* Hold Bitcoin and claim it 1:1.
+* Run a validator, or delegate stake to a validator, and earn validator rewards. After launch, anyone can do both.
 
-There is no special multiplier.
+Contributors can also receive QBTC from the development fund, which grows only when reclamations pass. All claims use the same 1:1 rate. No account gets a multiplier.
 
-## What this rules out
+## Who maintains QBTC
 
-* **Insider rounds at discounted prices.** No.
-* **Genesis team allocation that vests into circulation.** No.
-* **Pre-launch yield programs that allocate tokens to early participants on terms unavailable later.** No.
+A team maintains the protocol. A foundation may also support it. The team and any foundation raise money in conventional ways, such as fiat funding and equity in operating companies. The team also receives the development fund share.
 
-## What it does not rule out
+## How QBTC is distributed
 
-Fair launch does not mean "no organization exists to maintain the protocol." A team and any associated foundation will exist, and will fundraise in conventional ways (fiat, equity in operating entities). The team also receives the development fund share.
-
-It also does not mean QBTC will be evenly distributed at launch. The Bitcoin UTXO set is itself uneven; a small number of addresses hold a large fraction of supply. QBTC inherits Bitcoin's distribution, for better and worse. What it does not do is *worsen* that distribution by adding a layer of insider allocation on top.
+QBTC follows Bitcoin's distribution. The Bitcoin UTXO set is uneven: a small number of addresses hold a large share of all BTC. QBTC entitlements have the same shape, because each claim is 1:1. The protocol adds no genesis allocation on top of that distribution. The two funds receive QBTC only from later reclamation votes.
 
 ## Read next
 
@@ -643,7 +642,7 @@ Bitcoin's social consensus does not accept hard forks that change rules affectin
 
 ### Is there a team allocation?
 
-No sale, no premine, no investor allocation, no vesting. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Each governance reclaim of dormant exposed-key BTC splits 90 / 5 / 5: 90% to the Reserve, 5% to a development fund and 5% to a marketing fund. The two funds are the only project share. One mint at genesis: 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
+No sale, no premine, no investor allocation, no vesting. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Each governance reclaim of dormant exposed-key BTC splits 90 / 5 / 5: 90% to the Reserve, 5% to a development fund and 5% to a marketing fund. The two funds are the only project share. One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
 
 ### Where do validator rewards come from?
 
@@ -1002,7 +1001,7 @@ When a validator receives a `MsgClaimWithProof`, the handler (`x/qbtc/keeper/han
    * Verify the UTXO exists in QBTC's state.
    * Verify its `EntitledAmount > 0` (not previously claimed).
    * Verify the UTXO's stored Hash160 matches the proven address.
-3. **Atomic disbursement.** If any check fails, the entire batch reverts (cache-context semantics). If all pass, the cumulative `EntitledAmount` is transferred to the destination, and each claimed UTXO's `EntitledAmount` is set to 0.
+3. **Atomic disbursement.** If any check fails, the entire batch reverts (cache-context semantics). If all pass, QBTC equal to the cumulative `EntitledAmount` is minted to the destination, and each claimed UTXO's `EntitledAmount` is set to 0.
 
 ## Double-claim prevention and taint propagation
 
@@ -1694,7 +1693,7 @@ Propagation makes governance reclamation (§2.5) permanent: once a UTXO is recla
 
 There is one mint at genesis and two minting paths after it.
 
-**Genesis mint.** Genesis mints 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same.
+**Genesis mint.** Genesis mints 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million.
 
 **Path 1: User claim.** A successful `MsgClaimWithProof` mints QBTC into the claimer's account, equal to the sum of the referenced UTXOs' BTC values.
 
@@ -1713,7 +1712,7 @@ The Reserve Module is the only direct source of per-block validator emission. Th
 
 #### Validator emission, from the Reserve Module
 
-Per `x/qbtc/keeper/network_manager.go:24–47`:
+Per `x/qbtc/keeper/network_manager.go:24–45`:
 
 * `ProcessNetworkReward()` is called per block.
 * It computes:
@@ -1735,7 +1734,7 @@ total_QBTC_minted = genesis mint (50) + sum(user claims) + sum(governance reclam
                   ≤ 21,000,000 QBTC
 ```
 
-The cap holds because no Bitcoin UTXO can be claimed twice (the `claimed_flag` propagates per §2.4), each claim mints exactly the BTC amount of that UTXO, the block-9 coinbase output cannot be claimed, and Bitcoin's total supply is capped at 21M.
+The cap holds because no Bitcoin UTXO can be claimed twice (the `claimed_flag` propagates per §2.4), each claim mints exactly the BTC amount of that UTXO, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) cannot be claimed, and Bitcoin's total supply is capped at 21M.
 
 No inflationary minting exists anywhere in the chain code.
 
@@ -1753,7 +1752,7 @@ Dormant-UTXO reclamation proposals (§2.5 Path 2) are enacted through `x/gov` ra
 * **Claim mirror**: tracks the live Bitcoin UTXO set. It starts from a bootstrap seed.
 * **Reserve Module**: a module account that holds QBTC reclaimed by governance, drawn down per block to validators via the emission formula above.
 * **Development fund** (5%) and **marketing fund** (5%) from each governance reclamation.
-* One mint at genesis: 50 QBTC for the first validator. No sale, no premine, no investor allocation, no vesting.
+* One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. No sale, no premine, no investor allocation, no vesting.
 
 See [Tokenomics](/research/tokenomics) for the full breakdown.
 
@@ -1810,8 +1809,27 @@ Source: https://docs.qbtc.net/research/tokenomics
 QBTC's economic design rests on three invariants. There is no sale, no premine, no investor allocation, no vesting and no inflation.
 
 1. **Cap matches Bitcoin.** Total supply is hard-capped at 21,000,000 QBTC.
-2. **One mint at genesis, then claims only.** Genesis mints 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same. After genesis, tokens come into existence only when a Bitcoin UTXO is claimed, by either a user or by governance.
+2. **One mint at genesis, then claims only.** Genesis mints 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million. After genesis, tokens come into existence only when a Bitcoin UTXO is claimed, by either a user or by governance.
 3. **The claim mirror is a ledger of entitlements**, not a pool of tokens. Tokens are minted only when an entitlement is exercised.
+
+## How QBTC moves
+
+```mermaid actions={false}
+flowchart TD
+  BTC["Bitcoin UTXO set"] --> M["Claim mirror<br/>(entitlement records)"]
+  M --> E{"Eligible UTXO<br/>mints QBTC once only"}
+  E -- "Path 1: user claim" --> H["Holder's QBTC address<br/>(100%)"]
+  E -- "Path 2: governance vote<br/>(policy: dormant > 17 years, key exposed)" --> S["QBTC minted by the vote<br/>(the BTC stays on Bitcoin)"]
+  S -- "90%" --> R["Reserve Module"]
+  S -- "5%" --> D["Development fund"]
+  S -- "5%" --> K["Marketing fund"]
+  R -- "payout each block" --> F["Fee collector"]
+  TX["Transaction fees"] --> F
+  F -- "98% (at current community tax)" --> V["Validators and delegators"]
+  F -- "2% community tax" --> C["Community pool"]
+```
+
+Each eligible Bitcoin UTXO can mint QBTC one time, by one of the two paths. A user claim sends the full amount to the holder ([Claim Mechanism](/build/claim-mechanism)). A governance reclamation splits the amount 90 / 5 / 5. The Reserve has one inflow: governance reclamation. Transaction fees do not go to the Reserve. Fees and Reserve payouts meet in the fee collector, which pays validators, delegators and the community pool.
 
 ## The claim mirror
 
@@ -1877,6 +1895,10 @@ Each successful reclamation proposal mints QBTC and splits it 90 / 5 / 5:
 | **Development fund** | 5% | Funds continued protocol development. |
 | **Marketing fund** | 5% | Funds adoption and education. |
 
+[Chart: Split of each governance reclamation.]
+
+The 5% shares are fixed in code. The two fund addresses are governance parameters. If a fund address is not set, its 5% goes to the Reserve.
+
 The two funds are the only project share of QBTC.
 
 Each governance reclamation is a public, recorded event: the proposal identifies the UTXOs, validators vote, the chain executes the split.
@@ -1891,7 +1913,7 @@ The Reserve Module is a module account on the chain. It holds QBTC that has been
 
 **One outflow:**
 
-* Validator emission, per block. Per `x/qbtc/keeper/network_manager.go:24–47`:
+* Validator emission, per block. Per `x/qbtc/keeper/network_manager.go:24–45`, called from the module's EndBlock:
 
 ```
 release_per_block = reserve_balance / (EmissionCurve × BlocksPerYear)
@@ -1901,15 +1923,27 @@ release_per_block = reserve_balance / (EmissionCurve × BlocksPerYear)
 
 The released amount is transferred from the Reserve Module to the standard Cosmos fee collector, which distributes to validators and delegators via `x/distribution`.
 
+### Illustrative Reserve balance
+
+[Chart: illustrative Reserve balance over time. See the text below.]
+
+The Reserve starts empty at genesis, so there is no emission until the first reclamation vote passes. After that, each block pays out the same fraction of the current balance. With no new reclaims, the balance falls to about 37% of its first value after `EmissionCurve` years, whatever the parameter values are. It approaches zero but never reaches it. A new reclaim tops the balance up. The payout per block is proportional to the balance, so it has the same shape.
+
+**Note:** **This chart shows a shape, not a forecast.** The time axis is in multiples of `EmissionCurve` years and the vertical axis is relative to the starting balance. The chart shows no QBTC amounts. The reclaim in the chart is an example only: each reclaim needs a governance vote, and none is guaranteed. Protocol payouts are not individual staking returns. A staker's rewards also depend on total stake, validator commission, fees and the validator set.
+
 ## Sustainability
 
 Typical proof-of-stake chains fund validator emission via inflationary minting. The token loses value over time unless network activity grows fast enough to offset inflation.
 
-QBTC funds validator emission by reclaiming value that Bitcoin would otherwise lose to quantum attackers, converting a one-time loss event (Q-day theft of dormant exposed-key coins) into a sustainable validator subsidy.
+QBTC funds validator emission by reclaiming value that Bitcoin would otherwise lose to quantum attackers, converting a one-time loss event (Q-day theft of dormant exposed-key coins) into a source of validator subsidies while Reserve funds remain.
 
-Each proposal sets its own cutoff block height, so a later first vote reclaims more outputs. A vote in November 2026 would reclaim about 983,000 BTC (4.7% of the 21M cap). The exact list is built at launch. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net). Transaction fees grow as a share of validator revenue with adoption, complementing the emission stream.
+Each proposal sets its own cutoff block height, so a later first vote reclaims more outputs. The exact list is built at launch. For current figures by category, see [indexer.qbtc.net](https://indexer.qbtc.net). Transaction fees may contribute more validator revenue if network usage increases.
 
 ## Cap enforcement
+
+[Chart: Bitcoin's 21M cap, which is also the QBTC ceiling.]
+
+Bitcoin's 21,000,000 cap is also the ceiling for QBTC. Most of the cap is already mined. The middle block shows dormant exposed-key outputs: outputs with a public key on chain that have not moved for more than 17 years. The 17-year rule is a governance policy that each proposal applies. The chain code does not check output age. The block is a subset of all exposed-key BTC, so it is smaller than the total P2PK figure on other pages. The block widths are approximate. For current figures, see [indexer.qbtc.net](https://indexer.qbtc.net). Every other unspent output has a claim entry. At launch, P2PKH and P2WPKH outputs with compressed keys can claim 1:1 by proof. Support for other output types is to be confirmed. Each new Bitcoin block adds new claim entries.
 
 At any time:
 
@@ -1918,15 +1952,15 @@ total_QBTC_minted = genesis mint (50) + sum(user claims) + sum(governance reclam
                   ≤ 21,000,000 QBTC
 ```
 
-The cap holds because no Bitcoin UTXO can be claimed twice. The `claimed_flag` propagates through Bitcoin spends, so a reclaimed UTXO and its descendants are permanently ineligible. Each claim mints exactly the BTC amount of that UTXO. The block-9 coinbase output, which offsets the genesis mint, cannot be claimed. Bitcoin's total supply is capped at 21M, so QBTC's total minted supply is bounded by the same number.
+The cap holds because no Bitcoin UTXO can be claimed twice. The `claimed_flag` propagates through Bitcoin spends, so a reclaimed UTXO and its descendants are permanently ineligible. Each claim mints exactly the BTC amount of that UTXO. The coinbase output of Bitcoin's genesis block (block 0), which offsets the genesis mint, cannot be claimed. Bitcoin's total supply is capped at 21M, so QBTC's total minted supply is bounded by the same number.
 
 No inflationary minting exists anywhere in the chain code.
 
 ## Distribution of validator rewards
 
-Once QBTC released from the Reserve Module hits the standard Cosmos fee collector, distribution follows standard `x/distribution` rules:
+The fee collector receives two inflows: QBTC released from the Reserve Module, and transaction fees. Transaction fees go to the fee collector, not to the Reserve. Distribution of the total follows standard `x/distribution` rules:
 
-* A configurable percentage goes to the community pool.
+* The community tax goes to the community pool. It is 2% (the Cosmos SDK default). Governance can change it.
 * The remainder is distributed to validators in proportion to bonded stake.
 * Each validator's commission is taken; the rest passes through to delegators.
 
@@ -1939,7 +1973,7 @@ No custom QBTC mechanism is layered on top of `x/distribution`.
 | Supply cap | 21M BTC | 21M QBTC |
 | Block reward source | Newly minted (halving schedule) | Reserve Module (funded by governance reclamation) |
 | Inflation | Decreasing, asymptotic to 0 | Strictly zero |
-| Genesis mint | None | 50 QBTC for the first validator (offset by the unclaimable block-9 coinbase output) |
+| Genesis mint | None | 50 QBTC, committed to securing the chain during the genesis period (offset by the unclaimable 50 BTC coinbase output of Bitcoin's genesis block) |
 | Sale or investor allocation | None | None |
 | Recovery mechanism for quantum-lost coins | None | Governance reclamation into Reserve Module |
 | Funding for ongoing development | None on-chain (Bitcoin Core funded by donations/firms) | 5% of governance reclamations (development fund) |

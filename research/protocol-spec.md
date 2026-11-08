@@ -101,7 +101,7 @@ Propagation makes governance reclamation (§2.5) permanent: once a UTXO is recla
 
 There is one mint at genesis and two minting paths after it.
 
-**Genesis mint.** Genesis mints 50 QBTC for the first validator. In exchange, the block-9 Bitcoin coinbase output (50 BTC) cannot be claimed, so the cap stays the same.
+**Genesis mint.** Genesis mints 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million.
 
 **Path 1: User claim.** A successful `MsgClaimWithProof` mints QBTC into the claimer's account, equal to the sum of the referenced UTXOs' BTC values.
 
@@ -120,7 +120,7 @@ The Reserve Module is the only direct source of per-block validator emission. Th
 
 #### Validator emission, from the Reserve Module
 
-Per `x/qbtc/keeper/network_manager.go:24–47`:
+Per `x/qbtc/keeper/network_manager.go:24–45`:
 
 * `ProcessNetworkReward()` is called per block.
 * It computes:
@@ -142,7 +142,7 @@ total_QBTC_minted = genesis mint (50) + sum(user claims) + sum(governance reclam
                   ≤ 21,000,000 QBTC
 ```
 
-The cap holds because no Bitcoin UTXO can be claimed twice (the `claimed_flag` propagates per §2.4), each claim mints exactly the BTC amount of that UTXO, the block-9 coinbase output cannot be claimed, and Bitcoin's total supply is capped at 21M.
+The cap holds because no Bitcoin UTXO can be claimed twice (the `claimed_flag` propagates per §2.4), each claim mints exactly the BTC amount of that UTXO, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) cannot be claimed, and Bitcoin's total supply is capped at 21M.
 
 No inflationary minting exists anywhere in the chain code.
 
@@ -160,7 +160,7 @@ Dormant-UTXO reclamation proposals (§2.5 Path 2) are enacted through `x/gov` ra
 * **Claim mirror**: tracks the live Bitcoin UTXO set. It starts from a bootstrap seed.
 * **Reserve Module**: a module account that holds QBTC reclaimed by governance, drawn down per block to validators via the emission formula above.
 * **Development fund** (5%) and **marketing fund** (5%) from each governance reclamation.
-* One mint at genesis: 50 QBTC for the first validator. No sale, no premine, no investor allocation, no vesting.
+* One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. No sale, no premine, no investor allocation, no vesting.
 
 See [Tokenomics](/research/tokenomics) for the full breakdown.
 
