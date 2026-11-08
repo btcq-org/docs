@@ -13,14 +13,14 @@ Every validator's consensus key is an ML-DSA key. Every consensus vote, every bl
 
 Implemented via a fork of CometBFT at `github.com/btcq-org/cometbft`, which adds a `crypto/mldsa` package and routes signing through it.
 
-If validators signed with Ed25519, a quantum-capable adversary could forge a validator signature and rewrite chain history. ML-DSA is lattice-based and is believed secure against known classical and quantum attacks. QBTC uses the ML-DSA-44 parameter set (NIST security category 2).
+If validators signed with Ed25519, a quantum-capable adversary could forge a validator signature and rewrite chain history. ML-DSA is lattice-based and is believed secure against known classical and quantum attacks. QBTC uses the ML-DSA-65 parameter set (NIST security category 3).
 
 ### Size and bandwidth
 
 ML-DSA signatures are larger than Ed25519:
 
-* ML-DSA-44 signature: 2420 bytes (~2.4 KB).
-* ML-DSA-44 public key: 1312 bytes (~1.3 KB).
+* ML-DSA-65 signature: 3309 bytes (~3.3 KB).
+* ML-DSA-65 public key: 1952 bytes (~1.9 KB).
 * Ed25519 signature: 64 bytes.
 * Ed25519 public key: 32 bytes.
 
@@ -54,7 +54,7 @@ The wallet signs a digest with the Bitcoin key and sends the signature to a prov
 
 Each layer covers a different risk. If only consensus used ML-DSA, a claim that published your BTC public key would expose that key to a quantum attacker. If only claims used ZK, a quantum attacker could forge validator signatures and rewrite the chain.
 
-Accounts on QBTC can also use secp256k1, ed25519 or multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
+Accounts use ML-DSA-65 too. Every account, including the validator operator account, uses an ML-DSA-65 key. The chain rejects all other key types, including secp256k1, ed25519 and multisig. QBTC sent to an address without an ML-DSA-65 key can never be spent.
 
 ## References
 

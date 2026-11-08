@@ -43,7 +43,7 @@ ORDER = [
 
 PREAMBLE = """# QBTC — Full Documentation
 
-> The first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by zero-knowledge proof. Consensus signed by NIST FIPS 204 (ML-DSA). Pre-mainnet, mainnet planned for Q4 2026.
+> The first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by zero-knowledge proof. Consensus signed by NIST FIPS 204 (ML-DSA). Pre-mainnet, mainnet planned for early 2027.
 
 This file concatenates all QBTC documentation pages in curated reading order for LLM ingestion. Sources are at https://docs.qbtc.net and https://github.com/btcq-org/docs.
 

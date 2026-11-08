@@ -9,7 +9,7 @@ QBTC exposes two HTTP surfaces a developer will use:
 * **The QBTC chain** — standard Cosmos SDK REST/gRPC. The hosted gateway below points at the **current public test network** and will change at mainnet.
 
 <Info>
-**Test network vs. mainnet.** The Bitcoin indexer reflects real Bitcoin and is stable. The **chain** endpoints serve a public test network (chain ID `qbtc`) that has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026. The host, chain ID, and on-chain state can all change at mainnet. Treat chain endpoints as illustrative, not durable.
+**Test network vs. mainnet.** The Bitcoin indexer reflects real Bitcoin and is stable. The **chain** endpoints serve a public test network (chain ID `qbtc`) that has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for early 2027. The host, chain ID, and on-chain state can all change at mainnet. Treat chain endpoints as illustrative, not durable.
 </Info>
 
 ## Bitcoin risk indexer — `https://api.qbtc.net`

@@ -1,19 +1,19 @@
 ---
 title: "Roadmap"
-description: "QBTC is pre-mainnet. A test network has run since March 2026; mainnet is a fresh genesis, planned for Q4 2026. Component-level status table."
+description: "QBTC is pre-mainnet. A test network has run since March 2026; mainnet is a fresh genesis, planned for early 2027. Component-level status table."
 ---
 
 QBTC is pre-mainnet. The protocol substrate (post-quantum consensus, ZK-gated claims, the UTXO mirror) runs on a public test network that started in March 2026. The test network may be reset.
 
-**Mainnet: a fresh genesis, planned for Q4 2026.** Mainnet follows after the pre-launch security review closes.
+**Mainnet: a fresh genesis, planned for early 2027.** Mainnet follows after the pre-launch security review closes.
 
 ## Component status
 
 | Component | Status |
 |---|---|
-| Post-quantum consensus (ML-DSA-44 / FIPS 204) | **Built**, in chain code |
+| Post-quantum consensus and accounts (ML-DSA-65 / FIPS 204) | **Built**, in chain code |
 | ZK PLONK claim verifier (on-chain) | **Built**, in chain code |
-| Bifrost sidecar + ebifrost block ingestion | **Built**, in chain code |
+| Bitcoin block ingestion through validator vote extensions | **Built**, in chain code |
 | User claim mechanism (`MsgClaimWithProof`, batch up to 50 UTXOs; P2PKH and P2WPKH outputs) | **Built**, in chain code |
 | Reserve Module + validator emission formula | **Built**, in chain code |
 | Cosmos `x/gov` governance | **Built**, in chain code |

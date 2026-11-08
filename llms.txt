@@ -1,12 +1,12 @@
 # QBTC
 
-> QBTC is a separate chain for Bitcoin holders. Holders of P2PKH (`1…`) and P2WPKH (`bc1q…`) outputs claim QBTC 1:1 with a zero-knowledge proof. Validators sign with NIST FIPS 204 (ML-DSA) from genesis. **A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026.**
+> QBTC is a separate chain for Bitcoin holders. Holders of P2PKH (`1…`) and P2WPKH (`bc1q…`) outputs claim QBTC 1:1 with a zero-knowledge proof. Validators sign with NIST FIPS 204 (ML-DSA) from genesis. **A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for early 2027.**
 
 A large quantum computer could break Bitcoin's ECDSA signatures. QBTC is a separate chain whose validators sign with ML-DSA, and it tracks the Bitcoin UTXO set. Eligibility is live: whoever controls an eligible unspent output at the time of the claim can claim it. Bitcoin is never touched — no bridge, no peg, no custodian.
 
-The chain is built on Cosmos SDK with a forked CometBFT consensus engine that signs with ML-DSA-44 instead of Ed25519. Accounts accept ML-DSA, secp256k1, ed25519 and multisig keys; post-quantum protection applies only to ML-DSA accounts. Claims are gated by PLONK zero-knowledge proofs: the wallet signs a digest with the Bitcoin key, and a proving service builds the proof and broadcasts the claim. The Bitcoin public key never goes on chain. A new Bitcoin output needs 144 confirmations before it can claim.
+The chain is built on Cosmos SDK with a forked CometBFT consensus engine that signs with ML-DSA-65 instead of Ed25519. All accounts use ML-DSA-65 keys; the chain rejects every other key type, including multisig. Claims are gated by PLONK zero-knowledge proofs: the wallet signs a digest with the Bitcoin key, and a proving service builds the proof and broadcasts the claim. The Bitcoin public key never goes on chain. A new Bitcoin output needs 144 confirmations before it can claim.
 
-Total supply is hard-capped at 21M QBTC. No sale, no premine, no investor allocation, no vesting, no inflation. One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period; in exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, so the total stays within 21 million. Governance votes can reclaim outputs that have not moved for more than 17 years and whose public key is visible on chain. The cutoff is a Bitcoin block height written into each proposal. Each reclaim splits 90 / 5 / 5: Reserve / development fund / marketing fund. The Reserve pays validator and staker rewards.
+Total supply is hard-capped at 21M QBTC. No sale, no investor allocation, no team allocation at genesis, no vesting, no inflation. One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period; in exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, so the total stays within 21 million. Governance votes can reclaim outputs that have not moved for more than 17 years and whose public key is visible on chain. The cutoff is a Bitcoin block height written into each proposal. Each reclaim splits 90 / 5 / 5: Reserve / development fund / marketing fund. The Reserve pays validator and staker rewards.
 
 ## Start here
 
@@ -18,15 +18,15 @@ Total supply is hard-capped at 21M QBTC. No sale, no premine, no investor alloca
 ## For BTC holders
 
 - [For BTC Holders](https://docs.qbtc.net/learn/for-btc-holders): What holders need to know about claiming: supported address types, 1:1 for eligible outputs, no fees to the project, no signup, and how the claim keeps the Bitcoin public key off chain.
-- [Fair Launch Principles](https://docs.qbtc.net/learn/fair-launch): No sale, no premine, no investor allocation. Entitlement comes from the Bitcoin UTXO set. Includes the 90 / 5 / 5 split of governance reclaims (Reserve / development fund / marketing fund).
+- [Fair Launch Principles](https://docs.qbtc.net/learn/fair-launch): No sale, no investor allocation, no team allocation at genesis. Entitlement comes from the Bitcoin UTXO set. Includes the 90 / 5 / 5 split of governance reclaims (Reserve / development fund / marketing fund).
 - [Roadmap](https://docs.qbtc.net/learn/roadmap): Component-level status. What's built in chain code today; what activates via governance after mainnet.
 - [FAQ](https://docs.qbtc.net/learn/faq): Common questions: how to claim, what happens to dormant BTC, where do validator rewards come from, how QBTC differs from a bridge.
 
 ## For developers
 
 - [Build overview](https://docs.qbtc.net/build/overview): Index of architecture, cryptography, consensus, claim mechanism, node operation, and API reference.
-- [Architecture](https://docs.qbtc.net/build/architecture): Cosmos SDK chain with forked ML-DSA CometBFT consensus, bifrost sidecars relaying Bitcoin blocks, and an on-chain UTXO mirror in the `x/qbtc` module.
-- [Quantum Resistance (ML-DSA)](https://docs.qbtc.net/build/quantum-resistance): ML-DSA-44 (FIPS 204) at consensus, and PLONK zero-knowledge proofs at the claim layer.
+- [Architecture](https://docs.qbtc.net/build/architecture): Cosmos SDK chain with forked ML-DSA CometBFT consensus, Bitcoin blocks attested in validator vote extensions, and an on-chain UTXO mirror in the `x/qbtc` module.
+- [Quantum Resistance (ML-DSA)](https://docs.qbtc.net/build/quantum-resistance): ML-DSA-65 (FIPS 204) at consensus and for all accounts, and PLONK zero-knowledge proofs at the claim layer.
 - [Consensus & Validators](https://docs.qbtc.net/build/consensus): CometBFT forked to use ML-DSA signatures instead of Ed25519. Staking, distribution, and governance are standard Cosmos modules.
 - [Claim Mechanism](https://docs.qbtc.net/build/claim-mechanism): How a BTC holder converts entitlement into spendable QBTC: `MsgClaimWithProof`, batch claims up to 50 UTXOs, taint propagation rules.
 - [Running a Node](https://docs.qbtc.net/build/running-a-node): Validator and full-node setup against the current test network.
@@ -42,7 +42,7 @@ Total supply is hard-capped at 21M QBTC. No sale, no premine, no investor alloca
 
 ## Reference
 
-- [Glossary](https://docs.qbtc.net/resources/glossary): Defined terms — bifrost, ebifrost, CometBFT, claim mirror, EntitledAmount, ML-DSA, PLONK, P2PK, Reserve Module, Hash160, Shor's algorithm, Explorer, Indexer, Seedless wallet.
+- [Glossary](https://docs.qbtc.net/resources/glossary): Defined terms — Bitcoin reader, vote extension, CometBFT, claim mirror, EntitledAmount, ML-DSA, PLONK, P2PK, Reserve Module, Hash160, Shor's algorithm, Explorer, Indexer, Seedless wallet.
 - [Whitepaper](https://docs.qbtc.net/resources/whitepaper): The original QBTC whitepaper as a historical design document. The canonical chain reference is now the Protocol Specification.
 - [Brand Assets](https://docs.qbtc.net/resources/brand-assets): QBTC's logo, wordmark, colors, and typography.
 
@@ -57,6 +57,6 @@ Total supply is hard-capped at 21M QBTC. No sale, no premine, no investor alloca
 
 ## Status
 
-- Network: a test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026.
+- Network: a test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for early 2027.
 - Claims: the self-claim supports P2PKH and P2WPKH outputs today.
 - Security: a pre-launch security review is in progress. Mainnet follows after it closes.

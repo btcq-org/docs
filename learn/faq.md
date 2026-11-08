@@ -107,7 +107,7 @@ Bitcoin's social consensus does not accept hard forks that change rules affectin
 
 ### Is there a team allocation?
 
-No sale, no premine, no investor allocation, no vesting. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Each governance reclaim of dormant exposed-key BTC splits 90 / 5 / 5: 90% to the Reserve, 5% to a development fund and 5% to a marketing fund. The two funds are the only project share. One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
+No sale, no investor allocation, no team allocation at genesis, no vesting. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Each governance reclaim of dormant exposed-key BTC splits 90 / 5 / 5: 90% to the Reserve, 5% to a development fund and 5% to a marketing fund. The two funds are the only project share. One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
 
 ### Where do validator rewards come from?
 
@@ -121,11 +121,11 @@ No. No public sale, no presale, no investor rounds. There is no way to buy QBTC 
 
 ### What's QBTC built on?
 
-The Cosmos SDK, with consensus on a forked CometBFT that uses ML-DSA-44 (Dilithium / FIPS 204) signatures instead of Ed25519.
+The Cosmos SDK, with consensus on a forked CometBFT that uses ML-DSA-65 (Dilithium / FIPS 204) signatures instead of Ed25519.
 
 ### Does QBTC use ECDSA anywhere?
 
-Yes, at the account level. Validators sign consensus messages with ML-DSA. Accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys. The claim also checks a Bitcoin ECDSA signature inside the zero-knowledge proof.
+Yes, at the account level and at consensus. Validators sign consensus messages with ML-DSA-65. Every account, including the validator operator account, uses an ML-DSA-65 key. The chain rejects all other key types, including secp256k1, ed25519 and multisig. The claim also checks a Bitcoin ECDSA signature inside the zero-knowledge proof.
 
 ### Where can I read the code?
 
@@ -147,7 +147,7 @@ A test network has run since March 2026. It is public and may be reset. Mainnet 
 
 ### When does mainnet ship?
 
-**Planned for Q4 2026.** Mainnet is a fresh genesis. It follows after the pre-launch security review closes. Follow [@qbtc_net on X](https://x.com/qbtc_net) or join the [Discord](https://discord.gg/anMfAjtCPZ).
+**Planned for early 2027.** Mainnet is a fresh genesis. It follows after the pre-launch security review closes. Follow [@qbtc_net on X](https://x.com/qbtc_net) or join the [Discord](https://discord.gg/anMfAjtCPZ).
 
 ### What's actually in the code today vs. just specified?
 

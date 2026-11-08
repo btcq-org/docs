@@ -1,6 +1,6 @@
 ---
 title: "Architecture"
-description: "QBTC architecture: Cosmos SDK chain with forked ML-DSA CometBFT consensus, bifrost sidecars relaying Bitcoin blocks, and an on-chain UTXO mirror."
+description: "QBTC architecture: Cosmos SDK chain with forked ML-DSA CometBFT consensus, Bitcoin blocks attested in validator vote extensions, and an on-chain UTXO mirror."
 ---
 
 QBTC is a Cosmos SDK application chain that runs on a forked CometBFT consensus engine using post-quantum signatures. It maintains a mirror of the Bitcoin UTXO set inside its own state and accepts zero-knowledge proofs of BTC ownership as claims against that mirror.
@@ -9,28 +9,28 @@ For deeper specifications, see the [Protocol Specification](/research/protocol-s
 
 ## High-level picture
 
-```mermaid
+```mermaid actions={false}
 flowchart TD
     BTC["<b>Bitcoin Network</b><br/>UTXO set, ECDSA sigs"]
-    BIF["<b>bifrost</b> (sidecar daemon)<br/>watches BTC blocks<br/>signs with ML-DSA<br/>gossips via LibP2P"]
+    BTCN["<b>Bitcoin Core node</b><br/>(one per validator)"]
     subgraph QBTCD["qbtcd (chain daemon)"]
         direction LR
-        CMT["<b>CometBFT (PQ)</b><br/>ML-DSA consensus"]
+        CMT["<b>CometBFT (PQ)</b><br/>ML-DSA-65 consensus<br/>vote extensions"]
         SDK["<b>Cosmos SDK core</b><br/>auth, bank, stake,<br/>gov, IBC, wasm"]
-        XQ["<b>x/qbtc</b><br/>UTXO mirror<br/>claims<br/>ZK verifier<br/>ebifrost"]
+        XQ["<b>x/qbtc</b><br/>Bitcoin reader<br/>UTXO mirror<br/>claims, ZK verifier"]
     end
     PS["<b>proof-service</b><br/>PLONK prover (HTTP)"]
 
-    BTC -->|RPC| BIF
-    BIF -->|gRPC| QBTCD
+    BTC --> BTCN
+    BTCN -->|RPC| XQ
     PS -->|/prove| QBTCD
 ```
 
-## The four major components
+## The main components
 
 ### 1. The chain daemon (`qbtcd`)
 
-`qbtcd` is a Cosmos SDK v0.52-era application binary. It registers the standard SDK modules (`auth`, `bank`, `staking`, `slashing`, `distribution`, `gov`, `upgrade`, `evidence`, `feegrant`, `authz`, `consensus`, `params`, `epochs`, `group`, IBC v10, ICS-27 interchain accounts, IBC transfer, CosmWasm, and `tokenfactory`) and adds one custom module: **`x/qbtc`**.
+`qbtcd` is a Cosmos SDK v0.55 application binary. It registers the standard SDK modules (`auth`, `bank`, `staking`, `slashing`, `distribution`, `gov`, `upgrade`, `evidence`, `feegrant`, `authz`, `consensus`, `params`, `epochs`, `group`, IBC v10, ICS-27 interchain accounts, IBC transfer, CosmWasm, and `tokenfactory`) and adds one custom module: **`x/qbtc`**.
 
 Notable chain parameters:
 
@@ -44,7 +44,7 @@ QBTC depends on a fork of CometBFT that introduces a new `crypto/mldsa` package 
 
 Every validator's consensus key is an ML-DSA key, every vote is signed with ML-DSA, every block-commit signature is ML-DSA. No wrapper or sidecar layer. The fork is maintained at `github.com/btcq-org/cometbft`.
 
-QBTC uses the ML-DSA-44 parameter set. ML-DSA-44 signatures are larger than Ed25519 (2420 bytes vs. 64 bytes per FIPS 204), which affects block size and bandwidth. The trade-off is intentional: the consensus path has no ECDSA or Ed25519 dependency. Accounts are a separate layer: they accept ML-DSA, secp256k1, ed25519 and multisig keys.
+QBTC uses the ML-DSA-65 parameter set. ML-DSA-65 signatures are larger than Ed25519 (3309 bytes vs. 64 bytes per FIPS 204), which affects block size and bandwidth. The trade-off is intentional: the consensus path has no ECDSA or Ed25519 dependency. Accounts use ML-DSA-65 as well. The chain rejects all other account key types, including secp256k1, ed25519 and multisig.
 
 See [Quantum Resistance (ML-DSA)](/build/quantum-resistance) for details.
 
@@ -58,21 +58,20 @@ The single custom module handles everything QBTC-specific:
 | `types/` | Protobuf-generated types and message validation |
 | `module/` | Cosmos module wiring and genesis state loader |
 | `zk/` | PLONK circuits and the on-chain verifier for claim proofs |
-| `ebifrost/` | "Enshrined bifrost" — in-chain logic that accepts gossiped Bitcoin blocks from validator sidecars and injects them as special transactions |
+| `btcreader/` | The Bitcoin reader: fetches and checks blocks from the validator's own Bitcoin node and caches them for vote extensions |
 
 The module's surface area is intentionally small. Standard SDK modules handle staking, governance, fees, and IBC. The custom module is the part that has to be QBTC-specific.
 
-### 4. The validator sidecar (`bifrost`)
+### 4. Bitcoin block ingestion (vote extensions)
 
-Each validator runs a `bifrost` process alongside `qbtcd`. Its job is narrow:
+Each validator's `qbtcd` runs a Bitcoin reader (`x/qbtc/btcreader`). There is no separate process. The reader fetches each new block from the validator's own Bitcoin Core node after 6 confirmations, checks its hash and merkle root, and caches it.
 
-1. Connect to a Bitcoin full node via RPC and watch for new blocks.
-2. When a new BTC block arrives, gzip it and sign it with the validator's QBTC consensus key (ML-DSA).
-3. Gossip the signed block to peer validators' `bifrost` processes via LibP2P.
+1. In each consensus vote, the validator lists the Bitcoin blocks it has cached (a CometBFT **vote extension**, signed with its ML-DSA-65 consensus key).
+2. The next proposer counts the votes. It includes a Bitcoin block when validators with more than **2/3 of voting power** voted for the same block.
+3. The proposer injects the block into the QBTC block as a special transaction.
+4. Every validator checks the injected block again. The chain recomputes every transaction ID and the merkle root, checks that the header links to the last processed block, and checks the proof of work at Bitcoin's difficulty.
 
-The chain's `x/qbtc/ebifrost` module receives these signed blocks via gRPC and includes them in QBTC blocks as **injected transactions**. A Bitcoin block is only considered ingested once more than **2/3 of bonded validator power** has attested to it.
-
-QBTC's view of Bitcoin is itself produced by a Byzantine-fault-tolerant consensus, not by a single oracle or trusted relayer.
+QBTC's view of Bitcoin is itself produced by a Byzantine-fault-tolerant consensus, not by a single oracle or trusted relayer. Validators choose which Bitcoin branch to follow, but they cannot invent transactions or outputs.
 
 ### 5. The proof service (`proof-service`)
 
@@ -85,7 +84,6 @@ A CLI version (`zkprover`) is available for users who want to generate proofs lo
 | Binary | Purpose |
 |---|---|
 | `qbtcd` | Chain daemon (validators and full nodes run this) |
-| `bifrost` | BTC block watcher and gossiper (every validator runs one) |
 | `proof-service` | Remote PLONK prover (optional infrastructure, anyone can host) |
 | `zkprover` | CLI for local proof generation |
 | `utxo-indexer` | Builds the bootstrap UTXO seed from a Bitcoin node |
@@ -104,9 +102,9 @@ The user's BTC is never moved. The user's BTC public key never goes on chain.
 ## How Bitcoin's state stays mirrored
 
 1. Bitcoin produces a block.
-2. Each validator's `bifrost` reads the block from its Bitcoin node.
-3. Each `bifrost` gzips the block, signs it with the validator's ML-DSA consensus key, and gossips it.
-4. The QBTC `ebifrost` module aggregates signatures. When more than 2/3 of bonded validator power has attested to the same block, it is accepted.
+2. After 6 confirmations, each validator's Bitcoin reader fetches the block from its own Bitcoin node and checks it.
+3. Each validator attests the block in its consensus vote, signed with its ML-DSA-65 consensus key.
+4. When validators with more than 2/3 of voting power attest the same block, the next proposer includes it.
 5. The accepted block is injected as a special transaction in the next QBTC block. The transaction updates the UTXO mirror: new outputs become claims, spent outputs are reconciled.
 6. Coinbase outputs add new claim entries. Bitcoin miners receive a corresponding QBTC claim as well.
 

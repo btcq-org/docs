@@ -1,6 +1,6 @@
 # QBTC — Full Documentation
 
-> The first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by zero-knowledge proof. Consensus signed by NIST FIPS 204 (ML-DSA). Pre-mainnet, mainnet planned for Q4 2026.
+> The first quantum-resistant Bitcoin chain. Every Bitcoin holder gets a 1:1 entitlement claimable by zero-knowledge proof. Consensus signed by NIST FIPS 204 (ML-DSA). Pre-mainnet, mainnet planned for early 2027.
 
 This file concatenates all QBTC documentation pages in curated reading order for LLM ingestion. Sources are at https://docs.qbtc.net and https://github.com/btcq-org/docs.
 
@@ -16,7 +16,7 @@ A large quantum computer could break Bitcoin's signatures. QBTC is a separate ch
 
 The self-claim supports P2PKH (`1…`) and P2WPKH (`bc1q…`) outputs today. A new output needs 144 Bitcoin confirmations (about one day) before it can claim.
 
-**Note:** **Pre-mainnet.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026, after the pre-launch security review closes. See the [Roadmap](/learn/roadmap).
+**Note:** **Pre-mainnet.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for early 2027, after the pre-launch security review closes. See the [Roadmap](/learn/roadmap).
 
 ## Choose your path
 
@@ -97,7 +97,7 @@ Once a Bitcoin public key has been broadcast (during a normal Bitcoin spend), a 
 * Native token: `qbtc`. Bech32 address prefix: `qbtc`.
 * Consensus: **CometBFT, forked** to use ML-DSA signatures instead of Ed25519.
 * One custom module (`x/qbtc`) that handles UTXO mirroring, claim verification, and the ZK PLONK verifier.
-* A per-validator sidecar process (`bifrost`) that watches a Bitcoin full node and gossips new BTC blocks into QBTC, where more than 2/3 of bonded validator power must attest before they are processed.
+* A Bitcoin reader inside each validator's node. It reads new Bitcoin blocks from the validator's own Bitcoin node, and validators attest them in their consensus votes. A block is processed only after validators with more than 2/3 of voting power attest it.
 
 ## How a claim flows, end to end
 
@@ -251,7 +251,7 @@ There are five ways to give Bitcoin holders access to post-quantum signatures:
 
 A soft fork is the more likely path for the Bitcoin community, embedding post-quantum verification into Taproot scripts. The approach has severe problems:
 
-* **Bitcoin's block space was not sized for PQ signatures.** ML-DSA-44 signatures are about 2.4 KB versus about 70 bytes for ECDSA. Adding them to Bitcoin means roughly a 34× expansion of signature data inside a block-space budget that has been politically immovable for a decade. QBTC uses ML-DSA from genesis. Large signatures and blocks still raise network latency requirements for validators.
+* **Bitcoin's block space was not sized for PQ signatures.** ML-DSA-65 signatures are about 3.3 KB versus about 70 bytes for ECDSA. Adding them to Bitcoin means roughly a 47× expansion of signature data inside a block-space budget that has been politically immovable for a decade. QBTC uses ML-DSA from genesis. Large signatures and blocks still raise network latency requirements for validators.
 * **Activation takes years Bitcoin may not have.** BIP discussion, soft-fork signaling, miner activation, and user migration each compound. Realistic timelines run 5 to 10 years, on a clock set by a CRQC arrival window that published assessments place between 2029 and 2035. QBTC ships its post-quantum chain on its own schedule, without needing Bitcoin's social consensus to move first.
 * **The largest pool of at-risk BTC is structurally unfixable by soft fork.** Satoshi-era P2PK balances (~1.7M BTC that has never moved) and reused-address coins with on-chain public keys cannot defend themselves under any soft-fork scheme: there is no signer to migrate them. They remain spendable by whoever runs Shor's algorithm first. QBTC's governance reclamation addresses this category on a separate ledger: it sends the matching QBTC to the Reserve and the two funds. It does not protect the coins on Bitcoin, which stay where they are. Per-category breakdown: [indexer.qbtc.net](https://indexer.qbtc.net).
 * **Consensus fractures.** A soft fork that quietly leaves dormant coins exposed will not satisfy the holders who want them protected; a soft fork that touches them will not pass. Either outcome fractures Bitcoin's social consensus. QBTC sidesteps the dilemma: Bitcoin's rules are unchanged, and holders who opt in claim on a separate chain.
@@ -319,7 +319,7 @@ Source: https://docs.qbtc.net/learn/for-btc-holders
 
 **Note:** **1 BTC in an eligible output = 1 QBTC claimable.** Supported today: P2PKH (`1…`) and P2WPKH (`bc1q…`). No signup. No fees to the project.
 
-**Note:** **Pre-mainnet.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026. You do not need to take any action right now. Your BTC is yours.
+**Note:** **Pre-mainnet.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for early 2027. You do not need to take any action right now. Your BTC is yours.
 
 ## The short version
 
@@ -334,7 +334,7 @@ Eligibility is live, with no snapshot date: whoever controls an eligible unspent
 * **You own the claim if you own the BTC.** The claim is computed from the Bitcoin UTXO set, not from a registration or signup. Whoever controls the private key for a Bitcoin address controls the corresponding QBTC claim.
 * **You claim from a wallet that supports QBTC claims.** The wallet signs a digest with your Bitcoin key and sends the signature to a proving service. The service builds the zero-knowledge proof and broadcasts the claim. No Bitcoin transaction is sent.
 * **Your BTC public key does not go on chain.** The claim transaction shows only the hash of the address being claimed and the destination QBTC address.
-* **Use an ML-DSA account for post-quantum protection.** QBTC accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
+* **Every QBTC account is post-quantum.** QBTC accounts use ML-DSA-65 keys, and the chain accepts no other key type. Claim to an address from a wallet that supports ML-DSA-65. Vultisig supports ML-DSA-65 from launch. QBTC sent to any other kind of address can never be spent.
 * **You can batch claims.** A single transaction can claim up to 50 UTXOs from the same Bitcoin address.
 
 ## Where do I hold my BTC?
@@ -384,7 +384,7 @@ Nothing is required. If you want to be prepared:
 
 Source: https://docs.qbtc.net/learn/fair-launch
 
-QBTC launches on terms that mirror Bitcoin's own. No sale. No investor allocation. No team premine. No vesting. The entire claimable supply belongs to people who already hold Bitcoin. Genesis has one mint: 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million.
+QBTC launches on terms that mirror Bitcoin's own. No sale. No investor allocation. No team allocation at genesis. No vesting. The entire claimable supply belongs to people who already hold Bitcoin. Genesis has one mint: 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million.
 
 ## What "fair launch" means here
 
@@ -392,7 +392,7 @@ A fair launch, in the sense QBTC uses the term, requires all of the following:
 
 1. **No ICO, IDO, or pre-sale.** The token cannot be purchased from the project before launch. There is no fundraising round in which capital is exchanged for tokens at a discount.
 2. **No investor allocation.** No venture capital and no strategic investors in token form.
-3. **No team premine.** The only genesis mint is 50 QBTC. They are committed to securing the chain during the genesis period. The 50 BTC coinbase output of Bitcoin's genesis block (block 0), which no one can claim, offsets them.
+3. **No team allocation at genesis.** The only genesis mint is 50 QBTC. They are committed to securing the chain during the genesis period. The 50 BTC coinbase output of Bitcoin's genesis block (block 0), which no one can claim, offsets them.
 4. **Entitlement is determined by an external, immutable signal.** For QBTC, that signal is the Bitcoin UTXO set. Whoever currently controls a Bitcoin UTXO controls the corresponding QBTC entitlement. The project cannot alter who gets what after the fact.
 5. **Anything beyond Path 1 user claims requires governance.** Apart from the 50 QBTC genesis mint, every other path through which QBTC enters circulation is voted on on-chain.
 
@@ -493,15 +493,15 @@ Source: https://docs.qbtc.net/learn/roadmap
 
 QBTC is pre-mainnet. The protocol substrate (post-quantum consensus, ZK-gated claims, the UTXO mirror) runs on a public test network that started in March 2026. The test network may be reset.
 
-**Mainnet: a fresh genesis, planned for Q4 2026.** Mainnet follows after the pre-launch security review closes.
+**Mainnet: a fresh genesis, planned for early 2027.** Mainnet follows after the pre-launch security review closes.
 
 ## Component status
 
 | Component | Status |
 |---|---|
-| Post-quantum consensus (ML-DSA-44 / FIPS 204) | **Built**, in chain code |
+| Post-quantum consensus and accounts (ML-DSA-65 / FIPS 204) | **Built**, in chain code |
 | ZK PLONK claim verifier (on-chain) | **Built**, in chain code |
-| Bifrost sidecar + ebifrost block ingestion | **Built**, in chain code |
+| Bitcoin block ingestion through validator vote extensions | **Built**, in chain code |
 | User claim mechanism (`MsgClaimWithProof`, batch up to 50 UTXOs; P2PKH and P2WPKH outputs) | **Built**, in chain code |
 | Reserve Module + validator emission formula | **Built**, in chain code |
 | Cosmos `x/gov` governance | **Built**, in chain code |
@@ -642,7 +642,7 @@ Bitcoin's social consensus does not accept hard forks that change rules affectin
 
 ### Is there a team allocation?
 
-No sale, no premine, no investor allocation, no vesting. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Each governance reclaim of dormant exposed-key BTC splits 90 / 5 / 5: 90% to the Reserve, 5% to a development fund and 5% to a marketing fund. The two funds are the only project share. One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
+No sale, no investor allocation, no team allocation at genesis, no vesting. The entire **claimable** supply belongs to existing Bitcoin holders (1:1 with BTC). Each governance reclaim of dormant exposed-key BTC splits 90 / 5 / 5: 90% to the Reserve, 5% to a development fund and 5% to a marketing fund. The two funds are the only project share. One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million. See [Fair Launch Principles](/learn/fair-launch) for the full disclosure.
 
 ### Where do validator rewards come from?
 
@@ -656,11 +656,11 @@ No. No public sale, no presale, no investor rounds. There is no way to buy QBTC 
 
 ### What's QBTC built on?
 
-The Cosmos SDK, with consensus on a forked CometBFT that uses ML-DSA-44 (Dilithium / FIPS 204) signatures instead of Ed25519.
+The Cosmos SDK, with consensus on a forked CometBFT that uses ML-DSA-65 (Dilithium / FIPS 204) signatures instead of Ed25519.
 
 ### Does QBTC use ECDSA anywhere?
 
-Yes, at the account level. Validators sign consensus messages with ML-DSA. Accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys. The claim also checks a Bitcoin ECDSA signature inside the zero-knowledge proof.
+Yes, at the account level and at consensus. Validators sign consensus messages with ML-DSA-65. Every account, including the validator operator account, uses an ML-DSA-65 key. The chain rejects all other key types, including secp256k1, ed25519 and multisig. The claim also checks a Bitcoin ECDSA signature inside the zero-knowledge proof.
 
 ### Where can I read the code?
 
@@ -682,7 +682,7 @@ A test network has run since March 2026. It is public and may be reset. Mainnet 
 
 ### When does mainnet ship?
 
-**Planned for Q4 2026.** Mainnet is a fresh genesis. It follows after the pre-launch security review closes. Follow [@qbtc_net on X](https://x.com/qbtc_net) or join the [Discord](https://discord.gg/anMfAjtCPZ).
+**Planned for early 2027.** Mainnet is a fresh genesis. It follows after the pre-launch security review closes. Follow [@qbtc_net on X](https://x.com/qbtc_net) or join the [Discord](https://discord.gg/anMfAjtCPZ).
 
 ### What's actually in the code today vs. just specified?
 
@@ -698,7 +698,7 @@ Documentation for developers, integrators, and node operators. If you want to un
 
 ## Start here
 
-* [Architecture](/build/architecture), a tour of the chain daemon, the bifrost sidecar, the ZK proof service, and how Bitcoin's state is mirrored.
+* [Architecture](/build/architecture), a tour of the chain daemon, Bitcoin block ingestion, the ZK proof service, and how Bitcoin's state is mirrored.
 * [Quantum Resistance (ML-DSA)](/build/quantum-resistance), the cryptographic substrate.
 * [Consensus & Validators](/build/consensus), the CometBFT fork and validator economics.
 * [Claim Mechanism](/build/claim-mechanism), how a Bitcoin holder converts a claim into spendable QBTC.
@@ -728,28 +728,28 @@ For deeper specifications, see the [Protocol Specification](/research/protocol-s
 
 ## High-level picture
 
-```mermaid
+```mermaid actions={false}
 flowchart TD
     BTC["<b>Bitcoin Network</b><br/>UTXO set, ECDSA sigs"]
-    BIF["<b>bifrost</b> (sidecar daemon)<br/>watches BTC blocks<br/>signs with ML-DSA<br/>gossips via LibP2P"]
+    BTCN["<b>Bitcoin Core node</b><br/>(one per validator)"]
     subgraph QBTCD["qbtcd (chain daemon)"]
         direction LR
-        CMT["<b>CometBFT (PQ)</b><br/>ML-DSA consensus"]
+        CMT["<b>CometBFT (PQ)</b><br/>ML-DSA-65 consensus<br/>vote extensions"]
         SDK["<b>Cosmos SDK core</b><br/>auth, bank, stake,<br/>gov, IBC, wasm"]
-        XQ["<b>x/qbtc</b><br/>UTXO mirror<br/>claims<br/>ZK verifier<br/>ebifrost"]
+        XQ["<b>x/qbtc</b><br/>Bitcoin reader<br/>UTXO mirror<br/>claims, ZK verifier"]
     end
     PS["<b>proof-service</b><br/>PLONK prover (HTTP)"]
 
-    BTC -->|RPC| BIF
-    BIF -->|gRPC| QBTCD
+    BTC --> BTCN
+    BTCN -->|RPC| XQ
     PS -->|/prove| QBTCD
 ```
 
-## The four major components
+## The main components
 
 ### 1. The chain daemon (`qbtcd`)
 
-`qbtcd` is a Cosmos SDK v0.52-era application binary. It registers the standard SDK modules (`auth`, `bank`, `staking`, `slashing`, `distribution`, `gov`, `upgrade`, `evidence`, `feegrant`, `authz`, `consensus`, `params`, `epochs`, `group`, IBC v10, ICS-27 interchain accounts, IBC transfer, CosmWasm, and `tokenfactory`) and adds one custom module: **`x/qbtc`**.
+`qbtcd` is a Cosmos SDK v0.55 application binary. It registers the standard SDK modules (`auth`, `bank`, `staking`, `slashing`, `distribution`, `gov`, `upgrade`, `evidence`, `feegrant`, `authz`, `consensus`, `params`, `epochs`, `group`, IBC v10, ICS-27 interchain accounts, IBC transfer, CosmWasm, and `tokenfactory`) and adds one custom module: **`x/qbtc`**.
 
 Notable chain parameters:
 
@@ -763,7 +763,7 @@ QBTC depends on a fork of CometBFT that introduces a new `crypto/mldsa` package 
 
 Every validator's consensus key is an ML-DSA key, every vote is signed with ML-DSA, every block-commit signature is ML-DSA. No wrapper or sidecar layer. The fork is maintained at `github.com/btcq-org/cometbft`.
 
-QBTC uses the ML-DSA-44 parameter set. ML-DSA-44 signatures are larger than Ed25519 (2420 bytes vs. 64 bytes per FIPS 204), which affects block size and bandwidth. The trade-off is intentional: the consensus path has no ECDSA or Ed25519 dependency. Accounts are a separate layer: they accept ML-DSA, secp256k1, ed25519 and multisig keys.
+QBTC uses the ML-DSA-65 parameter set. ML-DSA-65 signatures are larger than Ed25519 (3309 bytes vs. 64 bytes per FIPS 204), which affects block size and bandwidth. The trade-off is intentional: the consensus path has no ECDSA or Ed25519 dependency. Accounts use ML-DSA-65 as well. The chain rejects all other account key types, including secp256k1, ed25519 and multisig.
 
 See [Quantum Resistance (ML-DSA)](/build/quantum-resistance) for details.
 
@@ -777,21 +777,20 @@ The single custom module handles everything QBTC-specific:
 | `types/` | Protobuf-generated types and message validation |
 | `module/` | Cosmos module wiring and genesis state loader |
 | `zk/` | PLONK circuits and the on-chain verifier for claim proofs |
-| `ebifrost/` | "Enshrined bifrost" — in-chain logic that accepts gossiped Bitcoin blocks from validator sidecars and injects them as special transactions |
+| `btcreader/` | The Bitcoin reader: fetches and checks blocks from the validator's own Bitcoin node and caches them for vote extensions |
 
 The module's surface area is intentionally small. Standard SDK modules handle staking, governance, fees, and IBC. The custom module is the part that has to be QBTC-specific.
 
-### 4. The validator sidecar (`bifrost`)
+### 4. Bitcoin block ingestion (vote extensions)
 
-Each validator runs a `bifrost` process alongside `qbtcd`. Its job is narrow:
+Each validator's `qbtcd` runs a Bitcoin reader (`x/qbtc/btcreader`). There is no separate process. The reader fetches each new block from the validator's own Bitcoin Core node after 6 confirmations, checks its hash and merkle root, and caches it.
 
-1. Connect to a Bitcoin full node via RPC and watch for new blocks.
-2. When a new BTC block arrives, gzip it and sign it with the validator's QBTC consensus key (ML-DSA).
-3. Gossip the signed block to peer validators' `bifrost` processes via LibP2P.
+1. In each consensus vote, the validator lists the Bitcoin blocks it has cached (a CometBFT **vote extension**, signed with its ML-DSA-65 consensus key).
+2. The next proposer counts the votes. It includes a Bitcoin block when validators with more than **2/3 of voting power** voted for the same block.
+3. The proposer injects the block into the QBTC block as a special transaction.
+4. Every validator checks the injected block again. The chain recomputes every transaction ID and the merkle root, checks that the header links to the last processed block, and checks the proof of work at Bitcoin's difficulty.
 
-The chain's `x/qbtc/ebifrost` module receives these signed blocks via gRPC and includes them in QBTC blocks as **injected transactions**. A Bitcoin block is only considered ingested once more than **2/3 of bonded validator power** has attested to it.
-
-QBTC's view of Bitcoin is itself produced by a Byzantine-fault-tolerant consensus, not by a single oracle or trusted relayer.
+QBTC's view of Bitcoin is itself produced by a Byzantine-fault-tolerant consensus, not by a single oracle or trusted relayer. Validators choose which Bitcoin branch to follow, but they cannot invent transactions or outputs.
 
 ### 5. The proof service (`proof-service`)
 
@@ -804,7 +803,6 @@ A CLI version (`zkprover`) is available for users who want to generate proofs lo
 | Binary | Purpose |
 |---|---|
 | `qbtcd` | Chain daemon (validators and full nodes run this) |
-| `bifrost` | BTC block watcher and gossiper (every validator runs one) |
 | `proof-service` | Remote PLONK prover (optional infrastructure, anyone can host) |
 | `zkprover` | CLI for local proof generation |
 | `utxo-indexer` | Builds the bootstrap UTXO seed from a Bitcoin node |
@@ -823,9 +821,9 @@ The user's BTC is never moved. The user's BTC public key never goes on chain.
 ## How Bitcoin's state stays mirrored
 
 1. Bitcoin produces a block.
-2. Each validator's `bifrost` reads the block from its Bitcoin node.
-3. Each `bifrost` gzips the block, signs it with the validator's ML-DSA consensus key, and gossips it.
-4. The QBTC `ebifrost` module aggregates signatures. When more than 2/3 of bonded validator power has attested to the same block, it is accepted.
+2. After 6 confirmations, each validator's Bitcoin reader fetches the block from its own Bitcoin node and checks it.
+3. Each validator attests the block in its consensus vote, signed with its ML-DSA-65 consensus key.
+4. When validators with more than 2/3 of voting power attest the same block, the next proposer includes it.
 5. The accepted block is injected as a special transaction in the next QBTC block. The transaction updates the UTXO mirror: new outputs become claims, spent outputs are reconciled.
 6. Coinbase outputs add new claim entries. Bitcoin miners receive a corresponding QBTC claim as well.
 
@@ -852,14 +850,14 @@ Every validator's consensus key is an ML-DSA key. Every consensus vote, every bl
 
 Implemented via a fork of CometBFT at `github.com/btcq-org/cometbft`, which adds a `crypto/mldsa` package and routes signing through it.
 
-If validators signed with Ed25519, a quantum-capable adversary could forge a validator signature and rewrite chain history. ML-DSA is lattice-based and is believed secure against known classical and quantum attacks. QBTC uses the ML-DSA-44 parameter set (NIST security category 2).
+If validators signed with Ed25519, a quantum-capable adversary could forge a validator signature and rewrite chain history. ML-DSA is lattice-based and is believed secure against known classical and quantum attacks. QBTC uses the ML-DSA-65 parameter set (NIST security category 3).
 
 ### Size and bandwidth
 
 ML-DSA signatures are larger than Ed25519:
 
-* ML-DSA-44 signature: 2420 bytes (~2.4 KB).
-* ML-DSA-44 public key: 1312 bytes (~1.3 KB).
+* ML-DSA-65 signature: 3309 bytes (~3.3 KB).
+* ML-DSA-65 public key: 1952 bytes (~1.9 KB).
 * Ed25519 signature: 64 bytes.
 * Ed25519 public key: 32 bytes.
 
@@ -893,7 +891,7 @@ The wallet signs a digest with the Bitcoin key and sends the signature to a prov
 
 Each layer covers a different risk. If only consensus used ML-DSA, a claim that published your BTC public key would expose that key to a quantum attacker. If only claims used ZK, a quantum attacker could forge validator signatures and rewrite the chain.
 
-Accounts on QBTC can also use secp256k1, ed25519 or multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
+Accounts use ML-DSA-65 too. Every account, including the validator operator account, uses an ML-DSA-65 key. The chain rejects all other key types, including secp256k1, ed25519 and multisig. QBTC sent to an address without an ML-DSA-65 key can never be spent.
 
 ## References
 
@@ -908,7 +906,7 @@ Accounts on QBTC can also use secp256k1, ed25519 or multisig keys. Post-quantum 
 
 Source: https://docs.qbtc.net/build/consensus
 
-QBTC consensus is **CometBFT, forked** to use ML-DSA signatures instead of Ed25519. The economic layer is standard Cosmos `x/staking` and `x/distribution`. The only QBTC-specific consensus addition is the `ebifrost` module's handling of attested Bitcoin block ingestion.
+QBTC consensus is **CometBFT, forked** to use ML-DSA signatures instead of Ed25519. The economic layer is standard Cosmos `x/staking` and `x/distribution`. The only QBTC-specific consensus addition is Bitcoin block ingestion through vote extensions.
 
 ## Consensus engine
 
@@ -921,15 +919,15 @@ Validators bond QBTC via the standard Cosmos `x/staking` module (see [Becoming a
 * **Bonding**: standard `x/staking` semantics (self-bond from the validator's own account; no inflation, so rewards come from fees and Reserve emission).
 * **Slashing**: standard `x/slashing` — double-sign and downtime.
 * **Unbonding period**: 21 days on the current test network (a genesis parameter; subject to change at mainnet).
-* **Validator consensus key**: ML-DSA (`/cosmos.crypto.mldsa.PubKey`).
-* **Account keys** (including the validator operator account): accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
+* **Validator consensus key**: ML-DSA-65 (`/cosmos.crypto.mldsa65.PubKey`).
+* **Account keys** (including the validator operator account): ML-DSA-65 only. The chain rejects all other key types, including secp256k1, ed25519 and multisig.
 
 ## Validator responsibilities
 
 In addition to standard Cosmos validator duties, QBTC validators also:
 
-1. **Run a `bifrost` sidecar** that watches a Bitcoin full node and gossips signed BTC blocks to peers. See [Architecture](/build/architecture) for the data flow.
-2. **Attest to ingested BTC blocks**. The `ebifrost` module aggregates these attestations; a block is ingested into QBTC state once more than 2/3 of bonded validator power has attested.
+1. **Run the Bitcoin reader in `qbtcd`**, pointed at a Bitcoin Core node they trust. See [Running a Node](/build/running-a-node#configure-the-bitcoin-reader-validators).
+2. **Attest Bitcoin blocks in their consensus votes** (vote extensions). A block enters QBTC state once validators with more than 2/3 of voting power attest it. See [Architecture](/build/architecture) for the data flow.
 
 ## Validator rewards
 
@@ -961,7 +959,7 @@ The chain loads a bootstrap seed of the Bitcoin UTXO set (`genesis-954355.bin`).
 * The UTXO's BTC amount, scaled 1:1 to QBTC.
 * An `EntitledAmount` field, initially set to the claim amount and decremented to 0 when claimed.
 
-As new Bitcoin blocks are ingested via `ebifrost` (see [Architecture](/build/architecture)), the mirror updates:
+As new Bitcoin blocks are ingested through validator vote extensions (see [Architecture](/build/architecture)), the mirror updates:
 
 * New UTXOs add new claim entries.
 * Spent UTXOs are reconciled.
@@ -1007,7 +1005,7 @@ When a validator receives a `MsgClaimWithProof`, the handler (`x/qbtc/keeper/han
 
 A claimed UTXO has `EntitledAmount == 0`. Any subsequent attempt to claim it fails at step 2 of validator handling.
 
-The claimed status also propagates through Bitcoin spends. When the `ebifrost` module ingests a new Bitcoin block, any transaction whose inputs include claimed UTXOs carries the claimed status to its outputs in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed. A child of a partially-claimed set of parents inherits a proportionally-reduced `EntitledAmount`.
+The claimed status also propagates through Bitcoin spends. When the chain ingests a new Bitcoin block, any transaction whose inputs include claimed UTXOs carries the claimed status to its outputs in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed. A child of a partially-claimed set of parents inherits a proportionally-reduced `EntitledAmount`.
 
 Propagation makes governance reclamation (see [Tokenomics](/research/tokenomics)) permanent: once governance reclaims a UTXO, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO to a new address.
 
@@ -1034,25 +1032,24 @@ The wallet signs a digest with the Bitcoin key and sends the signature to a prov
 
 Source: https://docs.qbtc.net/build/running-a-node
 
-**Note:** **Test network.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026. The instructions below stand up a node against the current public **test network**. Endpoints, the chain ID, and the pinned version can change before mainnet — always cross-check the [chain repository](https://github.com/btcq-org/qbtc) for the latest values.
+**Note:** **Test network.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for early 2027. The instructions below stand up a node against the current public **test network**. Endpoints, the chain ID, and the pinned version can change before mainnet — always cross-check the [chain repository](https://github.com/btcq-org/qbtc) for the latest values.
 
-A QBTC node runs two processes side by side:
+**Note:** **Launch build.** This page describes the launch build: ML-DSA-65 keys, and a Bitcoin reader built into `qbtcd`. The current test network runs an earlier build, and until the relaunch the install script installs that earlier build.
 
-* **`qbtcd`** — the chain daemon (Cosmos SDK + the ML-DSA CometBFT fork). This is the node.
-* **`bifrost`** — the sidecar that connects to a Bitcoin full node, watches for new Bitcoin blocks, and relays them to the chain. See [Architecture](/build/architecture) for how the two fit together.
+A QBTC node is one process, **`qbtcd`**: the chain daemon (Cosmos SDK with the ML-DSA CometBFT fork).
 
-You also need access to a **Bitcoin full node** (for `bifrost` to read blocks from). It can run on the same machine or a separate one.
+Validators also need a **Bitcoin full node** (Bitcoin Core with RPC enabled). The Bitcoin reader inside `qbtcd` reads new Bitcoin blocks from it, and the validator attests those blocks in its consensus votes. The Bitcoin node can run on the same machine or a separate one. See [Architecture](/build/architecture) for how the parts fit together.
 
 ## Prerequisites
 
 * A Linux host (the installer targets `linux-amd64` release binaries and `systemd`).
 * `curl`, `tar`, `sudo`, `sha256sum`, and `systemctl` available on the host.
-* A reachable Bitcoin full node with RPC enabled (host, port, RPC username, and password).
-* For building from source instead of using release binaries: **Go 1.22+** and **Make**.
+* Validators only: a reachable Bitcoin Core node with RPC enabled (host, port, RPC username, and password).
+* For building from source instead of using release binaries: **Go 1.26+** and **Make**.
 
 ## Quick install (recommended)
 
-The chain repo ships an install script that downloads the `qbtcd` and `bifrost` binaries to `/usr/local/bin`, optionally sets up Cosmovisor for upgrade management, initializes the node home directory, downloads the genesis file, writes a `bifrost` config template, and installs `systemd` services.
+The chain repo ships an install script that downloads the `qbtcd` binary to `/usr/local/bin`, optionally sets up Cosmovisor for upgrade management, initializes the node home directory, downloads the genesis file, and installs a `systemd` service.
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh | bash
@@ -1061,13 +1058,13 @@ curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.s
 To pin a specific version (recommended for reproducibility — check the [releases page](https://github.com/btcq-org/qbtc/releases) for the current version):
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh | bash -s -- -v 1.0.22
+curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh | bash -s -- -v <version>
 ```
 
 or via environment variable:
 
 ```bash
-QBTC_VERSION=1.0.22 bash -c "$(curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh)"
+QBTC_VERSION=<version> bash -c "$(curl -sSL https://raw.githubusercontent.com/btcq-org/qbtc/main/scripts/install.sh)"
 ```
 
 **Note:** Piping a remote script straight into `bash` runs unreviewed code as your user. If you prefer to inspect it first:
@@ -1082,58 +1079,53 @@ bash qbtc-install.sh
 
 | Path | Contents |
 |---|---|
-| `/usr/local/bin/qbtcd`, `/usr/local/bin/bifrost` | The two binaries. |
+| `/usr/local/bin/qbtcd` | The chain binary. |
 | `$HOME/.qbtc` | Chain daemon home (config, data, genesis). |
-| `$HOME/.bifrost` | Bifrost home (config, local DB). |
-| `systemd` units `qbtcd` and `bifrost` | Service definitions (auto-restart, raised file-descriptor limit). |
+| `systemd` unit `qbtcd` | Service definition (auto-restart, raised file-descriptor limit). |
 
-## Configure bifrost
+## Configure the Bitcoin reader (validators)
 
-Before starting the services, point `bifrost` at your Bitcoin full node. Edit its config:
+Validators must turn on the Bitcoin reader and point it at a Bitcoin Core node they trust. Edit the `[btc_reader]` section of `~/.qbtc/config/app.toml`:
 
-```bash
-vim ~/.bifrost/config.json
+```toml
+[btc_reader]
+# Read Bitcoin blocks and attest them in vote extensions
+enable = true
+
+# Bitcoin Core RPC host, port and credentials
+bitcoin_host = "127.0.0.1"
+bitcoin_port = 8332
+bitcoin_rpc_user = "bitcoinrpc"
+bitcoin_rpc_password = "securepassword"
+
+# Confirmations a Bitcoin block needs before this node attests it
+# (the block itself counts as one)
+confirmation_depth = 6
+
+poll_interval = "10s"
+max_cached_blocks = 16
+rpc_timeout = "30s"
 ```
 
-The template the installer writes looks like this — fill in your Bitcoin RPC host, port, username, and password:
-
-```json
-{
-  "listen_addr": "0.0.0.0:30006",
-  "http_listen_addr": "0.0.0.0:30007",
-  "external_ip": "",
-  "bitcoin": {
-    "host": "127.0.0.1",
-    "port": 8332,
-    "rpc_user": "bitcoinrpc",
-    "password": "securepassword",
-    "local_db_path": "/home/youruser/.bifrost/db"
-  },
-  "qbtc_grpc_address": "localhost:9090",
-  "cometbft_rpc_address": "http://localhost:26657"
-}
-```
-
-**Note:** **Validators: set `external_ip` to your node's public IP.** Bifrost peers reach each other at `external_ip:30006`. If you leave it empty, your advertised peer address comes back as `0.0.0.0:30006`, which nobody can connect to. See [Register your bifrost peer address](#register-your-bifrost-peer-address).
+The reader fetches each block from your Bitcoin node, checks its hash and merkle root, and caches it. Your validator then attests the cached blocks in its consensus votes. A full node that does not validate can leave `enable = false`.
 
 ## Start the node
 
 ```bash
 sudo systemctl start qbtcd
-sudo systemctl start bifrost
 ```
 
 Check status and follow logs:
 
 ```bash
-sudo systemctl status qbtcd bifrost
+sudo systemctl status qbtcd
 sudo journalctl -u qbtcd -f
 ```
 
 To start automatically on boot:
 
 ```bash
-sudo systemctl enable qbtcd bifrost
+sudo systemctl enable qbtcd
 ```
 
 ## Ports
@@ -1142,12 +1134,10 @@ sudo systemctl enable qbtcd bifrost
 |---|---|---|
 | `26656` | `qbtcd` | CometBFT P2P. |
 | `26657` | `qbtcd` | CometBFT RPC. |
-| `9090` | `qbtcd` | Cosmos gRPC (bifrost connects here). |
-| `30006` | `bifrost` | Bifrost P2P (block gossip between validators). |
-| `30007` | `bifrost` | Bifrost HTTP. |
-| `8332` | Bitcoin node | Bitcoin RPC (bifrost reads from here). |
+| `9090` | `qbtcd` | Cosmos gRPC. |
+| `8332` | Bitcoin node | Bitcoin RPC (the `qbtcd` Bitcoin reader reads from here). |
 
-Open `26656` and `30006` to peers so your node can sync and gossip Bitcoin blocks. Keep `26657`, `9090`, and the Bitcoin RPC port firewalled to localhost or trusted hosts.
+Open `26656` to peers so your node can sync. Keep `26657`, `9090`, and the Bitcoin RPC port firewalled to localhost or trusted hosts.
 
 ## State sync (fast bootstrap)
 
@@ -1207,7 +1197,7 @@ cd qbtc
 make build
 ```
 
-`make build` produces all of the chain binaries into `./build/`: `qbtcd`, `bifrost`, `zkprover` (the local ZK proof CLI — see [Architecture](/build/architecture)), `proof-service` (the optional hosted PLONK prover), and `utxo-indexer` (builds the bootstrap UTXO seed). Run the test suite with:
+`make build` produces the chain binaries into `./build/`: `qbtcd`, `zkprover` (the local ZK proof CLI — see [Architecture](/build/architecture)), `proof-service` (the optional hosted PLONK prover), and `utxo-indexer` (builds the bootstrap UTXO seed). Run the test suite with:
 
 ```bash
 make test
@@ -1222,7 +1212,7 @@ For a throwaway local devnet, the repo includes a helper:
 
 ## Keeping your node updated
 
-New `qbtcd` / `bifrost` releases are published on the [releases page](https://github.com/btcq-org/qbtc/releases). There are two kinds of update, and they are handled differently.
+New `qbtcd` releases are published on the [releases page](https://github.com/btcq-org/qbtc/releases). There are two kinds of update, and they are handled differently.
 
 **Note:** Stay current. When the team schedules an on-chain upgrade, a node still running the old binary can halt or fall out of consensus at the upgrade height. Running behind also means missing blocks and risking downtime jailing if you validate.
 
@@ -1233,19 +1223,16 @@ For a routine version bump, you **replace the binaries directly** — no governa
 1. `/usr/local/bin/qbtcd`
 2. `~/.qbtc/cosmovisor/current/bin/qbtcd`
 
-`bifrost` runs from `/usr/local/bin/bifrost`.
-
 ```bash
-# stop services
-sudo systemctl stop qbtcd bifrost
+# stop the service
+sudo systemctl stop qbtcd
 
-# download the release binaries (or build them), then replace both copies
+# download the release binary (or build it), then replace both copies
 sudo install -m 755 qbtcd  /usr/local/bin/qbtcd
 sudo install -m 755 qbtcd  ~/.qbtc/cosmovisor/current/bin/qbtcd
-sudo install -m 755 bifrost /usr/local/bin/bifrost
 
 # restart
-sudo systemctl start qbtcd bifrost
+sudo systemctl start qbtcd
 qbtcd version    # confirm the new version
 ```
 
@@ -1279,9 +1266,9 @@ To read chain state without running a full node, use the public Cosmos REST gate
 
 Validator creation is the **standard Cosmos SDK `x/staking` flow** (`qbtcd tx staking create-validator`), with three QBTC-specific differences:
 
-1. **Consensus keys are ML-DSA, not Ed25519.** The validator pubkey you submit has `@type` `/cosmos.crypto.mldsa.PubKey`. You get it from `qbtcd comet show-validator` exactly as on any Cosmos chain — the key material is just post-quantum.
-2. **Account keys can be ML-DSA or classical.** Validators sign consensus messages with ML-DSA. Accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys. `qbtcd keys add` creates an ML-DSA-44 key by default.
-3. **A validator must also run `bifrost` and register it on-chain.** Block production depends on validators attesting Bitcoin blocks (see [Architecture](/build/architecture)). Beyond running the sidecar, you publish its peer address with a custom `x/qbtc` transaction so other validators can reach it — see [Register your bifrost peer address](#register-your-bifrost-peer-address). Skipping this leaves your validator unable to attest.
+1. **Consensus keys are ML-DSA-65, not Ed25519.** `qbtcd init` creates an ML-DSA-65 consensus key by default. The validator pubkey you submit has `@type` `/cosmos.crypto.mldsa65.PubKey`. You get it from `qbtcd comet show-validator`, as on any Cosmos chain.
+2. **Account keys are ML-DSA-65 only.** The chain rejects all other key types, including secp256k1, ed25519 and multisig. `qbtcd keys add` creates an ML-DSA-65 key by default (`--key-type ml_dsa_65`).
+3. **A validator must also run the Bitcoin reader.** Validators attest Bitcoin blocks in their consensus votes (vote extensions). A Bitcoin block enters QBTC state only when validators with more than 2/3 of voting power attest it. Enable the reader before you bond (see [Configure the Bitcoin reader](#configure-the-bitcoin-reader-validators)).
 
 **Note:** **You do not send tokens to anyone to create a validator.** `create-validator` bonds QBTC **from your own validator account** — it moves your own balance from liquid to bonded (self-delegation). There is no deposit address to pay into. To fund your account on the current test network (which has no public faucet), generate your validator account first and ask the team for test-network QBTC to **your** `qbtc1…` address (via [Discord](https://discord.gg/anMfAjtCPZ)).
 
@@ -1299,20 +1286,20 @@ Verified live; all change at mainnet relaunch.
 | Downtime slashing | 1% + jail if you sign < 50% of the last 100 blocks; 10-minute jail |
 | Double-sign slashing | 5% + permanent tombstone |
 
-**Note:** **Never run the same consensus key on two nodes.** Double-signing is slashed 5% and tombstones the validator permanently. For multiple validators, each needs its **own** node home, its **own** consensus key, its **own** `bifrost`, and its **own** funded account.
+**Note:** **Never run the same consensus key on two nodes.** Double-signing is slashed 5% and tombstones the validator permanently. For multiple validators, each needs its **own** node home, its **own** consensus key, its **own** Bitcoin reader configuration, and its **own** funded account.
 
 ### Step by step
 
-1. **Sync a full node and run `bifrost`** (sections above). Wait until `qbtcd` is caught up (`qbtcd status` → `sync_info.catching_up: false`).
+1. **Sync a full node and enable the Bitcoin reader** (sections above). Wait until `qbtcd` is caught up (`qbtcd status` → `sync_info.catching_up: false`).
 
-2. **Create your validator account key** (this is an ML-DSA key):
+2. **Create your validator account key** (this is an ML-DSA-65 key):
 
    ```bash
    qbtcd keys add my-validator
    # note the qbtc1... address it prints
    ```
 
-   **Note:** The HD derivation path for QBTC accounts is `m/44'/118/0'/0/0`. You need this if you are importing keys into a wallet or building wallet integration — `qbtcd keys add` handles it automatically.
+   **Note:** The HD derivation path for QBTC accounts is `m/44'/118'/0'/0/0`. QBTC derives a 32-byte seed on that path from your BIP-39 mnemonic and uses it to generate the ML-DSA-65 key. The same mnemonic therefore gives a different address on QBTC than on a secp256k1 Cosmos chain. `qbtcd keys add` handles this automatically.
 
 3. **Fund the account.** On the test network, send your `qbtc1…` address to the team and they fund it. Confirm the balance:
 
@@ -1324,14 +1311,14 @@ Verified live; all change at mainnet relaunch.
 
    ```bash
    qbtcd comet show-validator
-   # → {"@type":"/cosmos.crypto.mldsa.PubKey","key":"..."}
+   # → {"@type":"/cosmos.crypto.mldsa65.PubKey","key":"..."}
    ```
 
 5. **Write `validator.json`** — paste the pubkey output verbatim into the `pubkey` field:
 
    ```json
    {
-     "pubkey": {"@type":"/cosmos.crypto.mldsa.PubKey","key":"PASTE_FROM_STEP_4"},
+     "pubkey": {"@type":"/cosmos.crypto.mldsa65.PubKey","key":"PASTE_FROM_STEP_4"},
      "amount": "1000000000qbtc",
      "moniker": "my-validator",
      "commission-rate": "0.1",
@@ -1360,50 +1347,9 @@ Verified live; all change at mainnet relaunch.
 
    or via the public gateway: `…/qbtc-rpc/cosmos/staking/v1beta1/validators`.
 
-### Register your bifrost peer address
-
-This is a QBTC-specific step with no Cosmos equivalent, and it comes **after** your validator is created and bonded — not before.
-
-* **It is order-enforced.** The `set-node-peer-address` transaction is rejected unless the signer is an already-**bonded** validator (the handler requires `validator.Status == Bonded`, otherwise it returns `unauthorized: validator is not bonded`). Run it before `create-validator`, or while your validator is still unbonded or jailed, and it fails. Confirm `BOND_STATUS_BONDED` from the verify step above first.
-* **Bonding alone is not enough.** Your validator's `bifrost` also has to be **discoverable** so other validators' `bifrost` processes can connect and exchange Bitcoin blocks. A bonded but unregistered validator cannot attest BTC blocks and risks downtime jailing.
-
-1. **Set `external_ip` and restart bifrost.** Confirm `external_ip` in `~/.bifrost/config.json` is your node's public IP (see the [bifrost config](#configure-bifrost) tip), then:
-
-   ```bash
-   sudo systemctl restart bifrost
-   ```
-
-2. **Read your full peer address** from the bifrost HTTP API. It returns `<peerID>@<external_ip>:<p2p-port>` ready to use:
-
-   ```bash
-   curl http://127.0.0.1:30007/peerid
-   # → 12D3KooWE2iVgm3YXDKwGX7Asqz7Q4JpoDZ12Vj8G6vVQMNVJEq9@149.28.169.249:30006
-   ```
-
-   If the IP comes back as `0.0.0.0`, `external_ip` is unset — fix step 1 first.
-
-3. **Register it on-chain** with the custom `x/qbtc` message, signed by your validator account:
-
-   ```bash
-   qbtcd tx qbtc set-node-peer-address \
-     --peer-address "12D3KooWE2iVgm3YXDKwGX7Asqz7Q4JpoDZ12Vj8G6vVQMNVJEq9@149.28.169.249:30006" \
-     --chain-id qbtc \
-     --from my-validator
-   ```
-
-4. **Verify** peering and the on-chain mapping:
-
-   ```bash
-   curl http://127.0.0.1:30007/connected-peers     # live bifrost connections
-   curl http://127.0.0.1:30007/validator-peers      # validator peers seen
-   qbtcd query qbtc all-node-peer-addresses          # the on-chain registry
-   ```
-
-   The custom `x/qbtc` queries are served by your own node, not the public REST gateway. If a subcommand differs on your build, check `qbtcd query qbtc --help`.
-
 ### Placement and latency
 
-QBTC blocks are **large**, and this makes network latency a real operational consideration. ML-DSA-44 consensus signatures are about 2.4 KB each (versus 64 bytes for Ed25519), and when a Bitcoin block is ingested it is shipped into a QBTC block that can be very large. A validator that is network-distant from the rest of the active set may not receive and precommit these large blocks within the consensus timeouts — so it **misses precommits and is jailed for downtime**, even while it keeps up fine on small blocks.
+QBTC blocks are **large**, and this makes network latency a real operational consideration. ML-DSA-65 consensus signatures are about 3.3 KB each (versus 64 bytes for Ed25519), and when a Bitcoin block is ingested it is shipped into a QBTC block that can be very large. A validator that is network-distant from the rest of the active set may not receive and precommit these large blocks within the consensus timeouts — so it **misses precommits and is jailed for downtime**, even while it keeps up fine on small blocks.
 
 This has been observed in practice: a validator with roughly **225 ms RTT** to the majority of voting power consistently missed precommits on large blocks and was jailed, while its small-block participation was unaffected. ML-DSA block sizes magnify latency problems that would be invisible on a standard Cosmos chain.
 
@@ -1419,13 +1365,13 @@ There is no single right answer here. What matters is that you understand your l
 
 ### Running multiple validators
 
-Repeat the whole flow per validator, on separate machines (or separate `--home` directories and ports), each with its own account, its own consensus key, and its own `bifrost`. Fund each account separately; each self-bonds independently.
+Repeat the whole flow per validator, on separate machines (or separate `--home` directories and ports), each with its own account, its own consensus key, and its own Bitcoin reader configuration. Fund each account separately; each self-bonds independently.
 
-**Note:** The exact subcommand names and flags above follow Cosmos SDK v0.53. If anything differs on your build, the binary is the source of truth — check `qbtcd tx staking create-validator --help` and `qbtcd comet --help`. See [Consensus & Validators](/build/consensus) for the economic model.
+**Note:** The exact subcommand names and flags above follow Cosmos SDK v0.55. If anything differs on your build, the binary is the source of truth — check `qbtcd tx staking create-validator --help` and `qbtcd comet --help`. See [Consensus & Validators](/build/consensus) for the economic model.
 
 ## See also
 
-* [Architecture](/build/architecture), how `qbtcd`, `bifrost`, and the Bitcoin node fit together.
+* [Architecture](/build/architecture), how `qbtcd`, its Bitcoin reader, and the Bitcoin node fit together.
 * [Consensus & Validators](/build/consensus), validator economics and emission.
 * [Chain repository](https://github.com/btcq-org/qbtc), source of truth for versions and endpoints.
 
@@ -1440,7 +1386,7 @@ QBTC exposes two HTTP surfaces a developer will use:
 * **The Bitcoin risk indexer** (`https://api.qbtc.net`) — indexes the **real Bitcoin UTXO set** (the claimable universe). Its data is valid for mainnet planning today.
 * **The QBTC chain** — standard Cosmos SDK REST/gRPC. The hosted gateway below points at the **current public test network** and will change at mainnet.
 
-**Note:** **Test network vs. mainnet.** The Bitcoin indexer reflects real Bitcoin and is stable. The **chain** endpoints serve a public test network (chain ID `qbtc`) that has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026. The host, chain ID, and on-chain state can all change at mainnet. Treat chain endpoints as illustrative, not durable.
+**Note:** **Test network vs. mainnet.** The Bitcoin indexer reflects real Bitcoin and is stable. The **chain** endpoints serve a public test network (chain ID `qbtc`) that has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for early 2027. The host, chain ID, and on-chain state can all change at mainnet. Treat chain endpoints as illustrative, not durable.
 
 ## Bitcoin risk indexer — `https://api.qbtc.net`
 
@@ -1605,16 +1551,16 @@ QBTC consensus is **CometBFT, forked** to replace Ed25519 with ML-DSA (CRYSTALS-
 
 * Source: `github.com/btcq-org/cometbft`.
 * Replaces `crypto/ed25519` with `crypto/mldsa` for validator consensus keys, vote signing, and block-commit signatures.
-* ML-DSA-44 parameter set (NIST security category 2).
-* Signature size: 2420 bytes (~2.4 KB). Public key size: 1312 bytes (~1.3 KB). Per FIPS 204.
+* ML-DSA-65 parameter set (NIST security category 3).
+* Signature size: 3309 bytes (~3.3 KB). Public key size: 1952 bytes (~1.9 KB). Per FIPS 204.
 
 The consensus path has no ECDSA or Ed25519 dependency. Validators sign with ML-DSA from genesis.
 
 ### 1.1 Validator set
 
 * Standard Cosmos `x/staking` for bonding and validator selection.
-* Validator consensus key: ML-DSA.
-* Account keys, including the validator operator key: ML-DSA, secp256k1, ed25519 or multisig. Post-quantum protection applies only to ML-DSA accounts.
+* Validator consensus key: ML-DSA-65.
+* Account keys, including the validator operator key: ML-DSA-65 only. The chain rejects every other signer type, including secp256k1, ed25519 and multisig. QBTC sent to an address without an ML-DSA-65 key can never be spent.
 * Maximum validator set size and unbonding period: genesis parameters. The test network uses 100 validators and 21 days. Mainnet sets its own values at genesis.
 
 ## 2. The custom module: `x/qbtc`
@@ -1627,25 +1573,27 @@ Single custom module covering everything QBTC-specific:
 | `types/` | Protobuf message types, validation |
 | `module/` | Cosmos module wiring, genesis state loader |
 | `zk/` | PLONK circuits, on-chain verifier |
-| `ebifrost/` | "Enshrined bifrost": accepts gossiped BTC blocks from validator sidecars |
+| `btcreader/` | Bitcoin reader: fetches blocks from the validator's own Bitcoin node for vote extensions |
 
 ### 2.1 The Bitcoin UTXO mirror
 
 The chain state contains a mirror of the Bitcoin UTXO set:
 
 * **Initial state**: the chain loads a bootstrap seed of the Bitcoin UTXO set (`genesis-954355.bin`), built by the `utxo-indexer` binary. The seed is not a snapshot for eligibility. Eligibility is live with no snapshot date: whoever controls an eligible unspent output at claim time can claim it.
-* **Continuous updates**: each new Bitcoin block is ingested via `ebifrost` after validator attestation, and the mirror is updated (new outputs added, spent outputs reconciled).
+* **Continuous updates**: each new Bitcoin block is ingested after validator attestation in vote extensions, and the mirror is updated (new outputs added, spent outputs reconciled).
 * **Per-UTXO claim entry**: each UTXO has an `EntitledAmount` field representing its outstanding QBTC claim. Set at ingestion, decremented to 0 upon successful claim.
 
-### 2.2 Block ingestion (ebifrost)
+### 2.2 Block ingestion (vote extensions)
 
-Each validator runs a `bifrost` sidecar that connects to a Bitcoin RPC, watches for new blocks, signs them with the validator's ML-DSA consensus key, and gossips them to peer validators via LibP2P.
+Each validator's `qbtcd` runs a Bitcoin reader (`x/qbtc/btcreader`). It fetches each block from the validator's own Bitcoin Core node after `confirmation_depth` confirmations (default 6), checks the block hash and merkle root, and caches the block.
 
-The `ebifrost` module accepts these signed blocks via gRPC and aggregates attestations. A block is ingested into QBTC state once more than **2/3 of bonded validator power** has attested.
+* **Attest.** In `ExtendVote`, each validator lists its cached blocks (up to 16 heights) in a CometBFT vote extension, signed with its ML-DSA-65 consensus key.
+* **Include.** In `PrepareProposal`, the proposer tallies the previous height's extended commit. It includes a block when validators with more than **2/3 of voting power** voted for the same block, up to 8 blocks per QBTC block. It injects them as one `MsgBtcBlock`.
+* **Check.** `ProcessProposal` and `FinalizeBlock` check the vote evidence again. They recompute every txid and the merkle root, check that the header links to the stored tip, and check the proof of work at Bitcoin's difficulty retarget rule.
+* **Anchor.** The chain starts from a Bitcoin block set at genesis (`btc_initial_height`, `btc_anchor_header`). It does not start from Bitcoin's genesis block.
+* **Finality.** A processed block is final. The chain does not handle Bitcoin reorgs deeper than `confirmation_depth`.
 
-Per `x/qbtc/keeper/handler_msg_report_block.go:67–68`:
-
-> `// require more than 2/3 of total staking power to attest the block`
+Source: `docs/BTC_BLOCK_INGESTION.md` in the chain repository.
 
 The block is then injected as a special transaction in the next QBTC block via `PrepareProposal`/`ProcessProposal`.
 
@@ -1685,7 +1633,7 @@ In the current clients, the wallet signs a digest with the Bitcoin key and sends
 
 A claimed UTXO's `EntitledAmount` is set to 0. Subsequent attempts to claim the same UTXO fail at the validation step (line 66, 123 of `handle_msg_claim_with_proof.go`).
 
-When the `ebifrost` module ingests a new Bitcoin block, the claimed status propagates to descendant UTXOs. If a transaction spends from any claimed UTXO, the outputs of that transaction inherit the claimed status in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed.
+When the chain ingests a new Bitcoin block, the claimed status propagates to descendant UTXOs. If a transaction spends from any claimed UTXO, the outputs of that transaction inherit the claimed status in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed.
 
 Propagation makes governance reclamation (§2.5) permanent: once a UTXO is reclaimed, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO through Bitcoin to a new address.
 
@@ -1752,7 +1700,7 @@ Dormant-UTXO reclamation proposals (§2.5 Path 2) are enacted through `x/gov` ra
 * **Claim mirror**: tracks the live Bitcoin UTXO set. It starts from a bootstrap seed.
 * **Reserve Module**: a module account that holds QBTC reclaimed by governance, drawn down per block to validators via the emission formula above.
 * **Development fund** (5%) and **marketing fund** (5%) from each governance reclamation.
-* One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. No sale, no premine, no investor allocation, no vesting.
+* One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. No sale, no investor allocation, no team allocation at genesis, no vesting.
 
 See [Tokenomics](/research/tokenomics) for the full breakdown.
 
@@ -1788,7 +1736,6 @@ Standard SDK semantics apply for all of these.
 | Binary | Purpose |
 |---|---|
 | `qbtcd` | Chain daemon |
-| `bifrost` | Bitcoin block watcher sidecar |
 | `proof-service` | PLONK prover (HTTP service) |
 | `zkprover` | PLONK prover (CLI) |
 | `utxo-indexer` | Builds the bootstrap seed of the UTXO mirror |
@@ -1806,7 +1753,7 @@ Standard SDK semantics apply for all of these.
 
 Source: https://docs.qbtc.net/research/tokenomics
 
-QBTC's economic design rests on three invariants. There is no sale, no premine, no investor allocation, no vesting and no inflation.
+QBTC's economic design rests on three invariants. There is no sale, no investor allocation, no team allocation at genesis, no vesting and no inflation.
 
 1. **Cap matches Bitcoin.** Total supply is hard-capped at 21,000,000 QBTC.
 2. **One mint at genesis, then claims only.** Genesis mints 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million. After genesis, tokens come into existence only when a Bitcoin UTXO is claimed, by either a user or by governance.
@@ -1995,7 +1942,7 @@ QBTC's security rests on three independent foundations. A compromise in any one 
 
 Every validator vote, every block-commit signature, every consensus message is signed with ML-DSA (FIPS 204). ML-DSA is designed to resist signature forgery by a quantum-capable adversary. See [Quantum Resistance (ML-DSA)](/build/quantum-resistance).
 
-**Trust assumption:** ML-DSA-44 (NIST security category 2) is believed secure against both classical and quantum adversaries. This rests on the hardness of lattice problems, which has been the standard post-quantum assumption for over a decade and survived NIST's multi-year PQC standardization process.
+**Trust assumption:** ML-DSA-65 (NIST security category 3) is believed secure against both classical and quantum adversaries. This rests on the hardness of lattice problems, which has been the standard post-quantum assumption for over a decade and survived NIST's multi-year PQC standardization process.
 
 ## 2. ZK-gated claims
 
@@ -2005,7 +1952,7 @@ A claim is only accepted if the submitted PLONK proof verifies. The proof attest
 
 ## 3. Bitcoin attestation by 2/3+ of validators
 
-Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` independently watches Bitcoin, signs the block it sees with its ML-DSA consensus key, and gossips. The `ebifrost` module accepts a block only after more than 2/3 of bonded validator power has attested.
+Bitcoin blocks are not trusted from a single oracle. Each validator reads Bitcoin from its own node and attests the blocks it sees in its consensus votes, signed with its ML-DSA-65 consensus key. The chain accepts a block only after validators with more than 2/3 of voting power attest it. The chain also checks the block itself: the transaction IDs, the merkle root, the link to the last processed block, and the proof of work at Bitcoin's difficulty.
 
 **Trust assumption:** At any given time, more than 1/3 of bonded validator power is honest. Standard Byzantine fault tolerance.
 
@@ -2020,7 +1967,7 @@ Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` 
 | Double-claim of the same UTXO | `EntitledAmount` set to 0 after claim. Subsequent attempts fail. |
 | Replay of a valid proof against a different destination | Destination address is a public input bound into the proof. A different destination produces a different proof. |
 | Proving-service operator | The wallet signs a digest with the Bitcoin key and sends the signature to a proving service. The service builds the proof and broadcasts the claim. The service receives the signature, not the private key. |
-| Quantum forgery of account signatures | Only ML-DSA accounts have post-quantum protection. Accounts can also use secp256k1, ed25519 or multisig keys. |
+| Quantum forgery of account signatures | Every account uses ML-DSA-65. The chain rejects classical and multisig keys. |
 | Stolen or compromised user wallet | Same as Bitcoin: control of the BTC private key equals control of the claim. |
 | Front-running of a claim transaction | Standard Cosmos mempool. Claims are not high-MEV (the same UTXO can only be claimed by the holder of the matching key). |
 
@@ -2028,8 +1975,8 @@ Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` 
 
 * **PLONK is not post-quantum.** Bounded by Bitcoin's own pre-quantum nature. Migration to a fully post-quantum SNARK is a research direction.
 * **Claims use a proving service today.** The holder relies on the service to build the proof and broadcast the claim.
-* **Account keys are not all post-quantum.** Accounts that use secp256k1, ed25519 or multisig keys do not have post-quantum protection.
-* **The bifrost design assumes honest majority for Bitcoin block ingestion.** Ingestion needs attestations from more than 2/3 of bonded validator power. Validators above that threshold acting together could feed a false Bitcoin block. Slashing applies, but only after detection.
+* **Funds sent to a non-ML-DSA-65 address are lost.** The chain rejects every other signer type, so QBTC sent to an address without an ML-DSA-65 key can never be spent.
+* **Bitcoin block ingestion assumes an honest majority.** Ingestion needs attestations from more than 2/3 of voting power. The chain checks proof of work, so validators cannot invent transactions or outputs. But validators above that threshold acting together could choose a valid block that later leaves the best Bitcoin chain. A processed block is final: the chain does not handle Bitcoin reorgs deeper than the 6-confirmation depth.
 
 ## Security review
 
@@ -2077,13 +2024,12 @@ Source: https://docs.qbtc.net/resources/glossary
 
 Terms used throughout the QBTC documentation.
 
-* **bifrost** — Per-validator sidecar daemon that watches a Bitcoin full node and gossips signed blocks to peers via LibP2P.
+* **Bitcoin reader** — The part of `qbtcd` (`x/qbtc/btcreader`) that fetches new Bitcoin blocks from a validator's own Bitcoin Core node, checks them, and caches them so the validator can attest them in its vote extensions.
 * **Claim** — A QBTC entitlement tied 1:1 to a live Bitcoin UTXO in the chain's claim mirror. Exercisable by the holder of the corresponding BTC private key via a ZK proof.
 * **Claim mirror** — The set of all outstanding QBTC entitlements, each tied to a currently-live Bitcoin UTXO. Tracks Bitcoin's UTXO set continuously.
 * **CometBFT** — The BFT consensus engine used by Cosmos chains. QBTC uses a [forked CometBFT](https://github.com/btcq-org/cometbft) with ML-DSA signatures.
 * **Cosmos SDK** — The framework QBTC is built on. Provides standard modules for staking, governance, IBC, and others.
 * **CRQC** — Cryptographically-Relevant Quantum Computer. A quantum computer capable of breaking 256-bit elliptic-curve cryptography in practical time.
-* **ebifrost** — The "enshrined bifrost." The in-chain module that aggregates validator attestations on Bitcoin blocks and ingests them into QBTC state.
 * **ECDSA** — Elliptic Curve Digital Signature Algorithm. Bitcoin's signature scheme. Quantum-vulnerable.
 * **EmissionCurve** — An on-chain parameter that controls how fast the Reserve Module is drawn down per block to validators. A governance vote can change it.
 * **EntitledAmount** — The remaining QBTC claim amount for a given UTXO. Set at ingestion. Decremented to 0 after claim.
@@ -2091,7 +2037,7 @@ Terms used throughout the QBTC documentation.
 * **Explorer** — The canonical QBTC block explorer at [explorer.qbtc.net](https://explorer.qbtc.net). Lookup for transactions, blocks, addresses, and claim activity on QBTC.
 * **Hash160** — The 20-byte hash (RIPEMD-160 of SHA-256) of a Bitcoin public key. Encodes a Bitcoin address.
 * **Indexer** — The QBTC risk indexer at [indexer.qbtc.net](https://indexer.qbtc.net). Aggregate stats on Bitcoin's quantum-vulnerable UTXO surface, broken down by script type (P2PK, reused P2PKH/P2WPKH, P2SH/P2WSH, etc.).
-* **ML-DSA** — Module-Lattice-Based Digital Signature Algorithm. NIST-standardized lattice signature scheme. Formerly CRYSTALS-Dilithium. QBTC's consensus signature scheme, at the ML-DSA-44 parameter set.
+* **ML-DSA** — Module-Lattice-Based Digital Signature Algorithm. NIST-standardized lattice signature scheme. Formerly CRYSTALS-Dilithium. QBTC's signature scheme for consensus and for all accounts, at the ML-DSA-65 parameter set.
 * **P2PK** — Pay-to-Public-Key. An early Bitcoin output format that places the public key directly on-chain. Quantum-vulnerable.
 * **P2PKH / P2WPKH** — Pay-to-Public-Key-Hash. Bitcoin output formats that store only the hash of the public key. The public key stays hidden until the first spend. These are the address types the QBTC self-claim supports today.
 * **PLONK** — A zero-knowledge SNARK proof system. QBTC's claim circuit is a PLONK circuit.
@@ -2103,6 +2049,7 @@ Terms used throughout the QBTC documentation.
 * **Shor's algorithm** — A quantum algorithm that solves the discrete logarithm problem efficiently. Breaks Bitcoin's ECDSA signatures (given a CRQC).
 * **UTXO** — Unspent Transaction Output. The unit of Bitcoin balance. QBTC mirrors Bitcoin's UTXO set.
 * **utxo-indexer** — A CLI tool that crawls a Bitcoin node and produces the bootstrap seed of the UTXO mirror. The seed is not an eligibility snapshot: eligibility is live.
+* **Vote extension** — Data that a CometBFT validator adds to its consensus vote. QBTC validators use vote extensions to attest Bitcoin blocks. A block enters QBTC state when validators with more than 2/3 of voting power attest it.
 * **zkprover** — A CLI tool for generating QBTC claim proofs locally.
 * **ZK proof** — Zero-knowledge proof. A cryptographic proof that reveals only the validity of a stated claim, not the supporting data.
 

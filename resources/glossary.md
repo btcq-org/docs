@@ -1,17 +1,16 @@
 ---
 title: "Glossary"
-description: "Glossary of QBTC terms: bifrost, ebifrost, CometBFT, claim mirror, EntitledAmount, ML-DSA, PLONK, P2PK, Reserve Module, Hash160, Shor's algorithm, and more."
+description: "Glossary of QBTC terms: Bitcoin reader, vote extension, CometBFT, claim mirror, EntitledAmount, ML-DSA, PLONK, P2PK, Reserve Module, Hash160, Shor's algorithm, and more."
 ---
 
 Terms used throughout the QBTC documentation.
 
-* **bifrost** — Per-validator sidecar daemon that watches a Bitcoin full node and gossips signed blocks to peers via LibP2P.
+* **Bitcoin reader** — The part of `qbtcd` (`x/qbtc/btcreader`) that fetches new Bitcoin blocks from a validator's own Bitcoin Core node, checks them, and caches them so the validator can attest them in its vote extensions.
 * **Claim** — A QBTC entitlement tied 1:1 to a live Bitcoin UTXO in the chain's claim mirror. Exercisable by the holder of the corresponding BTC private key via a ZK proof.
 * **Claim mirror** — The set of all outstanding QBTC entitlements, each tied to a currently-live Bitcoin UTXO. Tracks Bitcoin's UTXO set continuously.
 * **CometBFT** — The BFT consensus engine used by Cosmos chains. QBTC uses a [forked CometBFT](https://github.com/btcq-org/cometbft) with ML-DSA signatures.
 * **Cosmos SDK** — The framework QBTC is built on. Provides standard modules for staking, governance, IBC, and others.
 * **CRQC** — Cryptographically-Relevant Quantum Computer. A quantum computer capable of breaking 256-bit elliptic-curve cryptography in practical time.
-* **ebifrost** — The "enshrined bifrost." The in-chain module that aggregates validator attestations on Bitcoin blocks and ingests them into QBTC state.
 * **ECDSA** — Elliptic Curve Digital Signature Algorithm. Bitcoin's signature scheme. Quantum-vulnerable.
 * **EmissionCurve** — An on-chain parameter that controls how fast the Reserve Module is drawn down per block to validators. A governance vote can change it.
 * **EntitledAmount** — The remaining QBTC claim amount for a given UTXO. Set at ingestion. Decremented to 0 after claim.
@@ -19,7 +18,7 @@ Terms used throughout the QBTC documentation.
 * **Explorer** — The canonical QBTC block explorer at [explorer.qbtc.net](https://explorer.qbtc.net). Lookup for transactions, blocks, addresses, and claim activity on QBTC.
 * **Hash160** — The 20-byte hash (RIPEMD-160 of SHA-256) of a Bitcoin public key. Encodes a Bitcoin address.
 * **Indexer** — The QBTC risk indexer at [indexer.qbtc.net](https://indexer.qbtc.net). Aggregate stats on Bitcoin's quantum-vulnerable UTXO surface, broken down by script type (P2PK, reused P2PKH/P2WPKH, P2SH/P2WSH, etc.).
-* **ML-DSA** — Module-Lattice-Based Digital Signature Algorithm. NIST-standardized lattice signature scheme. Formerly CRYSTALS-Dilithium. QBTC's consensus signature scheme, at the ML-DSA-44 parameter set.
+* **ML-DSA** — Module-Lattice-Based Digital Signature Algorithm. NIST-standardized lattice signature scheme. Formerly CRYSTALS-Dilithium. QBTC's signature scheme for consensus and for all accounts, at the ML-DSA-65 parameter set.
 * **P2PK** — Pay-to-Public-Key. An early Bitcoin output format that places the public key directly on-chain. Quantum-vulnerable.
 * **P2PKH / P2WPKH** — Pay-to-Public-Key-Hash. Bitcoin output formats that store only the hash of the public key. The public key stays hidden until the first spend. These are the address types the QBTC self-claim supports today.
 * **PLONK** — A zero-knowledge SNARK proof system. QBTC's claim circuit is a PLONK circuit.
@@ -31,5 +30,6 @@ Terms used throughout the QBTC documentation.
 * **Shor's algorithm** — A quantum algorithm that solves the discrete logarithm problem efficiently. Breaks Bitcoin's ECDSA signatures (given a CRQC).
 * **UTXO** — Unspent Transaction Output. The unit of Bitcoin balance. QBTC mirrors Bitcoin's UTXO set.
 * **utxo-indexer** — A CLI tool that crawls a Bitcoin node and produces the bootstrap seed of the UTXO mirror. The seed is not an eligibility snapshot: eligibility is live.
+* **Vote extension** — Data that a CometBFT validator adds to its consensus vote. QBTC validators use vote extensions to attest Bitcoin blocks. A block enters QBTC state when validators with more than 2/3 of voting power attest it.
 * **zkprover** — A CLI tool for generating QBTC claim proofs locally.
 * **ZK proof** — Zero-knowledge proof. A cryptographic proof that reveals only the validity of a stated claim, not the supporting data.

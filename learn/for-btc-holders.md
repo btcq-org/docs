@@ -8,7 +8,7 @@ description: "What Bitcoin holders need to know about claiming QBTC: 1:1 for eli
 </Check>
 
 <Info>
-**Pre-mainnet.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for Q4 2026. You do not need to take any action right now. Your BTC is yours.
+**Pre-mainnet.** A test network has run since March 2026 and may be reset. Mainnet is a fresh genesis, planned for early 2027. You do not need to take any action right now. Your BTC is yours.
 </Info>
 
 ## The short version
@@ -24,7 +24,7 @@ Eligibility is live, with no snapshot date: whoever controls an eligible unspent
 * **You own the claim if you own the BTC.** The claim is computed from the Bitcoin UTXO set, not from a registration or signup. Whoever controls the private key for a Bitcoin address controls the corresponding QBTC claim.
 * **You claim from a wallet that supports QBTC claims.** The wallet signs a digest with your Bitcoin key and sends the signature to a proving service. The service builds the zero-knowledge proof and broadcasts the claim. No Bitcoin transaction is sent.
 * **Your BTC public key does not go on chain.** The claim transaction shows only the hash of the address being claimed and the destination QBTC address.
-* **Use an ML-DSA account for post-quantum protection.** QBTC accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
+* **Every QBTC account is post-quantum.** QBTC accounts use ML-DSA-65 keys, and the chain accepts no other key type. Claim to an address from a wallet that supports ML-DSA-65. Vultisig supports ML-DSA-65 from launch. QBTC sent to any other kind of address can never be spent.
 * **You can batch claims.** A single transaction can claim up to 50 UTXOs from the same Bitcoin address.
 
 ## Where do I hold my BTC?

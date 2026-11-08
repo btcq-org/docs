@@ -6,7 +6,7 @@ description: "QBTC's economic design: 21M supply cap, no sale, governance reclam
 import { tokenomicsData } from "/snippets/tokenomics-data.jsx";
 import { SegmentedBar, ReserveCurve } from "/snippets/tokenomics-charts.jsx";
 
-QBTC's economic design rests on three invariants. There is no sale, no premine, no investor allocation, no vesting and no inflation.
+QBTC's economic design rests on three invariants. There is no sale, no investor allocation, no team allocation at genesis, no vesting and no inflation.
 
 1. **Cap matches Bitcoin.** Total supply is hard-capped at 21,000,000 QBTC.
 2. **One mint at genesis, then claims only.** Genesis mints 50 QBTC, committed to securing the chain during the genesis period. In exchange, the 50 BTC coinbase output of Bitcoin's genesis block (block 0) can never be claimed, because Bitcoin never added it to its UTXO set. So the total stays within 21 million. After genesis, tokens come into existence only when a Bitcoin UTXO is claimed, by either a user or by governance.

@@ -13,16 +13,16 @@ QBTC consensus is **CometBFT, forked** to replace Ed25519 with ML-DSA (CRYSTALS-
 
 * Source: `github.com/btcq-org/cometbft`.
 * Replaces `crypto/ed25519` with `crypto/mldsa` for validator consensus keys, vote signing, and block-commit signatures.
-* ML-DSA-44 parameter set (NIST security category 2).
-* Signature size: 2420 bytes (~2.4 KB). Public key size: 1312 bytes (~1.3 KB). Per FIPS 204.
+* ML-DSA-65 parameter set (NIST security category 3).
+* Signature size: 3309 bytes (~3.3 KB). Public key size: 1952 bytes (~1.9 KB). Per FIPS 204.
 
 The consensus path has no ECDSA or Ed25519 dependency. Validators sign with ML-DSA from genesis.
 
 ### 1.1 Validator set
 
 * Standard Cosmos `x/staking` for bonding and validator selection.
-* Validator consensus key: ML-DSA.
-* Account keys, including the validator operator key: ML-DSA, secp256k1, ed25519 or multisig. Post-quantum protection applies only to ML-DSA accounts.
+* Validator consensus key: ML-DSA-65.
+* Account keys, including the validator operator key: ML-DSA-65 only. The chain rejects every other signer type, including secp256k1, ed25519 and multisig. QBTC sent to an address without an ML-DSA-65 key can never be spent.
 * Maximum validator set size and unbonding period: genesis parameters. The test network uses 100 validators and 21 days. Mainnet sets its own values at genesis.
 
 ## 2. The custom module: `x/qbtc`
@@ -35,25 +35,27 @@ Single custom module covering everything QBTC-specific:
 | `types/` | Protobuf message types, validation |
 | `module/` | Cosmos module wiring, genesis state loader |
 | `zk/` | PLONK circuits, on-chain verifier |
-| `ebifrost/` | "Enshrined bifrost": accepts gossiped BTC blocks from validator sidecars |
+| `btcreader/` | Bitcoin reader: fetches blocks from the validator's own Bitcoin node for vote extensions |
 
 ### 2.1 The Bitcoin UTXO mirror
 
 The chain state contains a mirror of the Bitcoin UTXO set:
 
 * **Initial state**: the chain loads a bootstrap seed of the Bitcoin UTXO set (`genesis-954355.bin`), built by the `utxo-indexer` binary. The seed is not a snapshot for eligibility. Eligibility is live with no snapshot date: whoever controls an eligible unspent output at claim time can claim it.
-* **Continuous updates**: each new Bitcoin block is ingested via `ebifrost` after validator attestation, and the mirror is updated (new outputs added, spent outputs reconciled).
+* **Continuous updates**: each new Bitcoin block is ingested after validator attestation in vote extensions, and the mirror is updated (new outputs added, spent outputs reconciled).
 * **Per-UTXO claim entry**: each UTXO has an `EntitledAmount` field representing its outstanding QBTC claim. Set at ingestion, decremented to 0 upon successful claim.
 
-### 2.2 Block ingestion (ebifrost)
+### 2.2 Block ingestion (vote extensions)
 
-Each validator runs a `bifrost` sidecar that connects to a Bitcoin RPC, watches for new blocks, signs them with the validator's ML-DSA consensus key, and gossips them to peer validators via LibP2P.
+Each validator's `qbtcd` runs a Bitcoin reader (`x/qbtc/btcreader`). It fetches each block from the validator's own Bitcoin Core node after `confirmation_depth` confirmations (default 6), checks the block hash and merkle root, and caches the block.
 
-The `ebifrost` module accepts these signed blocks via gRPC and aggregates attestations. A block is ingested into QBTC state once more than **2/3 of bonded validator power** has attested.
+* **Attest.** In `ExtendVote`, each validator lists its cached blocks (up to 16 heights) in a CometBFT vote extension, signed with its ML-DSA-65 consensus key.
+* **Include.** In `PrepareProposal`, the proposer tallies the previous height's extended commit. It includes a block when validators with more than **2/3 of voting power** voted for the same block, up to 8 blocks per QBTC block. It injects them as one `MsgBtcBlock`.
+* **Check.** `ProcessProposal` and `FinalizeBlock` check the vote evidence again. They recompute every txid and the merkle root, check that the header links to the stored tip, and check the proof of work at Bitcoin's difficulty retarget rule.
+* **Anchor.** The chain starts from a Bitcoin block set at genesis (`btc_initial_height`, `btc_anchor_header`). It does not start from Bitcoin's genesis block.
+* **Finality.** A processed block is final. The chain does not handle Bitcoin reorgs deeper than `confirmation_depth`.
 
-Per `x/qbtc/keeper/handler_msg_report_block.go:67–68`:
-
-> `// require more than 2/3 of total staking power to attest the block`
+Source: `docs/BTC_BLOCK_INGESTION.md` in the chain repository.
 
 The block is then injected as a special transaction in the next QBTC block via `PrepareProposal`/`ProcessProposal`.
 
@@ -93,7 +95,7 @@ In the current clients, the wallet signs a digest with the Bitcoin key and sends
 
 A claimed UTXO's `EntitledAmount` is set to 0. Subsequent attempts to claim the same UTXO fail at the validation step (line 66, 123 of `handle_msg_claim_with_proof.go`).
 
-When the `ebifrost` module ingests a new Bitcoin block, the claimed status propagates to descendant UTXOs. If a transaction spends from any claimed UTXO, the outputs of that transaction inherit the claimed status in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed.
+When the chain ingests a new Bitcoin block, the claimed status propagates to descendant UTXOs. If a transaction spends from any claimed UTXO, the outputs of that transaction inherit the claimed status in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed.
 
 Propagation makes governance reclamation (§2.5) permanent: once a UTXO is reclaimed, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO through Bitcoin to a new address.
 
@@ -160,7 +162,7 @@ Dormant-UTXO reclamation proposals (§2.5 Path 2) are enacted through `x/gov` ra
 * **Claim mirror**: tracks the live Bitcoin UTXO set. It starts from a bootstrap seed.
 * **Reserve Module**: a module account that holds QBTC reclaimed by governance, drawn down per block to validators via the emission formula above.
 * **Development fund** (5%) and **marketing fund** (5%) from each governance reclamation.
-* One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. No sale, no premine, no investor allocation, no vesting.
+* One mint at genesis: 50 QBTC, committed to securing the chain during the genesis period. No sale, no investor allocation, no team allocation at genesis, no vesting.
 
 See [Tokenomics](/research/tokenomics) for the full breakdown.
 
@@ -196,7 +198,6 @@ Standard SDK semantics apply for all of these.
 | Binary | Purpose |
 |---|---|
 | `qbtcd` | Chain daemon |
-| `bifrost` | Bitcoin block watcher sidecar |
 | `proof-service` | PLONK prover (HTTP service) |
 | `zkprover` | PLONK prover (CLI) |
 | `utxo-indexer` | Builds the bootstrap seed of the UTXO mirror |

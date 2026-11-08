@@ -13,7 +13,7 @@ The chain loads a bootstrap seed of the Bitcoin UTXO set (`genesis-954355.bin`).
 * The UTXO's BTC amount, scaled 1:1 to QBTC.
 * An `EntitledAmount` field, initially set to the claim amount and decremented to 0 when claimed.
 
-As new Bitcoin blocks are ingested via `ebifrost` (see [Architecture](/build/architecture)), the mirror updates:
+As new Bitcoin blocks are ingested through validator vote extensions (see [Architecture](/build/architecture)), the mirror updates:
 
 * New UTXOs add new claim entries.
 * Spent UTXOs are reconciled.
@@ -59,7 +59,7 @@ When a validator receives a `MsgClaimWithProof`, the handler (`x/qbtc/keeper/han
 
 A claimed UTXO has `EntitledAmount == 0`. Any subsequent attempt to claim it fails at step 2 of validator handling.
 
-The claimed status also propagates through Bitcoin spends. When the `ebifrost` module ingests a new Bitcoin block, any transaction whose inputs include claimed UTXOs carries the claimed status to its outputs in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed. A child of a partially-claimed set of parents inherits a proportionally-reduced `EntitledAmount`.
+The claimed status also propagates through Bitcoin spends. When the chain ingests a new Bitcoin block, any transaction whose inputs include claimed UTXOs carries the claimed status to its outputs in proportion to the value contributed by claimed inputs. A child of a fully-claimed parent has `EntitledAmount = 0` and cannot be claimed. A child of a partially-claimed set of parents inherits a proportionally-reduced `EntitledAmount`.
 
 Propagation makes governance reclamation (see [Tokenomics](/research/tokenomics)) permanent: once governance reclaims a UTXO, the Bitcoin holder cannot recover the QBTC entitlement by spending the UTXO to a new address.
 

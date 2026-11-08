@@ -9,7 +9,7 @@ QBTC's security rests on three independent foundations. A compromise in any one 
 
 Every validator vote, every block-commit signature, every consensus message is signed with ML-DSA (FIPS 204). ML-DSA is designed to resist signature forgery by a quantum-capable adversary. See [Quantum Resistance (ML-DSA)](/build/quantum-resistance).
 
-**Trust assumption:** ML-DSA-44 (NIST security category 2) is believed secure against both classical and quantum adversaries. This rests on the hardness of lattice problems, which has been the standard post-quantum assumption for over a decade and survived NIST's multi-year PQC standardization process.
+**Trust assumption:** ML-DSA-65 (NIST security category 3) is believed secure against both classical and quantum adversaries. This rests on the hardness of lattice problems, which has been the standard post-quantum assumption for over a decade and survived NIST's multi-year PQC standardization process.
 
 ## 2. ZK-gated claims
 
@@ -19,7 +19,7 @@ A claim is only accepted if the submitted PLONK proof verifies. The proof attest
 
 ## 3. Bitcoin attestation by 2/3+ of validators
 
-Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` independently watches Bitcoin, signs the block it sees with its ML-DSA consensus key, and gossips. The `ebifrost` module accepts a block only after more than 2/3 of bonded validator power has attested.
+Bitcoin blocks are not trusted from a single oracle. Each validator reads Bitcoin from its own node and attests the blocks it sees in its consensus votes, signed with its ML-DSA-65 consensus key. The chain accepts a block only after validators with more than 2/3 of voting power attest it. The chain also checks the block itself: the transaction IDs, the merkle root, the link to the last processed block, and the proof of work at Bitcoin's difficulty.
 
 **Trust assumption:** At any given time, more than 1/3 of bonded validator power is honest. Standard Byzantine fault tolerance.
 
@@ -34,7 +34,7 @@ Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` 
 | Double-claim of the same UTXO | `EntitledAmount` set to 0 after claim. Subsequent attempts fail. |
 | Replay of a valid proof against a different destination | Destination address is a public input bound into the proof. A different destination produces a different proof. |
 | Proving-service operator | The wallet signs a digest with the Bitcoin key and sends the signature to a proving service. The service builds the proof and broadcasts the claim. The service receives the signature, not the private key. |
-| Quantum forgery of account signatures | Only ML-DSA accounts have post-quantum protection. Accounts can also use secp256k1, ed25519 or multisig keys. |
+| Quantum forgery of account signatures | Every account uses ML-DSA-65. The chain rejects classical and multisig keys. |
 | Stolen or compromised user wallet | Same as Bitcoin: control of the BTC private key equals control of the claim. |
 | Front-running of a claim transaction | Standard Cosmos mempool. Claims are not high-MEV (the same UTXO can only be claimed by the holder of the matching key). |
 
@@ -42,8 +42,8 @@ Bitcoin blocks are not trusted from a single oracle. Each validator's `bifrost` 
 
 * **PLONK is not post-quantum.** Bounded by Bitcoin's own pre-quantum nature. Migration to a fully post-quantum SNARK is a research direction.
 * **Claims use a proving service today.** The holder relies on the service to build the proof and broadcast the claim.
-* **Account keys are not all post-quantum.** Accounts that use secp256k1, ed25519 or multisig keys do not have post-quantum protection.
-* **The bifrost design assumes honest majority for Bitcoin block ingestion.** Ingestion needs attestations from more than 2/3 of bonded validator power. Validators above that threshold acting together could feed a false Bitcoin block. Slashing applies, but only after detection.
+* **Funds sent to a non-ML-DSA-65 address are lost.** The chain rejects every other signer type, so QBTC sent to an address without an ML-DSA-65 key can never be spent.
+* **Bitcoin block ingestion assumes an honest majority.** Ingestion needs attestations from more than 2/3 of voting power. The chain checks proof of work, so validators cannot invent transactions or outputs. But validators above that threshold acting together could choose a valid block that later leaves the best Bitcoin chain. A processed block is final: the chain does not handle Bitcoin reorgs deeper than the 6-confirmation depth.
 
 ## Security review
 

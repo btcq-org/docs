@@ -3,7 +3,7 @@ title: "Consensus & Validators"
 description: "QBTC consensus runs on CometBFT with ML-DSA signatures replacing Ed25519. Staking, distribution, and governance are standard Cosmos modules."
 ---
 
-QBTC consensus is **CometBFT, forked** to use ML-DSA signatures instead of Ed25519. The economic layer is standard Cosmos `x/staking` and `x/distribution`. The only QBTC-specific consensus addition is the `ebifrost` module's handling of attested Bitcoin block ingestion.
+QBTC consensus is **CometBFT, forked** to use ML-DSA signatures instead of Ed25519. The economic layer is standard Cosmos `x/staking` and `x/distribution`. The only QBTC-specific consensus addition is Bitcoin block ingestion through vote extensions.
 
 ## Consensus engine
 
@@ -16,15 +16,15 @@ Validators bond QBTC via the standard Cosmos `x/staking` module (see [Becoming a
 * **Bonding**: standard `x/staking` semantics (self-bond from the validator's own account; no inflation, so rewards come from fees and Reserve emission).
 * **Slashing**: standard `x/slashing` — double-sign and downtime.
 * **Unbonding period**: 21 days on the current test network (a genesis parameter; subject to change at mainnet).
-* **Validator consensus key**: ML-DSA (`/cosmos.crypto.mldsa.PubKey`).
-* **Account keys** (including the validator operator account): accounts accept ML-DSA, secp256k1, ed25519 and multisig keys. Post-quantum protection applies only to accounts that use ML-DSA keys.
+* **Validator consensus key**: ML-DSA-65 (`/cosmos.crypto.mldsa65.PubKey`).
+* **Account keys** (including the validator operator account): ML-DSA-65 only. The chain rejects all other key types, including secp256k1, ed25519 and multisig.
 
 ## Validator responsibilities
 
 In addition to standard Cosmos validator duties, QBTC validators also:
 
-1. **Run a `bifrost` sidecar** that watches a Bitcoin full node and gossips signed BTC blocks to peers. See [Architecture](/build/architecture) for the data flow.
-2. **Attest to ingested BTC blocks**. The `ebifrost` module aggregates these attestations; a block is ingested into QBTC state once more than 2/3 of bonded validator power has attested.
+1. **Run the Bitcoin reader in `qbtcd`**, pointed at a Bitcoin Core node they trust. See [Running a Node](/build/running-a-node#configure-the-bitcoin-reader-validators).
+2. **Attest Bitcoin blocks in their consensus votes** (vote extensions). A block enters QBTC state once validators with more than 2/3 of voting power attest it. See [Architecture](/build/architecture) for the data flow.
 
 ## Validator rewards
 

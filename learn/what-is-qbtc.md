@@ -55,7 +55,7 @@ Once a Bitcoin public key has been broadcast (during a normal Bitcoin spend), a 
 * Native token: `qbtc`. Bech32 address prefix: `qbtc`.
 * Consensus: **CometBFT, forked** to use ML-DSA signatures instead of Ed25519.
 * One custom module (`x/qbtc`) that handles UTXO mirroring, claim verification, and the ZK PLONK verifier.
-* A per-validator sidecar process (`bifrost`) that watches a Bitcoin full node and gossips new BTC blocks into QBTC, where more than 2/3 of bonded validator power must attest before they are processed.
+* A Bitcoin reader inside each validator's node. It reads new Bitcoin blocks from the validator's own Bitcoin node, and validators attest them in their consensus votes. A block is processed only after validators with more than 2/3 of voting power attest it.
 
 ## How a claim flows, end to end
 

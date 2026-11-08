@@ -7,7 +7,7 @@ Documentation for developers, integrators, and node operators. If you want to un
 
 ## Start here
 
-* [Architecture](/build/architecture), a tour of the chain daemon, the bifrost sidecar, the ZK proof service, and how Bitcoin's state is mirrored.
+* [Architecture](/build/architecture), a tour of the chain daemon, Bitcoin block ingestion, the ZK proof service, and how Bitcoin's state is mirrored.
 * [Quantum Resistance (ML-DSA)](/build/quantum-resistance), the cryptographic substrate.
 * [Consensus & Validators](/build/consensus), the CometBFT fork and validator economics.
 * [Claim Mechanism](/build/claim-mechanism), how a Bitcoin holder converts a claim into spendable QBTC.
